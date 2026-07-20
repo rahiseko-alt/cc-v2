@@ -117,8 +117,8 @@
 {
   "meta": {
     "title": "ロードマップ",
-    "active": "G-1-1",
-    "next": "言語化をリーン版6枝(動く/公開/安全/継続運用/データ/性能)へ再構成。品質ゲートはCIへ一本化(旧G-1-3統合)、ガバナンス条件はcriteriaから除去しAGENTS.mdプロセスへ。evidenceは機械リンタで外部事実のみに強制。短期修正(ui lint本物化・.env.example・postcss override＋audit)を CI緑後に evidence反映。新設のG-3(安全)/G-4(継続運用)/G-5(データ)/G-6(性能)は未達で、ゴールは未成立。ゴール=このリポからアプリを本番運用できる環境にする。",
+    "active": "G-1-2",
+    "next": "G-1-1(土台と機械の審判)は6/6 done：CI緑(typecheck/lint〔ui本物〕/test/build/audit/evidenceリンタ)・実テスト・全lint本物・postcssのmoderate解消・.env.exampleを外部事実で充足。次の一手=G-1-2 起動スモーク(CIで build→next start→curl 200＋'cc-v2 monorepo')。以降 G-2(公開/Vercel)・G-3-3/3-4・G-4・G-5・G-6 は未達。基準変更は master 承認、done判定はCI/独立subagent。ゴール=このリポからアプリを本番運用できる環境にする。",
     "updated": "2026-07-20"
   },
   "nodes": [
@@ -133,7 +133,7 @@
                 { "text":"ランタイム/ツールのバージョンが固定", "verify":".tool-versions/.node-version が宣言スタックと一致", "evidence":"3cf1456" },
                 { "text":"CIが typecheck/lint/test/build を自動実行し緑（品質ゲートを一本化）", "verify":"GitHub Actions run が pnpm -r typecheck && lint && test && build 緑（run URL）", "evidence":"actions/runs/29755182381" },
                 { "text":"テストが本物（0件・ダミー・echoで緑にならない）", "verify":"pnpm -r test が Vitest 実テストを実行し、壊すと赤（commit SHA / CI run）", "evidence":"7e601af" },
-                { "text":"lint が全パッケージで本物（echo 禁止）", "verify":"packages/ui の lint が eslint を実行し違反を検出（echoでない・CI run）", "evidence":"" }
+                { "text":"lint が全パッケージで本物（echo 禁止）", "verify":"packages/ui の lint が eslint を実行し違反を検出（echoでない・CI run）", "evidence":"actions/runs/29758529344" }
               ]
             },
             { "id":"G-1-2", "kind":"state", "theme":"起動スモーク", "meaning":"ビルド後に実際に起動しトップページが返る", "detail":"到達性は外部事実(HTTP 200＋本文マーカー)で縛る。スクショにしない",
@@ -162,15 +162,15 @@
           "children":[
             { "id":"G-3-1", "kind":"state", "theme":"設定とシークレットの分離", "meaning":"機密が漏れない・env で注入", "detail":"12-Factor config / OWASP Secrets",
               "criteria":[
-                { "text":"シークレットが未コミットで env 注入", "verify":"git ls-files に .env* が0件、.gitignore が .env* を除外（commit SHA）", "evidence":"" },
-                { "text":"必要な環境変数が .env.example に宣言的に列挙", "verify":"apps/web/.env.example が存在し参照 env キー方針を記載（commit SHA）", "evidence":"" },
+                { "text":"シークレットが未コミットで env 注入", "verify":"git ls-files に .env* が0件、.gitignore が .env* を除外（commit SHA）", "evidence":"71b83a5" },
+                { "text":"必要な環境変数が .env.example に宣言的に列挙", "verify":"apps/web/.env.example が存在し参照 env キー方針を記載（commit SHA）", "evidence":"38e6919" },
                 { "text":"secret scanning が自動有効", "verify":"GitHub secret scanning＋push protection 有効（設定URL）", "evidence":"" }
               ]
             },
             { "id":"G-3-2", "kind":"state", "theme":"脆弱依存ゲート", "meaning":"既知脆弱性で止まる", "detail":"OWASP A06",
               "criteria":[
-                { "text":"依存監査がCIで自動実行され moderate 以上で落ちる", "verify":"CIで pnpm audit --audit-level moderate が exit 0（緑・run URL）", "evidence":"" },
-                { "text":"既知 moderate が解消 or 明示受容", "verify":"pnpm audit moderate 0（postcss は pnpm.overrides で >=8.5.10）、または例外を期限付きで記録", "evidence":"" }
+                { "text":"依存監査がCIで自動実行され moderate 以上で落ちる", "verify":"CIで pnpm audit --audit-level moderate が exit 0（緑・run URL）", "evidence":"actions/runs/29758529344" },
+                { "text":"既知 moderate が解消 or 明示受容", "verify":"pnpm audit moderate 0（postcss は pnpm.overrides で >=8.5.10）、または例外を期限付きで記録", "evidence":"38e6919" }
               ]
             },
             { "id":"G-3-3", "kind":"state", "theme":"静的解析とTLS", "meaning":"コード脆弱性・設定ミス・平文を防ぐ", "detail":"OWASP A05 / CodeQL / TLS",
