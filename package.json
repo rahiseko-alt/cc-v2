@@ -11,9 +11,16 @@
     "start": "pnpm --filter web start",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
-    "test": "pnpm -r test"
+    "test": "pnpm -r test",
+    "audit": "pnpm audit --audit-level moderate",
+    "verify:roadmap": "node scripts/verify-roadmap-evidence.mjs"
   },
   "devDependencies": {
     "typescript": "^5.7.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "postcss@<8.5.10": ">=8.5.10"
+    }
   }
 }
