@@ -9,7 +9,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "echo \"(ui) lint: not configured\"",
-    "test": "echo \"(ui) test: none\"",
+    "test": "vitest run",
     "build": "echo \"(ui) build: source-only package, nothing to build\""
   },
   "peerDependencies": {
@@ -17,6 +17,10 @@
   },
   "devDependencies": {
     "@types/react": "^19.0.0",
-    "typescript": "^5.7.3"
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.0"
   }
 }
