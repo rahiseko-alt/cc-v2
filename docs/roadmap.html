@@ -1,10 +1,10 @@
 <title>進捗ロードマップ</title>
 <style>
   :root {
-    --paper:#fbfbfd; --panel:#ffffff; --ink:#1b1e26; --muted:#5a606f; --line:#a9afc0;
+    --paper:#ffffff; --panel:#ffffff; --ink:#1b1e26; --muted:#5a606f; --line:#a9afc0;
     --blue-fill:#e3ebfb; --blue-edge:#7f9be6; --blue-num:#2c50c4;
     --amber-fill:#fbeecb; --amber-edge:#e0b25a; --amber-num:#9a6a12;
-    --red-fill:#f7dcda; --red-edge:#e08c86; --red-num:#b53a32;
+    --red-fill:#f7dcda; --red-edge:#e08c86; --red-num:#b8685f;
   }
   @media (prefers-color-scheme: dark) {
     :root { --paper:#0f1117; --panel:#161922; --ink:#e7e9f0; --muted:#9298aa; --line:#4a5266;
@@ -12,10 +12,10 @@
       --amber-fill:#2c2410; --amber-edge:#6b5320; --amber-num:#e0a33f;
       --red-fill:#33191a; --red-edge:#7a3b38; --red-num:#e8867e; }
   }
-  :root[data-theme="light"] { --paper:#fbfbfd; --panel:#ffffff; --ink:#1b1e26; --muted:#5a606f; --line:#a9afc0;
+  :root[data-theme="light"] { --paper:#ffffff; --panel:#ffffff; --ink:#1b1e26; --muted:#5a606f; --line:#a9afc0;
     --blue-fill:#e3ebfb; --blue-edge:#7f9be6; --blue-num:#2c50c4;
     --amber-fill:#fbeecb; --amber-edge:#e0b25a; --amber-num:#9a6a12;
-    --red-fill:#f7dcda; --red-edge:#e08c86; --red-num:#b53a32; }
+    --red-fill:#f7dcda; --red-edge:#e08c86; --red-num:#b8685f; }
   :root[data-theme="dark"] { --paper:#0f1117; --panel:#161922; --ink:#e7e9f0; --muted:#9298aa; --line:#4a5266;
     --blue-fill:#1a2340; --blue-edge:#4d63a6; --blue-num:#a6b6f7;
     --amber-fill:#2c2410; --amber-edge:#6b5320; --amber-num:#e0a33f;
@@ -129,15 +129,18 @@
 
   <div class="sheet" id="sheet-readme">
     <div class="doc">
-      <h2>用途</h2>
-      <p><b>進捗管理ツール。</b>アプリ開発でも、任意の計画・プロジェクト管理でも使える汎用の表。
-      （今回の「学習用ロードマップ」は、この表の使い方の一例にすぎない。）</p>
-      <ul>
-        <li><b>全体計画を、コミット単位の葉まで最後まで書いておく</b>（目的で割る／コミット1個サイズで止める）。</li>
-        <li><b>セッション開始時</b>：現在地（<code>meta.active</code> ＝ ✓）を見て、<b>このセッションでやること</b>を把握する。</li>
-        <li><b>進めたら</b>：その葉を done（赤字）にし、<code>commit</code> / <code>done_at</code> を記録、<code>meta.active</code> を次へ進める。</li>
-        <li><b>型を選んだ理由</b>：最小要素で 順番＝番号 / 階層＝ツリー線 / 進捗＝文字色 / 俯瞰＝折りたたみ を同時に満たすから。</li>
-      </ul>
+      <h2>概要</h2>
+      <p>このファイル1個 ＝ <b>進捗ロードマップ（図）＋その仕様（README）</b>の自己完結ファイル。
+      リポジトリにまずこれ1個あれば、ここから開始できる。用途は<b>進捗管理</b>で、
+      アプリ開発でも任意の計画・プロジェクト管理でも使える汎用の表（今回の学習用は一例）。</p>
+
+      <h2>運用（回し方）</h2>
+      <ol>
+        <li><b>開始</b>：図タブで現在地（✓ ＝ <code>meta.active</code>）を見て、このセッションでやることを把握。</li>
+        <li><b>計画</b>：全体を葉まで書いておく。割り方は「目的で割る／コミット1個サイズで止める」。</li>
+        <li><b>実行→記録</b>：終わった葉を done（赤字）にし <code>commit</code> / <code>done_at</code> を記録、<code>meta.active</code> を次へ。</li>
+        <li><b>共有</b>：どの AI ツール（Claude Code / Codex / Cursor / Antigravity）でもこの図を参照・更新。データの正は下記 JSON アイランド。</li>
+      </ol>
 
       <h2>データと表示の分離（重要）</h2>
       <p>ロードマップの<b>正はこの HTML 内の JSON</b>（<code>&lt;script id="roadmap-data"&gt;</code>）。更新は<b>この JSON だけ</b>を編集する。CSS/描画JSは触らない。</p>
