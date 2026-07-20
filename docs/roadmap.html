@@ -1,17 +1,17 @@
 <title>学習ロードマップ</title>
 <style>
   :root {
-    --paper:#fbfbfd; --panel:#ffffff; --ink:#1b1e26; --muted:#6a6f7e; --line:#e2e4ec;
-    --blue-fill:#e6ecfb; --blue-edge:#bccbf3; --blue-num:#3357cc;
+    --paper:#fbfbfd; --panel:#ffffff; --ink:#1b1e26; --muted:#5a606f;
+    --line:#a9afc0; --blue-fill:#e3ebfb; --blue-edge:#7f9be6; --blue-num:#2c50c4;
   }
   @media (prefers-color-scheme: dark) {
-    :root { --paper:#0f1117; --panel:#161922; --ink:#e7e9f0; --muted:#8b91a3; --line:#262a35;
-      --blue-fill:#1a2340; --blue-edge:#31406d; --blue-num:#9db0f5; }
+    :root { --paper:#0f1117; --panel:#161922; --ink:#e7e9f0; --muted:#9298aa;
+      --line:#4a5266; --blue-fill:#1a2340; --blue-edge:#4d63a6; --blue-num:#a6b6f7; }
   }
-  :root[data-theme="light"] { --paper:#fbfbfd; --panel:#ffffff; --ink:#1b1e26; --muted:#6a6f7e; --line:#e2e4ec;
-    --blue-fill:#e6ecfb; --blue-edge:#bccbf3; --blue-num:#3357cc; }
-  :root[data-theme="dark"] { --paper:#0f1117; --panel:#161922; --ink:#e7e9f0; --muted:#8b91a3; --line:#262a35;
-    --blue-fill:#1a2340; --blue-edge:#31406d; --blue-num:#9db0f5; }
+  :root[data-theme="light"] { --paper:#fbfbfd; --panel:#ffffff; --ink:#1b1e26; --muted:#5a606f;
+    --line:#a9afc0; --blue-fill:#e3ebfb; --blue-edge:#7f9be6; --blue-num:#2c50c4; }
+  :root[data-theme="dark"] { --paper:#0f1117; --panel:#161922; --ink:#e7e9f0; --muted:#9298aa;
+    --line:#4a5266; --blue-fill:#1a2340; --blue-edge:#4d63a6; --blue-num:#a6b6f7; }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--paper); color:var(--ink);
     font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
@@ -22,28 +22,27 @@
     border:1px solid var(--line); background:var(--panel); color:var(--muted); }
   .tools button:hover { border-color:var(--blue-num); color:var(--blue-num); }
 
-  .node { margin:3px 0; }
-  .children { margin:3px 0 3px 14px; padding-left:12px; border-left:1px solid var(--line); }
+  .node { margin:4px 0; }
+  .children { margin:4px 0 4px 15px; padding-left:13px; border-left:2px solid var(--line); }
 
-  .card { display:flex; align-items:baseline; gap:6px; padding:4px 8px; border-radius:7px;
-    border:1px solid var(--line); background:var(--panel); }
+  .card { display:flex; align-items:flex-start; gap:6px; padding:4px 8px; border-radius:7px;
+    border:1.5px solid var(--line); background:var(--panel); }
   details.node > summary.card { cursor:pointer; list-style:none; }
   details.node > summary.card::-webkit-details-marker { display:none; }
   .card.done { background:var(--blue-fill); border-color:var(--blue-edge); }
 
-  .caret { color:var(--muted); font-size:11px; width:.9em; flex:none; transition:transform .15s; }
+  .caret { color:var(--muted); font-size:11px; width:.9em; flex:none; margin-top:3px; transition:transform .15s; }
   details.node[open] > summary .caret { transform:rotate(90deg); }
   .leaf .caret { visibility:hidden; }
 
   .line { min-width:0; }
-  .line .n { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-variant-numeric:tabular-nums;
+  .n { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-variant-numeric:tabular-nums;
     font-weight:700; color:var(--muted); margin-right:8px; }
-  .card.done .line .n { color:var(--blue-num); }
-  .line .th { font-weight:600; margin-right:8px; }
-  .line .mn { margin-right:8px; }
-  .line .dt { color:var(--muted); }
-  .line .day { color:var(--muted); font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-    font-size:12px; margin-left:8px; white-space:nowrap; }
+  .card.done .n { color:var(--blue-num); }
+  .th { font-weight:600; margin-right:7px; }
+  .mn { color:var(--ink); }
+  .d2 { display:block; margin-top:2px; color:var(--muted); }
+  .day { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; margin-left:8px; white-space:nowrap; }
 </style>
 
 <div class="wrap">
@@ -54,35 +53,35 @@
 
   <div id="tree">
     <details class="node" open>
-      <summary class="card done"><span class="caret">▸</span><span class="line"><span class="n">1</span><span class="th">準備</span><span class="mn">決めて土台を用意する</span><span class="dt">スタック選定・リポ作成・ルール整備</span><span class="day">2026-07-20</span></span></summary>
+      <summary class="card done"><span class="caret">▸</span><span class="line"><span class="n">1</span><span class="th">準備</span><span class="mn">（決めて土台を用意する）</span><span class="d2">スタック選定・リポ作成・ルール整備<span class="day">2026-07-20</span></span></span></summary>
       <div class="children">
 
         <details class="node" open>
-          <summary class="card done"><span class="caret">▸</span><span class="line"><span class="n">1-1</span><span class="th">決める</span><span class="mn">スタックを選定する</span><span class="dt">何で作るか勝手に仮定せず決める</span><span class="day">2026-07-20</span></span></summary>
+          <summary class="card done"><span class="caret">▸</span><span class="line"><span class="n">1-1</span><span class="th">決める</span><span class="mn">（スタックを選定する）</span><span class="d2">何で作るか勝手に仮定せず決める<span class="day">2026-07-20</span></span></span></summary>
           <div class="children">
-            <div class="node leaf"><div class="card done"><span class="caret">▸</span><span class="line"><span class="n">1-1-1</span><span class="th">ヒアリング</span><span class="mn">制約を洗い出す</span><span class="dt">何が動かせない？ クラウド/言語指定・既存連携・顧客/チームの縛り・予算/納期</span><span class="day">2026-07-20</span></span></div></div>
-            <div class="node leaf"><div class="card done"><span class="caret">▸</span><span class="line"><span class="n">1-1-2</span><span class="th">リサーチ</span><span class="mn">選択肢を調べる</span><span class="dt">制約の中でその年のベストと候補のトレードオフ</span><span class="day">2026-07-20</span></span></div></div>
-            <div class="node leaf"><div class="card done"><span class="caret">▸</span><span class="line"><span class="n">1-1-3</span><span class="th">承認</span><span class="mn">決めて確定する</span><span class="dt">1案＋根拠＋代替1つ→明示OK→AGENTS.mdに記録</span><span class="day">2026-07-20</span></span></div></div>
+            <div class="node leaf"><div class="card done"><span class="caret">▸</span><span class="line"><span class="n">1-1-1</span><span class="th">ヒアリング</span><span class="mn">（制約を洗い出す）</span><span class="d2">何が動かせない？ クラウド/言語指定・既存連携・顧客/チームの縛り・予算/納期<span class="day">2026-07-20</span></span></span></div></div>
+            <div class="node leaf"><div class="card done"><span class="caret">▸</span><span class="line"><span class="n">1-1-2</span><span class="th">リサーチ</span><span class="mn">（選択肢を調べる）</span><span class="d2">制約の中でその年のベストと候補のトレードオフ<span class="day">2026-07-20</span></span></span></div></div>
+            <div class="node leaf"><div class="card done"><span class="caret">▸</span><span class="line"><span class="n">1-1-3</span><span class="th">承認</span><span class="mn">（決めて確定する）</span><span class="d2">1案＋根拠＋代替1つ→明示OK→AGENTS.mdに記録<span class="day">2026-07-20</span></span></span></div></div>
           </div>
         </details>
 
-        <div class="node leaf"><div class="card done"><span class="caret">▸</span><span class="line"><span class="n">1-2</span><span class="th">土台</span><span class="mn">土台をつくる</span><span class="dt">新リポ・フォルダ構成・パッケージ管理・設定ファイル</span><span class="day">2026-07-20</span></span></div></div>
-        <div class="node leaf"><div class="card done"><span class="caret">▸</span><span class="line"><span class="n">1-3</span><span class="th">整備</span><span class="mn">整える</span><span class="dt">AGENTS.md・秘密情報・バージョン固定・.gitignore</span><span class="day">2026-07-20</span></span></div></div>
+        <div class="node leaf"><div class="card done"><span class="caret">▸</span><span class="line"><span class="n">1-2</span><span class="th">土台</span><span class="mn">（土台をつくる）</span><span class="d2">新リポ・フォルダ構成・パッケージ管理・設定ファイル<span class="day">2026-07-20</span></span></span></div></div>
+        <div class="node leaf"><div class="card done"><span class="caret">▸</span><span class="line"><span class="n">1-3</span><span class="th">整備</span><span class="mn">（整える）</span><span class="d2">AGENTS.md・秘密情報・バージョン固定・.gitignore<span class="day">2026-07-20</span></span></span></div></div>
 
       </div>
     </details>
 
     <details class="node">
-      <summary class="card"><span class="caret">▸</span><span class="line"><span class="n">2</span><span class="th">作る</span><span class="mn">コードで中身をつくる</span><span class="dt">画面・処理・データ・品質チェック</span></span></summary>
+      <summary class="card"><span class="caret">▸</span><span class="line"><span class="n">2</span><span class="th">作る</span><span class="mn">（コードで中身をつくる）</span><span class="d2">画面・処理・データ・品質チェック</span></span></summary>
       <div class="children">
-        <div class="node leaf"><div class="card"><span class="caret">▸</span><span class="line"><span class="n">2-?</span><span class="th">未展開</span><span class="dt">「2番を3つに割って」で分割</span></span></div></div>
+        <div class="node leaf"><div class="card"><span class="caret">▸</span><span class="line"><span class="n">2-?</span><span class="th">未展開</span><span class="d2">「2番を3つに割って」で分割</span></span></div></div>
       </div>
     </details>
 
     <details class="node">
-      <summary class="card"><span class="caret">▸</span><span class="line"><span class="n">3</span><span class="th">出す</span><span class="mn">公開して運用する</span><span class="dt">デプロイ・運用・改善</span></span></summary>
+      <summary class="card"><span class="caret">▸</span><span class="line"><span class="n">3</span><span class="th">出す</span><span class="mn">（公開して運用する）</span><span class="d2">デプロイ・運用・改善</span></span></summary>
       <div class="children">
-        <div class="node leaf"><div class="card"><span class="caret">▸</span><span class="line"><span class="n">3-?</span><span class="th">未展開</span><span class="dt">「3番を3つに割って」で分割</span></span></div></div>
+        <div class="node leaf"><div class="card"><span class="caret">▸</span><span class="line"><span class="n">3-?</span><span class="th">未展開</span><span class="d2">「3番を3つに割って」で分割</span></span></div></div>
       </div>
     </details>
   </div>
