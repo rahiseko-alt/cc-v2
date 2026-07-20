@@ -32,11 +32,6 @@
   .tabs button.active { color:var(--ink); border-bottom-color:var(--blue-num); font-weight:600; }
   .sheet { display:none; } .sheet.active { display:block; }
 
-  /* 現在地バナー */
-  .banner { display:flex; flex-wrap:wrap; gap:6px 18px; padding:9px 13px; margin-bottom:10px;
-    border:1.5px solid var(--blue-edge); background:var(--blue-fill); border-radius:9px; font-size:13px; }
-  .banner b { color:var(--blue-num); margin-right:6px; font-size:12px; letter-spacing:.02em; }
-
   .tools { display:flex; gap:6px; justify-content:flex-end; margin-bottom:8px; }
   .tools button { font:inherit; font-size:12px; cursor:pointer; padding:4px 10px; border-radius:6px;
     border:1px solid var(--line); background:var(--panel); color:var(--muted); }
@@ -125,7 +120,6 @@
   </div>
 
   <div class="sheet active" id="sheet-fig">
-    <div class="banner" id="banner"></div>
     <div class="tools">
       <button data-act="open">開く</button>
       <button data-act="close">閉じる</button>
@@ -272,20 +266,6 @@
 
   var tree = document.getElementById('tree');
   DATA.nodes.forEach(function(n){ tree.appendChild(render(n, 0)); });
-
-  // banner
-  function findById(nodes, id){
-    for(var i=0;i<nodes.length;i++){
-      if(nodes[i].id===id) return nodes[i];
-      if(nodes[i].children){ var r=findById(nodes[i].children, id); if(r) return r; }
-    }
-    return null;
-  }
-  var act = findById(DATA.nodes, DATA.meta.active);
-  var banner = document.getElementById('banner');
-  var g1 = span(); g1.appendChild(span('b','現在地')); g1.appendChild(span('', act ? (act.id+' '+(act.theme||'')) : DATA.meta.active));
-  var g2 = span(); g2.appendChild(span('b','次の一手')); g2.appendChild(span('', DATA.meta.next||''));
-  banner.appendChild(g1); banner.appendChild(g2);
 
   // tabs
   document.querySelectorAll('.tabs button').forEach(function (b) {
