@@ -43,7 +43,9 @@
   .tools button:hover { border-color:var(--blue-num); color:var(--blue-num); }
 
   .node { margin:4px 0; }
-  .children { margin:4px 0 4px 30px; padding-left:18px; border-left:2px solid var(--line); }
+  .children { position:relative; margin:2px 0 2px 20px; padding-left:22px; border-left:2px solid var(--line); }
+  .children > .node { position:relative; }
+  .children > .node::before { content:""; position:absolute; left:-22px; top:16px; width:20px; height:2px; background:var(--line); }
   .card { display:flex; align-items:flex-start; gap:6px; padding:4px 8px; border-radius:7px;
     border:1.5px solid var(--line); background:var(--panel); }
   details.node > summary.card { cursor:pointer; list-style:none; }
