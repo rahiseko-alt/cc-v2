@@ -1,0 +1,199 @@
+<title>学習ロードマップ｜アプリ制作の全体地図</title>
+<style>
+  :root {
+    --paper:#fbfbfd; --panel:#ffffff; --panel-2:#f4f5fa;
+    --ink:#1b1e26; --muted:#5b6070; --line:#e4e6ee;
+    --blue:#3b62d6; --blue-fill:#e9eefc; --blue-edge:#c3d0f6;
+    --radius:11px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#0f1117; --panel:#171a21; --panel-2:#1e222b;
+      --ink:#e7e9f0; --muted:#9aa0b2; --line:#272b36;
+      --blue:#8ea2f2; --blue-fill:#1b2340; --blue-edge:#31406d;
+    }
+  }
+  :root[data-theme="light"] {
+    --paper:#fbfbfd; --panel:#ffffff; --panel-2:#f4f5fa;
+    --ink:#1b1e26; --muted:#5b6070; --line:#e4e6ee;
+    --blue:#3b62d6; --blue-fill:#e9eefc; --blue-edge:#c3d0f6;
+  }
+  :root[data-theme="dark"] {
+    --paper:#0f1117; --panel:#171a21; --panel-2:#1e222b;
+    --ink:#e7e9f0; --muted:#9aa0b2; --line:#272b36;
+    --blue:#8ea2f2; --blue-fill:#1b2340; --blue-edge:#31406d;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  .wrap { max-width:820px; margin:0 auto; padding:30px 18px 70px; }
+  h1 { font-size:1.5rem; margin:0 0 6px; text-wrap:balance; }
+  .sub { color:var(--muted); margin:0 0 16px; max-width:60ch; font-size:.95rem; }
+  .bar { display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; margin:0 0 20px; }
+  .legend { display:flex; gap:12px; font-size:.8rem; color:var(--muted); }
+  .key { display:inline-flex; align-items:center; gap:6px; }
+  .swatch { width:14px; height:14px; border-radius:4px; border:1.5px solid var(--line); }
+  .swatch.done { background:var(--blue-fill); border-color:var(--blue-edge); }
+  .tools { margin-left:auto; display:flex; gap:8px; }
+  .tools button {
+    font:inherit; font-size:.78rem; cursor:pointer; padding:6px 12px; border-radius:8px;
+    border:1px solid var(--line); background:var(--panel); color:var(--muted);
+  }
+  .tools button:hover { border-color:var(--blue); color:var(--blue); }
+
+  /* tree */
+  .node { margin:6px 0; }
+  .children { margin:6px 0 6px 20px; padding-left:16px; border-left:2px solid var(--line); }
+
+  /* card = summary or leaf */
+  .card {
+    display:flex; align-items:flex-start; gap:11px;
+    padding:11px 13px; border-radius:var(--radius);
+    border:1.5px solid var(--line); background:var(--panel);
+  }
+  details.node > summary.card { cursor:pointer; list-style:none; }
+  details.node > summary.card::-webkit-details-marker { display:none; }
+  .card.done { background:var(--blue-fill); border-color:var(--blue-edge); }
+
+  .caret { color:var(--muted); font-size:.85rem; line-height:1.5; width:1em; flex:none; transition:transform .15s; }
+  details.node[open] > summary .caret { transform:rotate(90deg); }
+  .leaf .caret { visibility:hidden; }
+
+  .num {
+    flex:none; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-variant-numeric:tabular-nums; font-size:.74rem; font-weight:600;
+    padding:3px 8px; border-radius:6px; margin-top:1px;
+    background:var(--panel-2); color:var(--muted);
+  }
+  .card.done .num { background:var(--blue); color:#fff; }
+  @media (prefers-color-scheme: dark) { .card.done .num { color:#0f1117; } }
+  :root[data-theme="dark"] .card.done .num { color:#0f1117; }
+
+  .body { display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .ttl { font-weight:600; font-size:.98rem; }
+  .desc { color:var(--muted); font-size:.84rem; line-height:1.45; }
+  .card.done .ttl { color:var(--ink); }
+
+  .foot { margin-top:34px; padding-top:18px; border-top:1px solid var(--line); }
+  .foot h2 { font-size:.95rem; margin:0 0 8px; }
+  .foot p, .foot li { color:var(--muted); font-size:.85rem; }
+  .foot code { background:var(--panel-2); padding:1px 6px; border-radius:5px; font-size:.85em; color:var(--ink); }
+  .foot ul { margin:6px 0; padding-left:20px; }
+</style>
+
+<div class="wrap">
+  <h1>学習ロードマップ — アプリ制作の全体地図</h1>
+  <p class="sub">新リポ作成を <b>スタート</b>、ユーザーが使えるアプリが動いている状態を <b>ゴール</b> とした全体像。カードを開いて深掘りし、3分割で育てていく。</p>
+
+  <div class="bar">
+    <div class="legend">
+      <span class="key"><span class="swatch done"></span>済（青）</span>
+      <span class="key"><span class="swatch"></span>未（無色）</span>
+    </div>
+    <div class="tools">
+      <button data-act="open">すべて開く</button>
+      <button data-act="close">すべて閉じる</button>
+    </div>
+  </div>
+
+  <div id="tree">
+    <!-- 1 -->
+    <details class="node" open>
+      <summary class="card done">
+        <span class="caret">▸</span><span class="num">1</span>
+        <span class="body"><span class="ttl">準備する</span><span class="desc">何で作るか決めて、土台を用意する</span></span>
+      </summary>
+      <div class="children">
+
+        <!-- 1-1 -->
+        <details class="node" open>
+          <summary class="card done">
+            <span class="caret">▸</span><span class="num">1-1</span>
+            <span class="body"><span class="ttl">決める（スタック選定）</span><span class="desc">何で作るかを、勝手に仮定せず決める</span></span>
+          </summary>
+          <div class="children">
+            <div class="node leaf">
+              <div class="card done"><span class="caret">▸</span><span class="num">1-1-1</span>
+                <span class="body"><span class="ttl">制約を洗い出す（ヒアリング）</span><span class="desc">何が動かせない？ クラウド/言語指定・既存連携・顧客/チームの縛り・予算/納期</span></span>
+              </div>
+            </div>
+            <div class="node leaf">
+              <div class="card done"><span class="caret">▸</span><span class="num">1-1-2</span>
+                <span class="body"><span class="ttl">選択肢を調べる（リサーチ）</span><span class="desc">制約の中で、その年のベストと候補ごとのトレードオフ（費用/相性/将来性）</span></span>
+              </div>
+            </div>
+            <div class="node leaf">
+              <div class="card done"><span class="caret">▸</span><span class="num">1-1-3</span>
+                <span class="body"><span class="ttl">決めて確定する（提案→承認）</span><span class="desc">1案＋根拠＋代替1つ → 明示OK → 決定を AGENTS.md に記録</span></span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <!-- 1-2 -->
+        <div class="node leaf">
+          <div class="card done"><span class="caret">▸</span><span class="num">1-2</span>
+            <span class="body"><span class="ttl">土台をつくる</span><span class="desc">決めた構成の「入れ物」を用意する。新リポ・フォルダ構成・パッケージ管理・設定ファイル</span></span>
+          </div>
+        </div>
+
+        <!-- 1-3 -->
+        <div class="node leaf">
+          <div class="card done"><span class="caret">▸</span><span class="num">1-3</span>
+            <span class="body"><span class="ttl">整える</span><span class="desc">どこでも同じに動き、AIも迷わない状態に。AGENTS.md・秘密情報の扱い・バージョン固定・.gitignore</span></span>
+          </div>
+        </div>
+
+      </div>
+    </details>
+
+    <!-- 2 -->
+    <details class="node">
+      <summary class="card">
+        <span class="caret">▸</span><span class="num">2</span>
+        <span class="body"><span class="ttl">作る</span><span class="desc">コードを書いて、動く状態にする。画面・処理・データ、そして品質チェック</span></span>
+      </summary>
+      <div class="children">
+        <div class="node leaf"><div class="card"><span class="caret">▸</span><span class="num">2-?</span>
+          <span class="body"><span class="ttl">未展開</span><span class="desc">「2番を3つに割って」で分割していく</span></span></div></div>
+      </div>
+    </details>
+
+    <!-- 3 -->
+    <details class="node">
+      <summary class="card">
+        <span class="caret">▸</span><span class="num">3</span>
+        <span class="body"><span class="ttl">出す</span><span class="desc">公開して、使える・保てる状態にする。デプロイ・運用・直し続ける仕組み</span></span>
+      </summary>
+      <div class="children">
+        <div class="node leaf"><div class="card"><span class="caret">▸</span><span class="num">3-?</span>
+          <span class="body"><span class="ttl">未展開</span><span class="desc">「3番を3つに割って」で分割していく</span></span></div></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="foot">
+    <h2>この地図の使い方</h2>
+    <ul>
+      <li>一度に細かくしない。掘りたい枝を「<b>◯番を3つに割って</b>」と依頼 → その枝だけ3分割して追記する。</li>
+      <li>色＝状態。<b>青＝済</b>／<b>無色＝未</b>。</li>
+      <li>どの AI ツール（Claude Code / Codex / Cursor / Antigravity）でも、この <code>docs/roadmap.html</code> を地図として参照・更新する。</li>
+    </ul>
+    <h2>育てログ</h2>
+    <ul>
+      <li>2026-07-20: 全体を 3 分割（準備／作る／出す）。1 を 1-1〜1-3、1-1 を 1-1-1〜1-1-3 に分割。マインドマップ型 → アコーディオンのツリー型に変更。</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.tools button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var open = b.dataset.act === 'open';
+      document.querySelectorAll('#tree details.node').forEach(function (d) { d.open = open; });
+    });
+  });
+</script>
