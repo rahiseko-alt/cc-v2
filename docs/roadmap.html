@@ -43,7 +43,7 @@
   .tools button:hover { border-color:var(--blue-num); color:var(--blue-num); }
 
   .node { margin:4px 0; }
-  .children { margin:4px 0 4px 15px; padding-left:13px; border-left:2px solid var(--line); }
+  .children { margin:4px 0 4px 18px; padding-left:16px; border-left:2px solid var(--line); }
   .card { display:flex; align-items:flex-start; gap:6px; padding:4px 8px; border-radius:7px;
     border:1.5px solid var(--line); background:var(--panel); }
   details.node > summary.card { cursor:pointer; list-style:none; }
@@ -63,13 +63,16 @@
   .d2 { display:block; margin-top:2px; color:var(--muted); }
   .day, .cmt { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; margin-left:8px; white-space:nowrap; }
   .cmt { opacity:.8; }
-  .here { flex:none; align-self:center; color:var(--blue-num); font-weight:900; font-size:16px; line-height:1; margin-left:3px; }
-  /* 階層を大きさで区別 */
-  .card.d0 { font-size:15.5px; border-width:2px; }
+  .here { flex:none; align-self:center; width:22px; height:22px; border-radius:50%;
+    background:var(--blue-num); color:var(--paper); font-size:14px; font-weight:900;
+    display:inline-flex; align-items:center; justify-content:center; }
+  .card.active { box-shadow:0 0 0 2px var(--blue-num); }
+  /* 階層を大きさで明確に区別 */
+  .card.d0 { font-size:18px; font-weight:600; border-width:2px; padding:8px 11px; }
   .card.d0 .th { font-weight:700; }
-  .card.d1 { font-size:14px; }
-  .card.d2 { font-size:13px; }
-  .card.d3 { font-size:12.5px; }
+  .card.d1 { font-size:14.5px; }
+  .card.d2 { font-size:12.5px; }
+  .card.d3 { font-size:11.5px; }
 
   .doc { max-width:70ch; }
   .doc h2 { font-size:1rem; margin:22px 0 8px; padding-bottom:4px; border-bottom:1px solid var(--line); }
@@ -232,7 +235,7 @@
   function card(node, hasChildren, depth){
     var st = statusOf(node);
     var el = document.createElement(hasChildren ? 'summary' : 'div');
-    el.className = 'card d' + depth + (st==='todo' ? '' : ' ' + st);
+    el.className = 'card d' + depth + (st==='todo' ? '' : ' ' + st) + (node.id===DATA.meta.active ? ' active' : '');
     el.appendChild(span('caret','▸'));
     var line = span('line');
     line.appendChild(span('n', node.id));
