@@ -117,42 +117,67 @@
 {
   "meta": {
     "title": "ロードマップ",
-    "active": "2",
-    "next": "状態2「実装」を受入条件を満たす作業へ分解する（上流の状態は先に、下流の作業は着手時に＝道順は都度）",
+    "active": "G-1-2",
+    "next": "G-1-2『アプリが実際に動く』を満たす: web をビルド＆起動しトップページ表示をスクショ保存。並行して G-1-3 品質チェック緑（型/Lint/テスト）を確認。ゴール=このリポからアプリを本番運用できる環境にする。",
     "updated": "2026-07-20"
   },
   "nodes": [
-    { "id":"1", "kind":"state", "theme":"セットアップ", "meaning":"作る前の土台を用意する", "detail":"土台が整い、どこでも同じに動く状態",
-      "criteria":[
-        { "text":"スタックが1案＋根拠で確定し記録されている", "verify":"apps/web/AGENTS.md に確定スタックが宣言済み", "evidence":"9d6941b" },
-        { "text":"依存導入から型チェックまで通る", "verify":"pnpm install --frozen-lockfile && pnpm -r typecheck が緑", "evidence":"3cf1456" },
-        { "text":"ランタイム/ツールのバージョンが固定されている", "verify":".tool-versions/.node-version が存在し宣言スタックと一致", "evidence":"3cf1456" }
-      ],
+    { "id":"G", "kind":"state", "theme":"ゴール：アプリを本番運用できる環境にする", "meaning":"このリポからアプリを動かし・公開し・運用し続けられる", "detail":"最上位＝最終到達状態。子＝これが成立する必要十分条件（各々が必要・合わせて十分）",
       "children":[
-        { "id":"1-1", "kind":"state", "theme":"スタック選定", "meaning":"何で作るかを決める", "detail":"勝手に仮定せず1案に絞れている状態",
-          "criteria":[
-            { "text":"1案＋根拠＋代替1つが承認され記録されている", "verify":"apps/web/AGENTS.md 技術スタック節に確定記載", "evidence":"9d6941b" }
-          ],
+        { "id":"G-1", "kind":"state", "theme":"アプリが動く", "meaning":"実在し意図通り動作する", "detail":"環境で実際に起動し、品質も緑",
           "children":[
-            { "id":"1-1-1", "kind":"work", "theme":"ヒアリング", "meaning":"動かせない条件を洗い出す", "detail":"クラウド/言語指定・既存連携・顧客/チームの縛り・予算/納期", "status":"done", "commit":"9d6941b", "done_at":"2026-07-20" },
-            { "id":"1-1-2", "kind":"work", "theme":"リサーチ", "meaning":"選べる手を調べる", "detail":"制約の中でその年のベストと候補のトレードオフ", "status":"done", "commit":"9d6941b", "done_at":"2026-07-20" },
-            { "id":"1-1-3", "kind":"work", "theme":"意思決定", "meaning":"1つ選んで記録する", "detail":"1案＋根拠＋代替1つ→明示OK→AGENTS.mdに記録", "status":"done", "commit":"9d6941b", "done_at":"2026-07-20" }
+            { "id":"G-1-1", "kind":"state", "theme":"土台が整っている", "meaning":"どこでも同じに動く下地", "detail":"スタック確定・scaffold・バージョン固定（済）",
+              "criteria":[
+                { "text":"スタックが1案＋根拠で確定し記録されている", "verify":"apps/web/AGENTS.md に確定スタック宣言", "evidence":"9d6941b" },
+                { "text":"scaffold が存在し依存導入から型チェックまで通る", "verify":"pnpm install --frozen-lockfile && pnpm -r typecheck が緑", "evidence":"447fa5c" },
+                { "text":"ランタイム/ツールのバージョンが固定されている", "verify":".tool-versions/.node-version が存在し宣言スタックと一致", "evidence":"3cf1456" }
+              ]
+            },
+            { "id":"G-1-2", "kind":"state", "theme":"アプリが実際に動く", "meaning":"起動して画面が出る", "detail":"scaffold のままでよい。まず動くこと",
+              "criteria":[
+                { "text":"web がビルドでき、起動してトップページが表示される", "verify":"pnpm --filter web build 成功 → start でトップページ 200/描画をスクショ保存", "evidence":"" }
+              ]
+            },
+            { "id":"G-1-3", "kind":"state", "theme":"品質チェックが緑", "meaning":"型/Lint/テストが通る", "detail":"壊れていないことを機械で保証",
+              "criteria":[
+                { "text":"型/Lint/テストが全て緑", "verify":"pnpm -r typecheck && pnpm -r lint && pnpm -r test", "evidence":"" }
+              ]
+            }
           ]
         },
-        { "id":"1-2", "kind":"work", "theme":"スキャフォールド", "meaning":"プロジェクトの入れ物を作る", "detail":"新リポ・フォルダ構成・パッケージ管理・設定ファイル", "status":"done", "commit":"447fa5c", "done_at":"2026-07-20" },
-        { "id":"1-3", "kind":"work", "theme":"構成・ルール整備", "meaning":"どこでも同じに動くよう整える", "detail":"AGENTS.md・秘密情報・.gitignore・バージョン固定（.tool-versions/.node-version）", "status":"done", "commit":"3cf1456", "done_at":"2026-07-20" }
-      ]
-    },
-    { "id":"2", "kind":"state", "theme":"実装", "meaning":"コードで中身をつくる", "detail":"主要機能が実際に動き、品質チェックが緑の状態（着手時に作業へ分解）",
-      "criteria":[
-        { "text":"主要機能が実際に動作し、その実行結果が証拠として残っている", "verify":"アプリを起動し主要フローを実行→テスト出力またはスクショを保存", "evidence":"" },
-        { "text":"品質チェックが緑（型/Lint/テスト）", "verify":"pnpm -r typecheck && pnpm -r lint && pnpm -r test", "evidence":"" }
-      ]
-    },
-    { "id":"3", "kind":"state", "theme":"デプロイ・運用", "meaning":"公開して動かし続ける", "detail":"本番で実際に動き、戻せる状態",
-      "criteria":[
-        { "text":"本番URLで実際に動作する", "verify":"デプロイ先URLへアクセスし主要フロー成功を確認", "evidence":"" },
-        { "text":"復旧手順が実行可能と確認済み", "verify":"ロールバック手順を実際に一度実行して戻せることを確認", "evidence":"" }
+        { "id":"G-2", "kind":"state", "theme":"本番で公開され動いている", "meaning":"外から届く所で動く", "detail":"デプロイ経路＋公開URL",
+          "children":[
+            { "id":"G-2-1", "kind":"state", "theme":"デプロイ経路が確立している", "meaning":"公開する手段がある", "detail":"Vercel 連携 or 定義済み手順",
+              "criteria":[
+                { "text":"main への push か定義済み手順で本番へ1回デプロイできる", "verify":"デプロイを実行→完了ログ/デプロイIDを記録", "evidence":"" }
+              ]
+            },
+            { "id":"G-2-2", "kind":"state", "theme":"公開URLで動作する", "meaning":"本番URLで実際に開ける", "detail":"到達性の確認",
+              "criteria":[
+                { "text":"本番URLでトップページが表示され主要フローが成功する", "verify":"本番URLへアクセスし 200/描画・主要操作成功をスクショ保存", "evidence":"" }
+              ]
+            }
+          ]
+        },
+        { "id":"G-3", "kind":"state", "theme":"運用を継続できる", "meaning":"気づけて・戻せて・再現できる", "detail":"運用＝動かし続ける能力",
+          "children":[
+            { "id":"G-3-1", "kind":"state", "theme":"異常に気づける", "meaning":"落ちたら分かる", "detail":"監視/ログ",
+              "criteria":[
+                { "text":"エラー/ダウンを観測できる", "verify":"意図的に失敗を起こし、監視またはログで1件検知できることを確認", "evidence":"" }
+              ]
+            },
+            { "id":"G-3-2", "kind":"state", "theme":"戻せる", "meaning":"壊れても前に戻せる", "detail":"ロールバック",
+              "criteria":[
+                { "text":"前の版へ実際に戻せる", "verify":"ロールバック手順を1回実行し前版に戻ることを確認", "evidence":"" }
+              ]
+            },
+            { "id":"G-3-3", "kind":"state", "theme":"再現デプロイできる", "meaning":"同じ手順で何度でも", "detail":"再現性",
+              "criteria":[
+                { "text":"同じ手順/設定で再デプロイでき同結果になる", "verify":"再デプロイを実行し前回と同じ動作を確認", "evidence":"" }
+              ]
+            }
+          ]
+        }
       ]
     }
   ]
@@ -203,6 +228,19 @@
         <li>各条件は <code>text</code>（満たすべき状態）＋ <code>verify</code>（どう確かめるか＝実行可能な手順）＋ <code>evidence</code>（結果の証拠：テスト出力・commit・スクショ）。</li>
         <li><code>evidence</code> が空＝未検証（☐）。埋まって初めて充足（☑）。図の <code>受入 n/m</code> バッジで進捗が見える。</li>
         <li>証拠は「◯◯レビュー.md が存在する」を認めない。実物が動いた記録を指す。</li>
+      </ul>
+
+      <h2>分解の規則（不変・自己相似）</h2>
+      <p class="rule">最上位は<b>ゴール</b>（最終到達状態）。以下、同じ規則を層の深さによらず当て続ける。</p>
+      <ul>
+        <li><b>不変の規則</b>：<code>P が成立する ⟺ 条件 C1…Cn が全て成立（各々が必要・合わせて十分）</code>。これをどの層でも同じに当てる。層数は設計せず、当て続けた結果として出る。</li>
+        <li><b>層は思考の分解粒度</b>であって処理（工程）ではない。setup→deploy のような時系列は背骨に置かない（それは葉を辿る順番＝道順）。組織軸は「何が真であるべきか」。</li>
+        <li><b>条件＝子ノード</b>。まだ証明が要る条件は<b>子の状態</b>（自分の <code>criteria</code> を持つ）、直接確かめられる条件は<b>葉の受入条件</b>。再帰の底は必ず<b>作業（操作）</b>。</li>
+        <li><b>個数は導出、粒度は選択</b>：子の数は必要十分性から出る（設計しない）。どこまで割るか＝粒度は最初に1回決める計画の契約。</li>
+      </ul>
+      <p class="rule">粒度の線：<b>各葉の状態に、実行可能な <code>verify</code> が1つ書けるところまで割る。書けたら止める。その下（操作）は着手時に展開。</b></p>
+      <ul>
+        <li>浅すぎ＝目的が曖昧で検証不能。深すぎ＝過剰分解で麻痺。線は「意味の分解（何/なぜ）から行動の分解（どう）へ切り替わる高さ」に置く。</li>
       </ul>
 
       <h2>割り方（計画先行・道順は都度）</h2>
