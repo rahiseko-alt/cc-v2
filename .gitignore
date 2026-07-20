@@ -9,6 +9,9 @@ out/
 build/
 dist/
 
+# next typegen
+next-env.d.ts
+
 # production / cache
 .turbo/
 .vercel/
