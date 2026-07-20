@@ -63,8 +63,13 @@
   .d2 { display:block; margin-top:2px; color:var(--muted); }
   .day, .cmt { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; margin-left:8px; white-space:nowrap; }
   .cmt { opacity:.8; }
-  .here { flex:none; align-self:center; font-size:11px; font-weight:700; color:#fff; background:var(--blue-num);
-    padding:2px 7px; border-radius:999px; white-space:nowrap; }
+  .here { flex:none; align-self:center; color:var(--blue-num); font-weight:900; font-size:16px; line-height:1; margin-left:3px; }
+  /* 階層を大きさで区別 */
+  .card.d0 { font-size:15.5px; border-width:2px; }
+  .card.d0 .th { font-weight:700; }
+  .card.d1 { font-size:14px; }
+  .card.d2 { font-size:13px; }
+  .card.d3 { font-size:12.5px; }
 
   .doc { max-width:70ch; }
   .doc h2 { font-size:1rem; margin:22px 0 8px; padding-bottom:4px; border-bottom:1px solid var(--line); }
@@ -194,7 +199,8 @@
       </table></div>
       <h3>構造・インタラクション</h3>
       <ul>
-        <li>1カード=2行。折りたたみは <code>&lt;details&gt;</code>（子ありはキャレット、葉は非表示）。現在地は「今ここ」ピル。</li>
+        <li>1カード=2行。折りたたみは <code>&lt;details&gt;</code>（子ありはキャレット、葉は非表示）。現在地は レ点（✓）。</li>
+        <li>階層は<b>文字サイズ＋インデント</b>で区別（浅いほど大きい：d0=15.5px / d1=14 / d2=13 / d3=12.5）。</li>
         <li>図シートには解説を置かない（説明はこの README シートに集約）。</li>
       </ul>
 
@@ -223,10 +229,10 @@
 
   function span(cls, text){ var s=document.createElement('span'); if(cls) s.className=cls; if(text!=null) s.textContent=text; return s; }
 
-  function card(node, hasChildren){
+  function card(node, hasChildren, depth){
     var st = statusOf(node);
     var el = document.createElement(hasChildren ? 'summary' : 'div');
-    el.className = 'card' + (st==='todo' ? '' : ' ' + st);
+    el.className = 'card d' + depth + (st==='todo' ? '' : ' ' + st);
     el.appendChild(span('caret','▸'));
     var line = span('line');
     line.appendChild(span('n', node.id));
@@ -237,30 +243,31 @@
     if(node.commit) d2.appendChild(span('cmt', '#'+node.commit));
     line.appendChild(d2);
     el.appendChild(line);
-    if(node.id === DATA.meta.active) el.appendChild(span('here','今ここ'));
+    if(node.id === DATA.meta.active) el.appendChild(span('here','✓'));
     return el;
   }
 
-  function render(node){
+  function render(node, depth){
+    depth = depth || 0;
     var kids = node.children && node.children.length;
     if(kids){
       var d = document.createElement('details');
       d.className = 'node';
       d.open = true;
-      d.appendChild(card(node, true));
+      d.appendChild(card(node, true, depth));
       var box = span('children'); box.className='children';
-      node.children.forEach(function(c){ box.appendChild(render(c)); });
+      node.children.forEach(function(c){ box.appendChild(render(c, depth+1)); });
       d.appendChild(box);
       return d;
     }
     var wrap = document.createElement('div');
     wrap.className = 'node leaf';
-    wrap.appendChild(card(node, false));
+    wrap.appendChild(card(node, false, depth));
     return wrap;
   }
 
   var tree = document.getElementById('tree');
-  DATA.nodes.forEach(function(n){ tree.appendChild(render(n)); });
+  DATA.nodes.forEach(function(n){ tree.appendChild(render(n, 0)); });
 
   // banner
   function findById(nodes, id){
