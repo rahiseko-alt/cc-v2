@@ -45,13 +45,16 @@
 ```bash
 pnpm install --frozen-lockfile
 pnpm -r typecheck
-pnpm -r lint
-pnpm -r test          # Vitest 実テスト（echo 禁止。0 件・ダミーで緑にしない）
+pnpm -r lint                        # 全パッケージ本物（echo 禁止）
+pnpm -r test                        # Vitest 実テスト（0 件・ダミーで緑にしない）
 pnpm -r build
+pnpm audit --audit-level moderate   # 依存の脆弱性ゲート（moderate 以上で落ちる）
+node scripts/verify-roadmap-evidence.mjs  # roadmap の evidence が外部事実か機械検査
 ```
 
-- テストは**本物**（実アサーションを持つ）だけを置く。`echo` による見かけの成功は偽の緑として扱い、禁止。
-- 新しいパッケージを足したら、そのパッケージにも実テストと上記スクリプトを用意する。
+- テストも lint も**本物**だけを置く。`echo` による見かけの成功は偽の緑として扱い、禁止。
+- 新しいパッケージを足したら、そのパッケージにも実テスト・実 lint と上記スクリプトを用意する。
+- 上記は CI（`.github/workflows/ci.yml`）でも同じく回り、機械の審判となる。
 
 ## PR instructions（コミット/PR）
 
@@ -75,13 +78,13 @@ pnpm -r build
 
 - **最初に固める（AI・セッションで変えない）**：①やる事＝状態、②出来た基準＝`criteria.text`、③**検証方法＝`criteria.verify`**。
 - **都度でよい（変わってよい）**：作業の**道順**（どう作るか）。上流の状態は先に描き切り、下流の作業は**着手時に**割る（遅延展開）。
-- **検証方法を後で決めない**：後付けは「自分の成果が通る検証」に歪む。`verify` は**実行可能な手順**で書く（例：`pnpm -r typecheck && pnpm -r lint && pnpm -r test`）。1コマンド化できない検証は、具体的な観察対象＋証拠（スクショ等）で固定する。**判断ではなく手順を固定する。**
+- **検証方法を後で決めない**：後付けは「自分の成果が通る検証」に歪む。`verify` は**実行可能な手順**で書く（例：`pnpm -r typecheck && pnpm -r lint && pnpm -r test`）。1コマンド化できない検証も、独立検証者が**外部事実で再観察**できる形に落とす（公開URLへの HTTP 応答・ログID・デプロイID）。スクショは補助資料であって evidence ではない。**判断ではなく手順を固定する。**
 
 ### 完了ゲート（品質担保の心臓）
 
 - **作業**：実行して記録（`commit`/`done_at`）が残れば `done`。
 - **状態**：子が全部 `done` でも `done` にしない。`criteria` を**全て検証し `evidence` が付いて初めて** `done`。子は済だが未検証なら `doing`（＝検証待ち）のまま。**作業→検証→状態成立の一方通行。**
-- **証拠の縛り**：`evidence` は commit／テスト出力／スクショ等の**実記録**を指す。「◯◯レビュー.md が存在する」は証拠と認めない。
+- **証拠の縛り**：`evidence` は commit SHA／CI run URL／デプロイID／第三者が叩ける公開URL／ログID 等の**偽造不能な外部事実**を指す（`scripts/verify-roadmap-evidence.mjs` が CI で機械強制）。スクショや「◯◯レビュー.md が存在する」等の自己申告は証拠と認めない。
 - **検証は都度（ゲート）**：完走後にまとめてテストしない。状態の子が全部埋まった時点で、その状態の**固定された `verify`** を回してゲートを開ける。失敗しても原因はその状態の作業に局所化される。
 - `todo`/`doing`/`done`/`blocked` の4値。**親（状態）の状態は子＋受入ゲートから自動導出**（手動で done にしない）。
 

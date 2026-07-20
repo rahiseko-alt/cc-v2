@@ -118,67 +118,111 @@
   "meta": {
     "title": "ロードマップ",
     "active": "G-1-1",
-    "next": "G-1-1 は CI緑・実テストで5/6充足。残る『基準は実行者が書き換え不能』は master の PR 承認が evidence（実行者は自己充足不可）。master 承認で G-1-1 done。並行して G-1-2(実際に動く)・G-1-3(品質緑)へ。ゴール=このリポからアプリを本番運用できる環境にする。",
+    "next": "言語化をリーン版6枝(動く/公開/安全/継続運用/データ/性能)へ再構成。品質ゲートはCIへ一本化(旧G-1-3統合)、ガバナンス条件はcriteriaから除去しAGENTS.mdプロセスへ。evidenceは機械リンタで外部事実のみに強制。短期修正(ui lint本物化・.env.example・postcss override＋audit)を CI緑後に evidence反映。新設のG-3(安全)/G-4(継続運用)/G-5(データ)/G-6(性能)は未達で、ゴールは未成立。ゴール=このリポからアプリを本番運用できる環境にする。",
     "updated": "2026-07-20"
   },
   "nodes": [
-    { "id":"G", "kind":"state", "theme":"ゴール：アプリを本番運用できる環境にする", "meaning":"このリポからアプリを動かし・公開し・運用し続けられる", "detail":"最上位＝最終到達状態。子＝これが成立する必要十分条件（各々が必要・合わせて十分）",
+    { "id":"G", "kind":"state", "theme":"ゴール：アプリを本番運用できる環境にする", "meaning":"動かし・公開し・安全に・継続運用でき・データを失わない", "detail":"最上位＝最終到達状態。子＝必要十分条件（各々が必要・合わせて十分）。Well-Architected/12-Factor/OWASP を被覆。未確定枝は『未定を明記した state』として置き着手時に手順展開（遅延展開）",
       "children":[
-        { "id":"G-1", "kind":"state", "theme":"アプリが動く", "meaning":"実在し意図通り動作する", "detail":"環境で実際に起動し、品質も緑",
+        { "id":"G-1", "kind":"state", "theme":"動く", "meaning":"正しくビルドされ起動し品質が機械で緑", "detail":"WA運用性 / 12-Factor build-release-run",
           "children":[
-            { "id":"G-1-1", "kind":"state", "theme":"土台が整っている", "meaning":"どこでも同じに動く下地＋検証の仕組み", "detail":"スタック確定・scaffold・バージョン固定 ＋ 機械の審判(CI)・本物のテスト・基準の不可変",
+            { "id":"G-1-1", "kind":"state", "theme":"土台と機械の審判", "meaning":"どこでも同じに動く下地＋CIの品質ゲート", "detail":"スタック確定・版固定・CI・本物のテスト・本物のlint。品質ゲートはCIに一本化",
               "criteria":[
-                { "text":"スタックが1案＋根拠で確定し記録されている", "verify":"apps/web/AGENTS.md に確定スタック宣言", "evidence":"9d6941b" },
-                { "text":"scaffold が存在し依存導入から型チェックまで通る", "verify":"pnpm install --frozen-lockfile && pnpm -r typecheck が緑", "evidence":"447fa5c" },
-                { "text":"ランタイム/ツールのバージョンが固定されている", "verify":".tool-versions/.node-version が存在し宣言スタックと一致", "evidence":"3cf1456" },
-                { "text":"機械の審判(CI)が存在し typecheck/lint/test/build を自動実行する", "verify":"GitHub Actions で pnpm -r typecheck && lint && test && build が緑（CI run URL）", "evidence":"actions/runs/29755182381" },
-                { "text":"テストが echo でなく本物（0件・ダミーでは緑にならない）", "verify":"pnpm -r test が Vitest 実テストを実行し、失敗を検出できる（commit SHA / CI run）", "evidence":"7e601af" },
-                { "text":"criteria/verify は実行者が勝手に変えられない（人間承認＋独立検証）", "verify":"AGENTS.md に恒久ルール明記済み。ただし本条件の充足は master の PR 承認が evidence（実行者は自己充足できない）", "evidence":"" }
+                { "text":"スタックが1案＋根拠で確定し記録（未定項目は『未定』と明記）", "verify":"apps/web/AGENTS.md に確定スタック宣言（DB/認証の未定も明記）", "evidence":"9d6941b" },
+                { "text":"依存導入から型チェックまで通る", "verify":"pnpm install --frozen-lockfile && pnpm -r typecheck が緑", "evidence":"447fa5c" },
+                { "text":"ランタイム/ツールのバージョンが固定", "verify":".tool-versions/.node-version が宣言スタックと一致", "evidence":"3cf1456" },
+                { "text":"CIが typecheck/lint/test/build を自動実行し緑（品質ゲートを一本化）", "verify":"GitHub Actions run が pnpm -r typecheck && lint && test && build 緑（run URL）", "evidence":"actions/runs/29755182381" },
+                { "text":"テストが本物（0件・ダミー・echoで緑にならない）", "verify":"pnpm -r test が Vitest 実テストを実行し、壊すと赤（commit SHA / CI run）", "evidence":"7e601af" },
+                { "text":"lint が全パッケージで本物（echo 禁止）", "verify":"packages/ui の lint が eslint を実行し違反を検出（echoでない・CI run）", "evidence":"" }
               ]
             },
-            { "id":"G-1-2", "kind":"state", "theme":"アプリが実際に動く", "meaning":"起動して画面が出る", "detail":"scaffold のままでよい。まず動くこと",
+            { "id":"G-1-2", "kind":"state", "theme":"起動スモーク", "meaning":"ビルド後に実際に起動しトップページが返る", "detail":"到達性は外部事実(HTTP 200＋本文マーカー)で縛る。スクショにしない",
               "criteria":[
-                { "text":"web がビルドでき、起動してトップページが表示される", "verify":"pnpm --filter web build 成功 → start でトップページ 200/描画をスクショ保存", "evidence":"" }
-              ]
-            },
-            { "id":"G-1-3", "kind":"state", "theme":"品質チェックが緑", "meaning":"型/Lint/テストが通る", "detail":"壊れていないことを機械で保証",
-              "criteria":[
-                { "text":"型/Lint/テストが全て緑", "verify":"pnpm -r typecheck && pnpm -r lint && pnpm -r test", "evidence":"" }
+                { "text":"web がビルド後に起動し 200＋既知マーカーを返す", "verify":"CIスモークで build→next start→curl -sf localhost:3000 が 200 かつ本文に 'cc-v2 monorepo' を含む（CI run URL）", "evidence":"" }
               ]
             }
           ]
         },
-        { "id":"G-2", "kind":"state", "theme":"本番で公開され動いている", "meaning":"外から届く所で動く", "detail":"デプロイ経路＋公開URL",
+        { "id":"G-2", "kind":"state", "theme":"公開", "meaning":"外から到達できる所で動く", "detail":"WA信頼性 / 12-Factor dev-prod parity",
           "children":[
-            { "id":"G-2-1", "kind":"state", "theme":"デプロイ経路が確立している", "meaning":"公開する手段がある", "detail":"Vercel 連携 or 定義済み手順",
+            { "id":"G-2-1", "kind":"state", "theme":"デプロイ経路が確立", "meaning":"本番へ公開する手段がある", "detail":"Vercel 連携（設定はコードに固定）",
               "criteria":[
-                { "text":"main への push か定義済み手順で本番へ1回デプロイできる", "verify":"デプロイを実行→完了ログ/デプロイIDを記録", "evidence":"" }
+                { "text":"main への push で本番へ1回デプロイ完了", "verify":"Vercel デプロイが Ready、デプロイIDが発行（デプロイID）", "evidence":"" },
+                { "text":"デプロイ設定がコードに固定", "verify":"vercel.json か apps/web/AGENTS.md に本番設定(Root=apps/web)が記載され実デプロイと一致", "evidence":"" }
               ]
             },
-            { "id":"G-2-2", "kind":"state", "theme":"公開URLで動作する", "meaning":"本番URLで実際に開ける", "detail":"到達性の確認",
+            { "id":"G-2-2", "kind":"state", "theme":"公開URLで動作", "meaning":"本番URLで実際に開ける", "detail":"主要フロー＝トップページ描画成功を具体化",
               "criteria":[
-                { "text":"本番URLでトップページが表示され主要フローが成功する", "verify":"本番URLへアクセスし 200/描画・主要操作成功をスクショ保存", "evidence":"" }
+                { "text":"本番URLでトップページが 200＋既知マーカーを返す", "verify":"curl -sS -w '%{http_code}' https://<prod> が 200 かつ本文に 'cc-v2 monorepo' を含む（公開URL＝第三者が叩ける外部事実）", "evidence":"" }
               ]
             }
           ]
         },
-        { "id":"G-3", "kind":"state", "theme":"運用を継続できる", "meaning":"気づけて・戻せて・再現できる", "detail":"運用＝動かし続ける能力",
+        { "id":"G-3", "kind":"state", "theme":"安全", "meaning":"シークレット・依存・設定が安全に扱える", "detail":"OWASP Secrets/A05/A06 ・ 12-Factor config ・ WAセキュリティ",
           "children":[
-            { "id":"G-3-1", "kind":"state", "theme":"異常に気づける", "meaning":"落ちたら分かる", "detail":"監視/ログ",
+            { "id":"G-3-1", "kind":"state", "theme":"設定とシークレットの分離", "meaning":"機密が漏れない・env で注入", "detail":"12-Factor config / OWASP Secrets",
               "criteria":[
-                { "text":"エラー/ダウンを観測できる", "verify":"意図的に失敗を起こし、監視またはログで1件検知できることを確認", "evidence":"" }
+                { "text":"シークレットが未コミットで env 注入", "verify":"git ls-files に .env* が0件、.gitignore が .env* を除外（commit SHA）", "evidence":"" },
+                { "text":"必要な環境変数が .env.example に宣言的に列挙", "verify":"apps/web/.env.example が存在し参照 env キー方針を記載（commit SHA）", "evidence":"" },
+                { "text":"secret scanning が自動有効", "verify":"GitHub secret scanning＋push protection 有効（設定URL）", "evidence":"" }
               ]
             },
-            { "id":"G-3-2", "kind":"state", "theme":"戻せる", "meaning":"壊れても前に戻せる", "detail":"ロールバック",
+            { "id":"G-3-2", "kind":"state", "theme":"脆弱依存ゲート", "meaning":"既知脆弱性で止まる", "detail":"OWASP A06",
               "criteria":[
-                { "text":"前の版へ実際に戻せる", "verify":"ロールバック手順を1回実行し前版に戻ることを確認", "evidence":"" }
+                { "text":"依存監査がCIで自動実行され moderate 以上で落ちる", "verify":"CIで pnpm audit --audit-level moderate が exit 0（緑・run URL）", "evidence":"" },
+                { "text":"既知 moderate が解消 or 明示受容", "verify":"pnpm audit moderate 0（postcss は pnpm.overrides で >=8.5.10）、または例外を期限付きで記録", "evidence":"" }
               ]
             },
-            { "id":"G-3-3", "kind":"state", "theme":"再現デプロイできる", "meaning":"同じ手順で何度でも", "detail":"再現性",
+            { "id":"G-3-3", "kind":"state", "theme":"静的解析とTLS", "meaning":"コード脆弱性・設定ミス・平文を防ぐ", "detail":"OWASP A05 / CodeQL / TLS",
               "criteria":[
-                { "text":"同じ手順/設定で再デプロイでき同結果になる", "verify":"再デプロイを実行し前回と同じ動作を確認", "evidence":"" }
+                { "text":"CodeQL 等の静的解析がCIで自動実行", "verify":"GitHub code scanning(CodeQL) が緑で alert 0（run/alert URL）", "evidence":"" },
+                { "text":"本番が TLS＋最小セキュリティヘッダ", "verify":"本番URLが https で、curl -I 応答に Strict-Transport-Security を含む（外部事実）", "evidence":"" }
+              ]
+            },
+            { "id":"G-3-4", "kind":"state", "theme":"認証/認可（未定→確定）", "meaning":"要否を決め、採用時は保護が効く", "detail":"未定を放置しない。採用時のみ本番criteriaを開く（遅延展開）",
+              "criteria":[
+                { "text":"認証/認可の要否を確定記載（未定にしない）", "verify":"apps/web/AGENTS.md の『認証』行が『未定』でなく『不要(理由)』または採用方式で確定（commit SHA）", "evidence":"" },
+                { "text":"[採用時のみ] 保護対象が未認証で拒否", "verify":"保護ルートへ未認証アクセスが 401/403（公開URLの外部事実）", "evidence":"" }
               ]
             }
+          ]
+        },
+        { "id":"G-4", "kind":"state", "theme":"継続運用", "meaning":"気づけて・戻せて・再現でき・制御できる", "detail":"WA運用性＋信頼性＋コスト",
+          "children":[
+            { "id":"G-4-1", "kind":"state", "theme":"異常に気づける（可観測性）", "meaning":"落ちたら分かる", "detail":"監視手段を確定（未選定にしない）",
+              "criteria":[
+                { "text":"監視/ログ手段を確定記載（未定にしない）", "verify":"apps/web/AGENTS.md の可観測性行が確定（例: Vercel ログ＋ヘルスチェック）（commit SHA）", "evidence":"" },
+                { "text":"意図的失敗が監視/ログに1件現れる", "verify":"既知の失敗(500ルート等)を1回起こし Vercel ログにそのイベントが現れる（ログID/URL）", "evidence":"" }
+              ]
+            },
+            { "id":"G-4-2", "kind":"state", "theme":"戻せる（ロールバック）", "meaning":"壊れても前に戻せる", "detail":"手順を先に文書化し循環を断つ",
+              "criteria":[
+                { "text":"ロールバック手順が先に文書として定義", "verify":"apps/web/AGENTS.md か docs に手順(Vercel: 前デプロイを Promote)が記載（commit SHA）", "evidence":"" },
+                { "text":"前版へ実際に戻せる", "verify":"現行を壊す→前デプロイを Promote→公開URLが前版に戻る（デプロイID＋curl の外部事実）", "evidence":"" }
+              ]
+            },
+            { "id":"G-4-3", "kind":"state", "theme":"再現デプロイ", "meaning":"同じ手順で何度でも同結果", "detail":"同一性を配信 commit SHA 一致で定義（アプリ改修に依存しない）",
+              "criteria":[
+                { "text":"同一コミットの再デプロイが成功し配信版の commit が一致", "verify":"frozen lockfile で再デプロイ→Vercel デプロイの meta.githubCommitSha が対象 commit SHA と一致し 200（デプロイID/外部事実）", "evidence":"" }
+              ]
+            },
+            { "id":"G-4-4", "kind":"state", "theme":"コストとアクセス制御", "meaning":"費用を制御し・誰がデプロイ/秘密に触れるか限定", "detail":"WAコスト / アクセス制御・監査",
+              "criteria":[
+                { "text":"コスト上限/アラートの要否を確定記載", "verify":"apps/web/AGENTS.md にコスト方針(Vercel 無料枠＋上限 or N/A理由)を確定（commit SHA）", "evidence":"" },
+                { "text":"本番デプロイ主体が限定（監査可能）", "verify":"GitHub ブランチ保護(main 直push禁止・レビュー必須)が有効（設定URL＝外部事実）", "evidence":"" }
+              ]
+            }
+          ]
+        },
+        { "id":"G-5", "kind":"state", "theme":"データを失わない（未定→確定）", "meaning":"永続データの要否を決め、持つなら復元・整合できる", "detail":"WA信頼性(backup) / 12-Factor backing services。現状 DB 未定",
+          "criteria":[
+            { "text":"永続データ/DB の要否を確定記載（未定にしない）", "verify":"apps/web/AGENTS.md の DB 行が『未定』でなく『不要(ステートレス理由)』または採用DB＋バックアップ方針で確定（commit SHA）", "evidence":"" },
+            { "text":"[DB採用時のみ] バックアップから復元でき整合する", "verify":"バックアップ取得→復元→データ一致（スナップショットID/復元ログ＝外部事実）", "evidence":"" }
+          ]
+        },
+        { "id":"G-6", "kind":"state", "theme":"性能・持続可能性（現段階N/A明示）", "meaning":"性能SLO/可用性/持続可能性の要否を隠さず明示", "detail":"WA性能効率/持続可能性。黙って落とさない（欠落の非明示を防ぐ）",
+          "criteria":[
+            { "text":"性能SLO/可用性/持続可能性の要件有無を確定記載", "verify":"apps/web/AGENTS.md に『1ページscaffold・低トラフィックのため SLO/可用性/持続可能性は現段階N/A、閾値超過時に再評価』と記録（commit SHA）", "evidence":"" }
           ]
         }
       ]
@@ -228,7 +272,7 @@
       <h3>受入条件（criteria）の書き方</h3>
       <p class="rule">条件は「動くこと」で書く。「ドキュメントがある／レビューした」で書かない。</p>
       <ul>
-        <li>各条件は <code>text</code>（満たすべき状態）＋ <code>verify</code>（どう確かめるか＝実行可能な手順）＋ <code>evidence</code>（結果の証拠：テスト出力・commit・スクショ）。</li>
+        <li>各条件は <code>text</code>（満たすべき状態）＋ <code>verify</code>（どう確かめるか＝実行可能な手順）＋ <code>evidence</code>（結果の証拠＝commit SHA・CI run URL・デプロイID・公開URL 等の外部事実。スクショ等の自己申告は不可）。</li>
         <li><code>evidence</code> が空＝未検証（☐）。埋まって初めて充足（☑）。図の <code>受入 n/m</code> バッジで進捗が見える。</li>
         <li>証拠は「◯◯レビュー.md が存在する」を認めない。実物が動いた記録を指す。</li>
       </ul>
@@ -268,7 +312,7 @@
       <h2>完了は git に紐付け（二重管理しない）</h2>
       <ul>
         <li>完了の真実は git。作業完了時は <code>status:"done"</code> ＋ <code>commit</code>（短ハッシュ or PR）＋ <code>done_at</code>。</li>
-        <li>状態の受入条件の <code>evidence</code> も commit / テスト出力 / スクショ等の実記録を指す。事実と食い違わせない。</li>
+        <li>状態の受入条件の <code>evidence</code> も commit SHA / CI run URL / デプロイID / 公開URL 等の外部事実を指す（スクショ等の自己申告は不可）。事実と食い違わせない。</li>
       </ul>
 
       <h2>データと表示の分離（重要）</h2>
