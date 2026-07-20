@@ -118,7 +118,7 @@
   "meta": {
     "title": "ロードマップ",
     "active": "G-1-1",
-    "next": "G-1-1『土台が整っている』を検証可能な形に立て直す: 機械の審判(CI/GitHub Actions)を稼働・本物のテスト(Vitest)・基準の不可変を満たし、evidence を CI run URL / commit SHA で埋める。次いで G-1-2(実際に動く)・G-1-3(品質緑)。ゴール=このリポからアプリを本番運用できる環境にする。",
+    "next": "G-1-1 は CI緑・実テストで5/6充足。残る『基準は実行者が書き換え不能』は master の PR 承認が evidence（実行者は自己充足不可）。master 承認で G-1-1 done。並行して G-1-2(実際に動く)・G-1-3(品質緑)へ。ゴール=このリポからアプリを本番運用できる環境にする。",
     "updated": "2026-07-20"
   },
   "nodes": [
@@ -131,9 +131,9 @@
                 { "text":"スタックが1案＋根拠で確定し記録されている", "verify":"apps/web/AGENTS.md に確定スタック宣言", "evidence":"9d6941b" },
                 { "text":"scaffold が存在し依存導入から型チェックまで通る", "verify":"pnpm install --frozen-lockfile && pnpm -r typecheck が緑", "evidence":"447fa5c" },
                 { "text":"ランタイム/ツールのバージョンが固定されている", "verify":".tool-versions/.node-version が存在し宣言スタックと一致", "evidence":"3cf1456" },
-                { "text":"機械の審判(CI)が存在し typecheck/lint/test/build を自動実行する", "verify":"GitHub Actions で pnpm -r typecheck && lint && test && build が緑（CI run URL）", "evidence":"" },
-                { "text":"テストが echo でなく本物（0件・ダミーでは緑にならない）", "verify":"pnpm -r test が Vitest 実テストを実行し、失敗を検出できる（commit SHA / CI run）", "evidence":"" },
-                { "text":"criteria/verify は実行者が勝手に変えられない（人間承認＋独立検証）", "verify":"AGENTS.md に恒久ルール明記（基準変更は人間承認・done判定は機械/独立subagent・evidenceは外部事実）", "evidence":"" }
+                { "text":"機械の審判(CI)が存在し typecheck/lint/test/build を自動実行する", "verify":"GitHub Actions で pnpm -r typecheck && lint && test && build が緑（CI run URL）", "evidence":"actions/runs/29755182381" },
+                { "text":"テストが echo でなく本物（0件・ダミーでは緑にならない）", "verify":"pnpm -r test が Vitest 実テストを実行し、失敗を検出できる（commit SHA / CI run）", "evidence":"7e601af" },
+                { "text":"criteria/verify は実行者が勝手に変えられない（人間承認＋独立検証）", "verify":"AGENTS.md に恒久ルール明記済み。ただし本条件の充足は master の PR 承認が evidence（実行者は自己充足できない）", "evidence":"" }
               ]
             },
             { "id":"G-1-2", "kind":"state", "theme":"アプリが実際に動く", "meaning":"起動して画面が出る", "detail":"scaffold のままでよい。まず動くこと",
