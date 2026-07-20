@@ -1,64 +1,76 @@
 <title>学習ロードマップ</title>
 <style>
   :root {
-    --paper:#fbfbfd; --panel:#ffffff; --ink:#1b1e26; --muted:#5a606f;
-    --line:#a9afc0; --blue-fill:#e3ebfb; --blue-edge:#7f9be6; --blue-num:#2c50c4;
+    --paper:#fbfbfd; --panel:#ffffff; --ink:#1b1e26; --muted:#5a606f; --line:#a9afc0;
+    --blue-fill:#e3ebfb; --blue-edge:#7f9be6; --blue-num:#2c50c4;
+    --amber-fill:#fbeecb; --amber-edge:#e0b25a; --amber-num:#9a6a12;
+    --red-fill:#f7dcda; --red-edge:#e08c86; --red-num:#b53a32;
   }
   @media (prefers-color-scheme: dark) {
-    :root { --paper:#0f1117; --panel:#161922; --ink:#e7e9f0; --muted:#9298aa;
-      --line:#4a5266; --blue-fill:#1a2340; --blue-edge:#4d63a6; --blue-num:#a6b6f7; }
+    :root { --paper:#0f1117; --panel:#161922; --ink:#e7e9f0; --muted:#9298aa; --line:#4a5266;
+      --blue-fill:#1a2340; --blue-edge:#4d63a6; --blue-num:#a6b6f7;
+      --amber-fill:#2c2410; --amber-edge:#6b5320; --amber-num:#e0a33f;
+      --red-fill:#33191a; --red-edge:#7a3b38; --red-num:#e8867e; }
   }
-  :root[data-theme="light"] { --paper:#fbfbfd; --panel:#ffffff; --ink:#1b1e26; --muted:#5a606f;
-    --line:#a9afc0; --blue-fill:#e3ebfb; --blue-edge:#7f9be6; --blue-num:#2c50c4; }
-  :root[data-theme="dark"] { --paper:#0f1117; --panel:#161922; --ink:#e7e9f0; --muted:#9298aa;
-    --line:#4a5266; --blue-fill:#1a2340; --blue-edge:#4d63a6; --blue-num:#a6b6f7; }
+  :root[data-theme="light"] { --paper:#fbfbfd; --panel:#ffffff; --ink:#1b1e26; --muted:#5a606f; --line:#a9afc0;
+    --blue-fill:#e3ebfb; --blue-edge:#7f9be6; --blue-num:#2c50c4;
+    --amber-fill:#fbeecb; --amber-edge:#e0b25a; --amber-num:#9a6a12;
+    --red-fill:#f7dcda; --red-edge:#e08c86; --red-num:#b53a32; }
+  :root[data-theme="dark"] { --paper:#0f1117; --panel:#161922; --ink:#e7e9f0; --muted:#9298aa; --line:#4a5266;
+    --blue-fill:#1a2340; --blue-edge:#4d63a6; --blue-num:#a6b6f7;
+    --amber-fill:#2c2410; --amber-edge:#6b5320; --amber-num:#e0a33f;
+    --red-fill:#33191a; --red-edge:#7a3b38; --red-num:#e8867e; }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--paper); color:var(--ink);
     font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
     font-size:14px; line-height:1.45; -webkit-font-smoothing:antialiased; }
   .wrap { max-width:840px; margin:0 auto; padding:12px 16px 60px; }
 
-  /* sheet tabs */
   .tabs { display:flex; gap:4px; border-bottom:2px solid var(--line); margin-bottom:12px; }
-  .tabs button { font:inherit; font-size:13px; cursor:pointer; padding:7px 16px;
-    border:none; background:none; color:var(--muted); border-bottom:2px solid transparent; margin-bottom:-2px; }
+  .tabs button { font:inherit; font-size:13px; cursor:pointer; padding:7px 16px; border:none; background:none;
+    color:var(--muted); border-bottom:2px solid transparent; margin-bottom:-2px; }
   .tabs button.active { color:var(--ink); border-bottom-color:var(--blue-num); font-weight:600; }
-  .sheet { display:none; }
-  .sheet.active { display:block; }
+  .sheet { display:none; } .sheet.active { display:block; }
+
+  /* 現在地バナー */
+  .banner { display:flex; flex-wrap:wrap; gap:6px 18px; padding:9px 13px; margin-bottom:10px;
+    border:1.5px solid var(--blue-edge); background:var(--blue-fill); border-radius:9px; font-size:13px; }
+  .banner b { color:var(--blue-num); margin-right:6px; font-size:12px; letter-spacing:.02em; }
 
   .tools { display:flex; gap:6px; justify-content:flex-end; margin-bottom:8px; }
   .tools button { font:inherit; font-size:12px; cursor:pointer; padding:4px 10px; border-radius:6px;
     border:1px solid var(--line); background:var(--panel); color:var(--muted); }
   .tools button:hover { border-color:var(--blue-num); color:var(--blue-num); }
 
-  /* tree */
   .node { margin:4px 0; }
   .children { margin:4px 0 4px 15px; padding-left:13px; border-left:2px solid var(--line); }
   .card { display:flex; align-items:flex-start; gap:6px; padding:4px 8px; border-radius:7px;
     border:1.5px solid var(--line); background:var(--panel); }
   details.node > summary.card { cursor:pointer; list-style:none; }
   details.node > summary.card::-webkit-details-marker { display:none; }
-  .card.done { background:var(--blue-fill); border-color:var(--blue-edge); }
+  .card.done   { background:var(--blue-fill);  border-color:var(--blue-edge); }
+  .card.doing  { background:var(--amber-fill); border-color:var(--amber-edge); }
+  .card.blocked{ background:var(--red-fill);   border-color:var(--red-edge); }
   .caret { color:var(--muted); font-size:11px; width:.9em; flex:none; margin-top:3px; transition:transform .15s; }
   details.node[open] > summary .caret { transform:rotate(90deg); }
   .leaf .caret { visibility:hidden; }
-  .line { min-width:0; }
+  .line { min-width:0; flex:1; }
   .n { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-variant-numeric:tabular-nums;
     font-weight:700; color:var(--muted); margin-right:8px; }
-  .card.done .n { color:var(--blue-num); }
+  .card.done .n { color:var(--blue-num); } .card.doing .n { color:var(--amber-num); } .card.blocked .n { color:var(--red-num); }
   .th { font-weight:600; margin-right:7px; }
   .mn { color:var(--ink); }
   .d2 { display:block; margin-top:2px; color:var(--muted); }
-  .day { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; margin-left:8px; white-space:nowrap; }
+  .day, .cmt { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; margin-left:8px; white-space:nowrap; }
+  .cmt { opacity:.8; }
+  .here { flex:none; align-self:center; font-size:11px; font-weight:700; color:#fff; background:var(--blue-num);
+    padding:2px 7px; border-radius:999px; white-space:nowrap; }
 
-  /* readme sheet */
   .doc { max-width:70ch; }
   .doc h2 { font-size:1rem; margin:22px 0 8px; padding-bottom:4px; border-bottom:1px solid var(--line); }
   .doc h2:first-child { margin-top:4px; }
   .doc h3 { font-size:.9rem; margin:16px 0 6px; color:var(--muted); }
-  .doc p { margin:6px 0; }
-  .doc ul { margin:6px 0; padding-left:20px; }
-  .doc li { margin:3px 0; }
+  .doc p { margin:6px 0; } .doc ul { margin:6px 0; padding-left:20px; } .doc li { margin:3px 0; }
   .doc code { background:var(--panel); border:1px solid var(--line); padding:1px 5px; border-radius:5px; font-size:.85em; }
   .doc pre { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:10px 12px; overflow-x:auto; font-size:.85em; }
   .doc .rule { background:var(--blue-fill); border:1.5px solid var(--blue-edge); border-radius:8px; padding:10px 14px; font-weight:600; }
@@ -66,7 +78,37 @@
   .doc table { border-collapse:collapse; width:100%; font-size:.82rem; }
   .doc th, .doc td { border:1px solid var(--line); padding:6px 9px; text-align:left; white-space:nowrap; }
   .doc th { background:var(--panel); font-weight:600; }
+  .sw { display:inline-block; width:12px; height:12px; border-radius:3px; border:1.5px solid var(--line); vertical-align:-1px; margin-right:4px; }
+  .sw.done{background:var(--blue-fill);border-color:var(--blue-edge);} .sw.doing{background:var(--amber-fill);border-color:var(--amber-edge);} .sw.blocked{background:var(--red-fill);border-color:var(--red-edge);}
 </style>
+
+<script type="application/json" id="roadmap-data">
+{
+  "meta": {
+    "title": "学習ロードマップ",
+    "active": "1-3",
+    "next": "1-3 を完了させる（.tool-versions / devcontainer でバージョン固定）→ その後 2 を割る",
+    "updated": "2026-07-20"
+  },
+  "nodes": [
+    { "id":"1", "theme":"セットアップ", "meaning":"作る前の土台を用意する", "detail":"スタック選定・リポ作成・ルール整備",
+      "children":[
+        { "id":"1-1", "theme":"スタック選定", "meaning":"何で作るかを決める", "detail":"何で作るか勝手に仮定せず決める",
+          "children":[
+            { "id":"1-1-1", "theme":"ヒアリング", "meaning":"動かせない条件を洗い出す", "detail":"何が動かせない？ クラウド/言語指定・既存連携・顧客/チームの縛り・予算/納期", "status":"done", "commit":"9d6941b", "done_at":"2026-07-20" },
+            { "id":"1-1-2", "theme":"リサーチ", "meaning":"選べる手を調べる", "detail":"制約の中でその年のベストと候補のトレードオフ", "status":"done", "commit":"9d6941b", "done_at":"2026-07-20" },
+            { "id":"1-1-3", "theme":"意思決定", "meaning":"1つ選んで記録する", "detail":"1案＋根拠＋代替1つ→明示OK→AGENTS.mdに記録", "status":"done", "commit":"9d6941b", "done_at":"2026-07-20" }
+          ]
+        },
+        { "id":"1-2", "theme":"スキャフォールド", "meaning":"プロジェクトの入れ物を作る", "detail":"新リポ・フォルダ構成・パッケージ管理・設定ファイル", "status":"done", "commit":"447fa5c", "done_at":"2026-07-20" },
+        { "id":"1-3", "theme":"構成・ルール整備", "meaning":"どこでも同じに動くよう整える", "detail":"AGENTS.md・秘密情報・.gitignore は済／バージョン固定（.tool-versions/devcontainer）が未", "status":"doing" }
+      ]
+    },
+    { "id":"2", "theme":"実装", "meaning":"コードで中身をつくる", "detail":"画面・処理・データ・品質チェック", "status":"todo" },
+    { "id":"3", "theme":"デプロイ・運用", "meaning":"公開して動かし続ける", "detail":"デプロイ・運用・改善", "status":"todo" }
+  ]
+}
+</script>
 
 <div class="wrap">
   <div class="tabs">
@@ -74,137 +116,167 @@
     <button data-sheet="readme">README</button>
   </div>
 
-  <!-- ============ 図シート ============ -->
   <div class="sheet active" id="sheet-fig">
+    <div class="banner" id="banner"></div>
     <div class="tools">
       <button data-act="open">開く</button>
       <button data-act="close">閉じる</button>
     </div>
-    <div id="tree">
-      <details class="node" open>
-        <summary class="card done"><span class="caret">▸</span><span class="line"><span class="n">1</span><span class="th">セットアップ</span><span class="mn">（作る前の土台を用意する）</span><span class="d2">スタック選定・リポ作成・ルール整備<span class="day">2026-07-20</span></span></span></summary>
-        <div class="children">
-          <details class="node" open>
-            <summary class="card done"><span class="caret">▸</span><span class="line"><span class="n">1-1</span><span class="th">スタック選定</span><span class="mn">（何で作るかを決める）</span><span class="d2">何で作るか勝手に仮定せず決める<span class="day">2026-07-20</span></span></span></summary>
-            <div class="children">
-              <div class="node leaf"><div class="card done"><span class="caret">▸</span><span class="line"><span class="n">1-1-1</span><span class="th">ヒアリング</span><span class="mn">（動かせない条件を洗い出す）</span><span class="d2">何が動かせない？ クラウド/言語指定・既存連携・顧客/チームの縛り・予算/納期<span class="day">2026-07-20</span></span></span></div></div>
-              <div class="node leaf"><div class="card done"><span class="caret">▸</span><span class="line"><span class="n">1-1-2</span><span class="th">リサーチ</span><span class="mn">（選べる手を調べる）</span><span class="d2">制約の中でその年のベストと候補のトレードオフ<span class="day">2026-07-20</span></span></span></div></div>
-              <div class="node leaf"><div class="card done"><span class="caret">▸</span><span class="line"><span class="n">1-1-3</span><span class="th">意思決定</span><span class="mn">（1つ選んで記録する）</span><span class="d2">1案＋根拠＋代替1つ→明示OK→AGENTS.mdに記録<span class="day">2026-07-20</span></span></span></div></div>
-            </div>
-          </details>
-          <div class="node leaf"><div class="card done"><span class="caret">▸</span><span class="line"><span class="n">1-2</span><span class="th">スキャフォールド</span><span class="mn">（プロジェクトの入れ物を作る）</span><span class="d2">新リポ・フォルダ構成・パッケージ管理・設定ファイル<span class="day">2026-07-20</span></span></span></div></div>
-          <div class="node leaf"><div class="card done"><span class="caret">▸</span><span class="line"><span class="n">1-3</span><span class="th">構成・ルール整備</span><span class="mn">（どこでも同じに動くよう整える）</span><span class="d2">AGENTS.md・秘密情報・バージョン固定・.gitignore<span class="day">2026-07-20</span></span></span></div></div>
-        </div>
-      </details>
-
-      <details class="node">
-        <summary class="card"><span class="caret">▸</span><span class="line"><span class="n">2</span><span class="th">実装</span><span class="mn">（コードで中身をつくる）</span><span class="d2">画面・処理・データ・品質チェック</span></span></summary>
-        <div class="children">
-          <div class="node leaf"><div class="card"><span class="caret">▸</span><span class="line"><span class="n">2-?</span><span class="th">未展開</span><span class="d2">目的で割る（下記READMEの規則）</span></span></div></div>
-        </div>
-      </details>
-
-      <details class="node">
-        <summary class="card"><span class="caret">▸</span><span class="line"><span class="n">3</span><span class="th">デプロイ・運用</span><span class="mn">（公開して動かし続ける）</span><span class="d2">デプロイ・運用・改善</span></span></summary>
-        <div class="children">
-          <div class="node leaf"><div class="card"><span class="caret">▸</span><span class="line"><span class="n">3-?</span><span class="th">未展開</span><span class="d2">目的で割る（下記READMEの規則）</span></span></div></div>
-        </div>
-      </details>
-    </div>
+    <div id="tree"></div>
   </div>
 
-  <!-- ============ READMEシート ============ -->
   <div class="sheet" id="sheet-readme">
     <div class="doc">
-
       <h2>この図の目的・意図</h2>
       <ul>
         <li><b>誰のため</b>: 非エンジニアが、アプリ制作の全体像を体系的に掴むため。</li>
-        <li><b>なぜ作る</b>: 行き当たりばったりの経験に「名前と位置」を与え、今どこを・なぜやっているかを地図で確認できるようにする。</li>
-        <li><b>この型（折りたたみツリー）を選んだ理由</b>: 最小要素で 順番＝番号 / 階層＝ツリー / 進捗＝色 / 俯瞰＝折りたたみ を同時に満たすから。依存（並列・ブロッカー）の表現は複雑になるため現時点は意図的に保留。</li>
-        <li><b>運用</b>: どの AI ツール（Claude Code / Codex / Cursor / Antigravity）でも、この図を地図として参照・更新する。</li>
+        <li><b>3つの用途</b>: ①全体計画 ②現在地の確認（セッション開始時）③進捗管理。</li>
+        <li><b>型を選んだ理由</b>: 最小要素で 順番＝番号 / 階層＝ツリー / 進捗＝色 / 俯瞰＝折りたたみ を同時に満たすから。依存（並列・ブロッカー）の表現は現時点で保留。</li>
       </ul>
+
+      <h2>データと表示の分離（重要）</h2>
+      <p>ロードマップの<b>正はこの HTML 内の JSON</b>（<code>&lt;script id="roadmap-data"&gt;</code>）。更新は<b>この JSON だけ</b>を編集する。CSS/描画JSは触らない。</p>
 
       <h2>割り方の規則</h2>
       <p class="rule">目的で割る。コミット1個サイズになったら止める。</p>
       <ul>
-        <li><b>粒度＝コミット単位</b>（1カード＝1つの目的）。数は固定しない（2個でも6個でもよい）。</li>
-        <li><b>完了の記録</b>: 葉が終わったら＝コミット。カードを青にし、完了日＝コミット日を入れる。</li>
-        <li>掘るときは「<b>◯番を割って</b>」と依頼 → その枝だけ、上記規則で分割・追記する。</li>
+        <li>粒度＝コミット単位（1ノード＝1つの目的）。数は固定しない（2でも6でも）。</li>
+        <li>掘るときは「◯番を割って」→ その枝だけこの規則で分割・追記。</li>
+      </ul>
+
+      <h2>状態（4値・色で表現）</h2>
+      <ul>
+        <li><span class="sw"></span><code>todo</code> 未（無色）</li>
+        <li><span class="sw doing"></span><code>doing</code> 着手中（黄）</li>
+        <li><span class="sw done"></span><code>done</code> 済（青）</li>
+        <li><span class="sw blocked"></span><code>blocked</code> ブロック（赤）</li>
+      </ul>
+      <p><b>親の状態は子から自動導出</b>（手動で done にしない）。全子done→done / 子にblockedあり→blocked / 一部進行→doing / それ以外→todo。</p>
+
+      <h2>現在地・次の一手</h2>
+      <p><code>meta.active</code>（現在地ノードID）と <code>meta.next</code>（次の一手）を上部バナーに表示。<b>セッション開始時に最初に読む値</b>。</p>
+
+      <h2>完了は git に紐付け（二重管理しない）</h2>
+      <ul>
+        <li>完了の真実は git。ノード完了時は <code>status:"done"</code> ＋ <code>commit</code>（短ハッシュ or PR）＋ <code>done_at</code>（＝コミット日）を記録。</li>
+        <li>done ノードにはコミットを表示。事実と食い違わせない。</li>
       </ul>
 
       <h2>カード表記ルール</h2>
-      <p>項目名は書かず、値だけを順に並べる。改行は意味の後、詳細の前。</p>
       <pre>番号  テーマ  （意味）
-詳細  完了日</pre>
+詳細  完了日  commit</pre>
       <ul>
-        <li><b>テーマ = 専門用語</b>（例: ヒアリング / スタック選定 / スキャフォールド）</li>
-        <li><b>意味 = 非エンジニア用語</b>。かっこ（）で囲む（例: （動かせない条件を洗い出す））</li>
-        <li><b>詳細</b> = 具体的な中身（2行目）。<b>完了日</b> = <code>YYYY-MM-DD</code>、未完了は空欄。</li>
+        <li>テーマ＝専門用語 / 意味＝非エンジニア用語（かっこ囲み）。改行は意味の後・詳細の前。</li>
       </ul>
-      <pre>1-1-1  ヒアリング  （動かせない条件を洗い出す）
-何が動かせない？ クラウド/言語指定・既存連携…  2026-07-20</pre>
 
       <h2>作図の作法（デザイン仕様）</h2>
-      <p>他の図に流用してもぶれないための共通仕様。色は必ずトークン経由で使い、値を直書きしない。</p>
-
+      <p>他の図に流用してもぶれないための共通仕様。色は必ずトークン経由、値を直書きしない。</p>
       <h3>カラートークン（ライト / ダーク）</h3>
       <div class="tblwrap"><table>
         <tr><th>トークン</th><th>用途</th><th>ライト</th><th>ダーク</th></tr>
-        <tr><td><code>--paper</code></td><td>ページ背景</td><td>#fbfbfd</td><td>#0f1117</td></tr>
-        <tr><td><code>--panel</code></td><td>カード地・ボタン地</td><td>#ffffff</td><td>#161922</td></tr>
-        <tr><td><code>--ink</code></td><td>本文・見出し</td><td>#1b1e26</td><td>#e7e9f0</td></tr>
+        <tr><td><code>--paper</code></td><td>背景</td><td>#fbfbfd</td><td>#0f1117</td></tr>
+        <tr><td><code>--panel</code></td><td>カード地・ボタン</td><td>#ffffff</td><td>#161922</td></tr>
+        <tr><td><code>--ink</code></td><td>本文</td><td>#1b1e26</td><td>#e7e9f0</td></tr>
         <tr><td><code>--muted</code></td><td>番号・詳細・補助</td><td>#5a606f</td><td>#9298aa</td></tr>
-        <tr><td><code>--line</code></td><td>境界線・ツリー縦線</td><td>#a9afc0</td><td>#4a5266</td></tr>
-        <tr><td><code>--blue-fill</code></td><td>完了カードの地</td><td>#e3ebfb</td><td>#1a2340</td></tr>
-        <tr><td><code>--blue-edge</code></td><td>完了カードの境界</td><td>#7f9be6</td><td>#4d63a6</td></tr>
-        <tr><td><code>--blue-num</code></td><td>完了カードの番号色</td><td>#2c50c4</td><td>#a6b6f7</td></tr>
+        <tr><td><code>--line</code></td><td>境界線・ツリー線</td><td>#a9afc0</td><td>#4a5266</td></tr>
+        <tr><td><code>--blue-*</code></td><td>済（fill/edge/num）</td><td>#e3ebfb / #7f9be6 / #2c50c4</td><td>#1a2340 / #4d63a6 / #a6b6f7</td></tr>
+        <tr><td><code>--amber-*</code></td><td>着手中</td><td>#fbeecb / #e0b25a / #9a6a12</td><td>#2c2410 / #6b5320 / #e0a33f</td></tr>
+        <tr><td><code>--red-*</code></td><td>ブロック</td><td>#f7dcda / #e08c86 / #b53a32</td><td>#33191a / #7a3b38 / #e8867e</td></tr>
       </table></div>
-      <p>状態＝色: 未完了→無色（<code>--panel</code>地／<code>--line</code>境界）、完了→青（<code>--blue-fill</code>地／<code>--blue-edge</code>境界／番号<code>--blue-num</code>）。テーマ切替は <code>prefers-color-scheme</code> ＋ ルートの <code>data-theme</code> 上書きの両対応。</p>
-
-      <h3>タイポグラフィ</h3>
-      <div class="tblwrap"><table>
-        <tr><th>要素</th><th>フォント</th><th>サイズ</th><th>太さ</th></tr>
-        <tr><td>基本（本文・テーマ・意味）</td><td>ui-sans-serif, system-ui, …, "Noto Sans JP"</td><td>14px</td><td>400（テーマ600）</td></tr>
-        <tr><td>番号・完了日</td><td>ui-monospace, SFMono-Regular, Menlo（tabular-nums）</td><td>番号14 / 完了日12</td><td>番号700</td></tr>
-        <tr><td>ツールボタン</td><td>基本と同じ</td><td>12px</td><td>400</td></tr>
-        <tr><td>キャレット ▸</td><td>基本と同じ</td><td>11px</td><td>400</td></tr>
-      </table></div>
-      <p>行間 1.45。番号は等幅＋<code>tabular-nums</code> で桁を揃える。</p>
-
-      <h3>線・角丸・余白（余白は最小）</h3>
+      <h3>タイポ / 線・余白</h3>
       <div class="tblwrap"><table>
         <tr><th>項目</th><th>値</th></tr>
-        <tr><td>カード境界線</td><td>1.5px（完了は <code>--blue-edge</code>）</td></tr>
-        <tr><td>ツリー縦線</td><td>2px <code>--line</code></td></tr>
-        <tr><td>ボタン境界線</td><td>1px <code>--line</code></td></tr>
-        <tr><td>カード角丸 / ボタン角丸</td><td>7px / 6px</td></tr>
-        <tr><td>カード内パディング / gap</td><td>4px 8px / 6px</td></tr>
-        <tr><td>ノード上下マージン</td><td>4px</td></tr>
-        <tr><td>子インデント</td><td>margin-left 15px / padding-left 13px</td></tr>
-        <tr><td>詳細行 上マージン</td><td>2px</td></tr>
-        <tr><td>番号 右 / テーマ 右 / 完了日 左</td><td>8px / 7px / 8px</td></tr>
+        <tr><td>基本フォント / サイズ / 行間</td><td>ui-sans-serif系 / 14px / 1.45</td></tr>
+        <tr><td>番号・完了日・commit</td><td>ui-monospace（tabular-nums）/ 番号14・700、日付/commit 12px</td></tr>
+        <tr><td>カード境界 / ツリー縦線</td><td>1.5px / 2px（<code>--line</code>）</td></tr>
+        <tr><td>カード角丸 / パディング / gap</td><td>7px / 4px 8px / 6px</td></tr>
+        <tr><td>子インデント / 詳細行上マージン</td><td>ml15 pl13 / 2px</td></tr>
       </table></div>
-
       <h3>構造・インタラクション</h3>
       <ul>
-        <li>1カード = 2行（1行目 番号/テーマ/（意味）、2行目 詳細/完了日）。</li>
-        <li>折りたたみは <code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code>。子ありはキャレット ▸（開くと90°回転）、葉は非表示。</li>
-        <li>図シートには解説・凡例を置かない（説明はこの README シートに集約）。</li>
+        <li>1カード=2行。折りたたみは <code>&lt;details&gt;</code>（子ありはキャレット、葉は非表示）。現在地は「今ここ」ピル。</li>
+        <li>図シートには解説を置かない（説明はこの README シートに集約）。</li>
       </ul>
 
       <h2>育てログ</h2>
       <ul>
-        <li>2026-07-20: 全体を3分割（準備／作る／出す）。1 を 1-1〜1-3、1-1 を 1-1-1〜1-1-3 に分割。</li>
-        <li>2026-07-20: マインドマップ → 折りたたみツリーに変更。カードを2行表記に統一。テーマ＝専門用語／意味＝非エンジニア用語。</li>
-        <li>2026-07-20: README を独立HTMLシート化（図/READMEのタブ）。割り方の規則を1本化（目的で割る／コミット1個サイズで止める）。</li>
+        <li>2026-07-20: 全体3分割→ツリー化→2行カード→テーマ専門/意味平易→図/READMEタブ→割り方1本化。</li>
+        <li>2026-07-20: データ駆動化（JSONアイランドが正）／状態4値／現在地・次の一手／親状態の自動導出／git紐付け。1-3 を doing に修正（バージョン固定が未）。</li>
       </ul>
-
     </div>
   </div>
 </div>
 
 <script>
+  var DATA = JSON.parse(document.getElementById('roadmap-data').textContent);
+
+  function statusOf(node){
+    if(node.children && node.children.length){
+      var ss = node.children.map(statusOf);
+      if(ss.every(function(s){return s==='done';})) return 'done';
+      if(ss.some(function(s){return s==='blocked';})) return 'blocked';
+      if(ss.some(function(s){return s==='doing'||s==='done';})) return 'doing';
+      return 'todo';
+    }
+    return node.status || 'todo';
+  }
+
+  function span(cls, text){ var s=document.createElement('span'); if(cls) s.className=cls; if(text!=null) s.textContent=text; return s; }
+
+  function card(node, hasChildren){
+    var st = statusOf(node);
+    var el = document.createElement(hasChildren ? 'summary' : 'div');
+    el.className = 'card' + (st==='todo' ? '' : ' ' + st);
+    el.appendChild(span('caret','▸'));
+    var line = span('line');
+    line.appendChild(span('n', node.id));
+    if(node.theme) line.appendChild(span('th', node.theme));
+    if(node.meaning) line.appendChild(span('mn', '（'+node.meaning+'）'));
+    var d2 = span('d2', node.detail || '');
+    if(node.done_at) d2.appendChild(span('day', node.done_at));
+    if(node.commit) d2.appendChild(span('cmt', '#'+node.commit));
+    line.appendChild(d2);
+    el.appendChild(line);
+    if(node.id === DATA.meta.active) el.appendChild(span('here','今ここ'));
+    return el;
+  }
+
+  function render(node){
+    var kids = node.children && node.children.length;
+    if(kids){
+      var d = document.createElement('details');
+      d.className = 'node';
+      d.open = true;
+      d.appendChild(card(node, true));
+      var box = span('children'); box.className='children';
+      node.children.forEach(function(c){ box.appendChild(render(c)); });
+      d.appendChild(box);
+      return d;
+    }
+    var wrap = document.createElement('div');
+    wrap.className = 'node leaf';
+    wrap.appendChild(card(node, false));
+    return wrap;
+  }
+
+  var tree = document.getElementById('tree');
+  DATA.nodes.forEach(function(n){ tree.appendChild(render(n)); });
+
+  // banner
+  function findById(nodes, id){
+    for(var i=0;i<nodes.length;i++){
+      if(nodes[i].id===id) return nodes[i];
+      if(nodes[i].children){ var r=findById(nodes[i].children, id); if(r) return r; }
+    }
+    return null;
+  }
+  var act = findById(DATA.nodes, DATA.meta.active);
+  var banner = document.getElementById('banner');
+  var g1 = span(); g1.appendChild(span('b','現在地')); g1.appendChild(span('', act ? (act.id+' '+(act.theme||'')) : DATA.meta.active));
+  var g2 = span(); g2.appendChild(span('b','次の一手')); g2.appendChild(span('', DATA.meta.next||''));
+  banner.appendChild(g1); banner.appendChild(g2);
+
+  // tabs
   document.querySelectorAll('.tabs button').forEach(function (b) {
     b.addEventListener('click', function () {
       document.querySelectorAll('.tabs button').forEach(function (x) { x.classList.remove('active'); });
@@ -213,6 +285,7 @@
       document.getElementById('sheet-' + b.dataset.sheet).classList.add('active');
     });
   });
+  // expand/collapse
   document.querySelectorAll('.tools button').forEach(function (b) {
     b.addEventListener('click', function () {
       var open = b.dataset.act === 'open';
