@@ -67,6 +67,7 @@ node scripts/verify-roadmap-evidence.mjs  # roadmap の evidence が外部事実
 
 - ロードマップの**正は `docs/roadmap.html` 内の JSON**（`<script id="roadmap-data">`）。日々の更新は**その JSON だけ**を編集する。判定・受入ゲートは末尾の描画エンジンが担い、**モデルを変える時だけ**エンジンを触る。
 - **セッション開始時**：まず `docs/roadmap.html` の `meta.active`（現在地）と `meta.next`（次の一手）を読み、ユーザーに**現在地と次の一手を報告してから**作業に入る。
+- **引継ぎ（handoff）**：ロードマップに触れるセッションでは `checkin-checkout` スキルに従う。開始時に `docs/handoff.md`（前回の特筆事項）を読み、ロードマップJSONを更新する瞬間に3行以内で上書きして commit & push する。handoff にはロードマップ関係事項は書かない（二重管理禁止）。
 
 ### ノードは2種（上流＝状態／下流＝作業）
 
