@@ -28,6 +28,23 @@ Next.js（App Router）の Web アプリ。共有 UI は `@repo/ui`（`packages/
 - 型チェック: `pnpm --filter web typecheck`
 - Lint: `pnpm --filter web lint`
 
+## 運用・非機能（確定）
+
+### 性能 / 可用性 / 持続可能性（G-6）
+
+- 1ページscaffold・低トラフィックのため SLO/可用性/持続可能性は現段階N/A、閾値超過時に再評価。
+
+### ロールバック手順（G-4-2）
+
+本番で問題が出たら、前の正常デプロイに戻す（前進修正を待たずに即座に復旧できる）。
+
+1. Vercel ダッシュボード → 対象プロジェクト → **Deployments** を開く。
+2. 直前の正常な Production デプロイを選ぶ → **⋯ → Promote to Production**。
+   - CLI 代替: `vercel promote <前デプロイのURL>`。
+3. 公開URLが前版に戻ったことを `curl` で確認（200＋既知マーカー `cc-v2 monorepo`）。
+
+前提: Vercel 連携が済んでいること（G-2-1）。連携前はこの手順は机上定義であり、実行検証（前版へ実際に戻せる）は G-4-2 の2つ目の条件で別途行う。
+
 ## この案件固有のルール / メモ
 
 - `any` は原則禁止（避けられない場合は理由をコメント）。
