@@ -117,8 +117,8 @@
 {
   "meta": {
     "title": "ロードマップ",
-    "active": "G-2-1",
-    "next": "G-1(動く)は完了：G-1-1(土台/機械の審判 6/6)＋G-1-2(起動スモーク＝CIで build→next start→curl 200＋'cc-v2 monorepo'、evidence=actions/runs/29792594971)。次の一手=G-2-1 デプロイ経路の確立(Vercel連携・Root=apps/web・main pushで本番へ1回デプロイ、evidence=デプロイID)→G-2-2 公開URLで 200＋マーカー。以降 G-3-3/3-4・G-4・G-5・G-6 は未達。基準変更は master 承認、done判定はCI/独立subagent。ゴール=このリポからアプリを本番運用できる環境にする。",
+    "active": "G-3",
+    "next": "G-1(動く)完了・G-2(公開)達成: Vercel連携済、本番=https://cc-v2-web.vercel.app、G-2-2 evidence=actions/runs/29810085456(prod-smoke green 200+marker)、G-2-1c1 evidence=本番URL。リポを public 化しG-3-3c1 CodeQL を CI導入 evidence=actions/runs/29810085334(green・alert0はSecurityタブ目視で最終確認待ち)。製品決定(master承認 evidence=6f10a2d): 認証不要/DB不要/監視=Vercelログ+HC/コスト=無料枠。★残り: (a)master のGitHub設定→G-3-1-c(secret scanning+push protection 有効化)・G-4-4c2(main ruleset作成、public化で強制可)。(b)Vercel連携後の実行検証→G-3-3c2(HSTS: 現状Vercel既定で未付与→ヘッダ設定が要る)・G-4-1c2(失敗ログ)・G-4-2c2(前版Promote実演)・G-4-3(再現デプロイ)。(c)作業ブランチ claude/a-5ftn7c を main へマージすると vercel.json 等が本番反映。基準変更は master 承認、done判定はCI/独立subagent。ゴール=このリポからアプリを本番運用できる環境にする。",
     "updated": "2026-07-21"
   },
   "nodes": [
@@ -147,13 +147,13 @@
           "children":[
             { "id":"G-2-1", "kind":"state", "theme":"デプロイ経路が確立", "meaning":"本番へ公開する手段がある", "detail":"Vercel 連携（設定はコードに固定）",
               "criteria":[
-                { "text":"main への push で本番へ1回デプロイ完了", "verify":"Vercel デプロイが Ready、デプロイIDが発行（デプロイID）", "evidence":"" },
+                { "text":"main への push で本番へ1回デプロイ完了", "verify":"Vercel デプロイが Ready、デプロイIDが発行（デプロイID）", "evidence":"https://cc-v2-web.vercel.app" },
                 { "text":"デプロイ設定がコードに固定", "verify":"vercel.json か apps/web/AGENTS.md に本番設定(Root=apps/web)が記載され実デプロイと一致", "evidence":"" }
               ]
             },
             { "id":"G-2-2", "kind":"state", "theme":"公開URLで動作", "meaning":"本番URLで実際に開ける", "detail":"主要フロー＝トップページ描画成功を具体化",
               "criteria":[
-                { "text":"本番URLでトップページが 200＋既知マーカーを返す", "verify":"curl -sS -w '%{http_code}' https://<prod> が 200 かつ本文に 'cc-v2 monorepo' を含む（公開URL＝第三者が叩ける外部事実）", "evidence":"" }
+                { "text":"本番URLでトップページが 200＋既知マーカーを返す", "verify":"curl -sS -w '%{http_code}' https://<prod> が 200 かつ本文に 'cc-v2 monorepo' を含む（公開URL＝第三者が叩ける外部事実）", "evidence":"https://github.com/rahiseko-alt/cc-v2/actions/runs/29810085456" }
               ]
             }
           ]
@@ -187,13 +187,13 @@
             },
             { "id":"G-3-3", "kind":"state", "theme":"静的解析とTLS", "meaning":"コード脆弱性・設定ミス・平文を防ぐ", "detail":"OWASP A05 / CodeQL / TLS",
               "criteria":[
-                { "text":"CodeQL 等の静的解析がCIで自動実行", "verify":"GitHub code scanning(CodeQL) が緑で alert 0（run/alert URL）", "evidence":"" },
+                { "text":"CodeQL 等の静的解析がCIで自動実行", "verify":"GitHub code scanning(CodeQL) が緑で alert 0（run/alert URL）", "evidence":"https://github.com/rahiseko-alt/cc-v2/actions/runs/29810085334" },
                 { "text":"本番が TLS＋最小セキュリティヘッダ", "verify":"本番URLが https で、curl -I 応答に Strict-Transport-Security を含む（外部事実）", "evidence":"" }
               ]
             },
             { "id":"G-3-4", "kind":"state", "theme":"認証/認可（未定→確定）", "meaning":"要否を決め、採用時は保護が効く", "detail":"未定を放置しない。採用時のみ本番criteriaを開く（遅延展開）",
               "criteria":[
-                { "text":"認証/認可の要否を確定記載（未定にしない）", "verify":"apps/web/AGENTS.md の『認証』行が『未定』でなく『不要(理由)』または採用方式で確定（commit SHA）", "evidence":"" },
+                { "text":"認証/認可の要否を確定記載（未定にしない）", "verify":"apps/web/AGENTS.md の『認証』行が『未定』でなく『不要(理由)』または採用方式で確定（commit SHA）", "evidence":"6f10a2d" },
                 { "text":"[採用時のみ] 保護対象が未認証で拒否", "verify":"保護ルートへ未認証アクセスが 401/403（公開URLの外部事実）", "evidence":"" }
               ]
             }
@@ -203,13 +203,13 @@
           "children":[
             { "id":"G-4-1", "kind":"state", "theme":"異常に気づける（可観測性）", "meaning":"落ちたら分かる", "detail":"監視手段を確定（未選定にしない）",
               "criteria":[
-                { "text":"監視/ログ手段を確定記載（未定にしない）", "verify":"apps/web/AGENTS.md の可観測性行が確定（例: Vercel ログ＋ヘルスチェック）（commit SHA）", "evidence":"" },
+                { "text":"監視/ログ手段を確定記載（未定にしない）", "verify":"apps/web/AGENTS.md の可観測性行が確定（例: Vercel ログ＋ヘルスチェック）（commit SHA）", "evidence":"6f10a2d" },
                 { "text":"意図的失敗が監視/ログに1件現れる", "verify":"既知の失敗(500ルート等)を1回起こし Vercel ログにそのイベントが現れる（ログID/URL）", "evidence":"" }
               ]
             },
             { "id":"G-4-2", "kind":"state", "theme":"戻せる（ロールバック）", "meaning":"壊れても前に戻せる", "detail":"手順を先に文書化し循環を断つ",
               "criteria":[
-                { "text":"ロールバック手順が先に文書として定義", "verify":"apps/web/AGENTS.md か docs に手順(Vercel: 前デプロイを Promote)が記載（commit SHA）", "evidence":"" },
+                { "text":"ロールバック手順が先に文書として定義", "verify":"apps/web/AGENTS.md か docs に手順(Vercel: 前デプロイを Promote)が記載（commit SHA）", "evidence":"60b1289" },
                 { "text":"前版へ実際に戻せる", "verify":"現行を壊す→前デプロイを Promote→公開URLが前版に戻る（デプロイID＋curl の外部事実）", "evidence":"" }
               ]
             },
@@ -220,7 +220,7 @@
             },
             { "id":"G-4-4", "kind":"state", "theme":"コストとアクセス制御", "meaning":"費用を制御し・誰がデプロイ/秘密に触れるか限定", "detail":"WAコスト / アクセス制御・監査",
               "criteria":[
-                { "text":"コスト上限/アラートの要否を確定記載", "verify":"apps/web/AGENTS.md にコスト方針(Vercel 無料枠＋上限 or N/A理由)を確定（commit SHA）", "evidence":"" },
+                { "text":"コスト上限/アラートの要否を確定記載", "verify":"apps/web/AGENTS.md にコスト方針(Vercel 無料枠＋上限 or N/A理由)を確定（commit SHA）", "evidence":"6f10a2d" },
                 { "text":"本番デプロイ主体が限定（監査可能）", "verify":"GitHub ブランチ保護(main 直push禁止・レビュー必須)が有効（設定URL＝外部事実）", "evidence":"" }
               ]
             }
@@ -228,13 +228,13 @@
         },
         { "id":"G-5", "kind":"state", "theme":"データを失わない（未定→確定）", "meaning":"永続データの要否を決め、持つなら復元・整合できる", "detail":"WA信頼性(backup) / 12-Factor backing services。現状 DB 未定",
           "criteria":[
-            { "text":"永続データ/DB の要否を確定記載（未定にしない）", "verify":"apps/web/AGENTS.md の DB 行が『未定』でなく『不要(ステートレス理由)』または採用DB＋バックアップ方針で確定（commit SHA）", "evidence":"" },
+            { "text":"永続データ/DB の要否を確定記載（未定にしない）", "verify":"apps/web/AGENTS.md の DB 行が『未定』でなく『不要(ステートレス理由)』または採用DB＋バックアップ方針で確定（commit SHA）", "evidence":"6f10a2d" },
             { "text":"[DB採用時のみ] バックアップから復元でき整合する", "verify":"バックアップ取得→復元→データ一致（スナップショットID/復元ログ＝外部事実）", "evidence":"" }
           ]
         },
         { "id":"G-6", "kind":"state", "theme":"性能・持続可能性（現段階N/A明示）", "meaning":"性能SLO/可用性/持続可能性の要否を隠さず明示", "detail":"WA性能効率/持続可能性。黙って落とさない（欠落の非明示を防ぐ）",
           "criteria":[
-            { "text":"性能SLO/可用性/持続可能性の要件有無を確定記載", "verify":"apps/web/AGENTS.md に『1ページscaffold・低トラフィックのため SLO/可用性/持続可能性は現段階N/A、閾値超過時に再評価』と記録（commit SHA）", "evidence":"" }
+            { "text":"性能SLO/可用性/持続可能性の要件有無を確定記載", "verify":"apps/web/AGENTS.md に『1ページscaffold・低トラフィックのため SLO/可用性/持続可能性は現段階N/A、閾値超過時に再評価』と記録（commit SHA）", "evidence":"60b1289" }
           ]
         }
       ]
