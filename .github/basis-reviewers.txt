@@ -1,17 +1,15 @@
-# 基準変更PR（docs/roadmap.html / AGENTS.md 系）に必須の「別系統2AI」レビュアー。
-# GitHub ログインを1行に1つ。ここに書いた全員の APPROVED が現HEADに揃うまで
-# basis-gate は緑にならない（fail-closed＝安全側）。
+# basis-gate が「現HEADでの判定」を必須とする GitHub ログイン（1行1つ）。
 #
-# 使い方:
-#   Claude と Codex が PR を承認する時の GitHub アカウント名（bot/ユーザーのログイン）を
-#   確認し、下のプレースホルダを実ログインに置き換える。
-#   置き換えるまで、基準変更PRの basis-gate は赤のまま（＝設定漏れで門が素通りしない）。
+# 運用(2)：
+#   - 第2の目 … 独立サブエージェント basis-reviewer が敵対的にレビューし、反証を平易言語で出す
+#                （.claude/agents/basis-reviewer.md）。生の反証は PR に記録として残す。
+#   - マスター … 第2の目の反証を読んだ上で、この承認を出す（＝門の実体）。
+# よって機械が必須とする判定者は「マスター1名」。第2の目の反証対応は人間の規律に委ねる
+#   （サブエージェントは独立 bot 身元を持てないため機械照合しない）。
 #
-# 例:
-#   claude-app[bot]
-#   chatgpt-codex-connector[bot]
+# 将来：別ベンダの bot（例 @codex review / Gemini Code Assist）を第2の目に格上げする場合、
+#   その bot のログインをここに足すだけで basis-gate がその bot の反証/承認を機械照合する。
 #
 # 行頭 # はコメント。空行は無視。
 
-REPLACE_WITH_CLAUDE_LOGIN
-REPLACE_WITH_CODEX_LOGIN
+rahiseko-alt
