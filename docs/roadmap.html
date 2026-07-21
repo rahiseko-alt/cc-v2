@@ -117,8 +117,8 @@
 {
   "meta": {
     "title": "ロードマップ",
-    "active": "G-2-1",
-    "next": "G-1(動く)完了。今セッション: G-2-1 criterion2(デプロイ設定コード固定=apps/web/vercel.json)を追加、G-6(性能/可用性/持続可能性N/A明示 evidence=60b1289)・G-4-2 criterion1(ロールバック手順文書化 evidence=60b1289)を達成。★外部ブロック待ち: (a)G-2-1 criterion1/G-2-2/G-3-3-c2/G-4-1-c2/G-4-2-c2/G-4-3/G-5-c2 は Vercel連携(master のダッシュボードOAuth→デプロイID)が前提。(b)G-3-1-c push protection と G-4-4-c2 branch保護 は GitHub設定(master)。(c)G-3-3-c1 CodeQL は private リポのため GHAS(課金)が前提。製品決定(master承認済 evidence=6f10a2d): G-3-4認証=不要/G-5 DB=不要(ステートレス)/G-4-1監視=Vercelログ+ヘルスチェック/G-4-4コスト=Vercel無料枠 を確定。残る各枝の2つ目条件(実行検証)は Vercel連携後。基準変更は master 承認、done判定はCI/独立subagent。ゴール=このリポからアプリを本番運用できる環境にする。",
+    "active": "G-3",
+    "next": "G-1(動く)完了・G-2(公開)達成: Vercel連携済、本番=https://cc-v2-web.vercel.app、G-2-2 evidence=actions/runs/29810085456(prod-smoke green 200+marker)、G-2-1c1 evidence=本番URL。リポを public 化しG-3-3c1 CodeQL を CI導入 evidence=actions/runs/29810085334(green・alert0はSecurityタブ目視で最終確認待ち)。製品決定(master承認 evidence=6f10a2d): 認証不要/DB不要/監視=Vercelログ+HC/コスト=無料枠。★残り: (a)master のGitHub設定→G-3-1-c(secret scanning+push protection 有効化)・G-4-4c2(main ruleset作成、public化で強制可)。(b)Vercel連携後の実行検証→G-3-3c2(HSTS: 現状Vercel既定で未付与→ヘッダ設定が要る)・G-4-1c2(失敗ログ)・G-4-2c2(前版Promote実演)・G-4-3(再現デプロイ)。(c)作業ブランチ claude/a-5ftn7c を main へマージすると vercel.json 等が本番反映。基準変更は master 承認、done判定はCI/独立subagent。ゴール=このリポからアプリを本番運用できる環境にする。",
     "updated": "2026-07-21"
   },
   "nodes": [
@@ -147,13 +147,13 @@
           "children":[
             { "id":"G-2-1", "kind":"state", "theme":"デプロイ経路が確立", "meaning":"本番へ公開する手段がある", "detail":"Vercel 連携（設定はコードに固定）",
               "criteria":[
-                { "text":"main への push で本番へ1回デプロイ完了", "verify":"Vercel デプロイが Ready、デプロイIDが発行（デプロイID）", "evidence":"" },
+                { "text":"main への push で本番へ1回デプロイ完了", "verify":"Vercel デプロイが Ready、デプロイIDが発行（デプロイID）", "evidence":"https://cc-v2-web.vercel.app" },
                 { "text":"デプロイ設定がコードに固定", "verify":"vercel.json か apps/web/AGENTS.md に本番設定(Root=apps/web)が記載され実デプロイと一致", "evidence":"" }
               ]
             },
             { "id":"G-2-2", "kind":"state", "theme":"公開URLで動作", "meaning":"本番URLで実際に開ける", "detail":"主要フロー＝トップページ描画成功を具体化",
               "criteria":[
-                { "text":"本番URLでトップページが 200＋既知マーカーを返す", "verify":"curl -sS -w '%{http_code}' https://<prod> が 200 かつ本文に 'cc-v2 monorepo' を含む（公開URL＝第三者が叩ける外部事実）", "evidence":"" }
+                { "text":"本番URLでトップページが 200＋既知マーカーを返す", "verify":"curl -sS -w '%{http_code}' https://<prod> が 200 かつ本文に 'cc-v2 monorepo' を含む（公開URL＝第三者が叩ける外部事実）", "evidence":"https://github.com/rahiseko-alt/cc-v2/actions/runs/29810085456" }
               ]
             }
           ]
@@ -187,7 +187,7 @@
             },
             { "id":"G-3-3", "kind":"state", "theme":"静的解析とTLS", "meaning":"コード脆弱性・設定ミス・平文を防ぐ", "detail":"OWASP A05 / CodeQL / TLS",
               "criteria":[
-                { "text":"CodeQL 等の静的解析がCIで自動実行", "verify":"GitHub code scanning(CodeQL) が緑で alert 0（run/alert URL）", "evidence":"" },
+                { "text":"CodeQL 等の静的解析がCIで自動実行", "verify":"GitHub code scanning(CodeQL) が緑で alert 0（run/alert URL）", "evidence":"https://github.com/rahiseko-alt/cc-v2/actions/runs/29810085334" },
                 { "text":"本番が TLS＋最小セキュリティヘッダ", "verify":"本番URLが https で、curl -I 応答に Strict-Transport-Security を含む（外部事実）", "evidence":"" }
               ]
             },
