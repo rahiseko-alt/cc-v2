@@ -117,9 +117,9 @@
 {
   "meta": {
     "title": "ロードマップ",
-    "active": "G-1-2",
-    "next": "G-1-1(土台と機械の審判)は6/6 done：CI緑(typecheck/lint〔ui本物〕/test/build/audit/evidenceリンタ)・実テスト・全lint本物・postcssのmoderate解消・.env.exampleを外部事実で充足。次の一手=G-1-2 起動スモーク(CIで build→next start→curl 200＋'cc-v2 monorepo')。以降 G-2(公開/Vercel)・G-3-3/3-4・G-4・G-5・G-6 は未達。基準変更は master 承認、done判定はCI/独立subagent。ゴール=このリポからアプリを本番運用できる環境にする。",
-    "updated": "2026-07-20"
+    "active": "G-2-1",
+    "next": "G-1(動く)は完了：G-1-1(土台/機械の審判 6/6)＋G-1-2(起動スモーク＝CIで build→next start→curl 200＋'cc-v2 monorepo'、evidence=actions/runs/29792594971)。次の一手=G-2-1 デプロイ経路の確立(Vercel連携・Root=apps/web・main pushで本番へ1回デプロイ、evidence=デプロイID)→G-2-2 公開URLで 200＋マーカー。以降 G-3-3/3-4・G-4・G-5・G-6 は未達。基準変更は master 承認、done判定はCI/独立subagent。ゴール=このリポからアプリを本番運用できる環境にする。",
+    "updated": "2026-07-21"
   },
   "nodes": [
     { "id":"G", "kind":"state", "theme":"ゴール：アプリを本番運用できる環境にする", "meaning":"動かし・公開し・安全に・継続運用でき・データを失わない", "detail":"最上位＝最終到達状態。子＝必要十分条件（各々が必要・合わせて十分）。Well-Architected/12-Factor/OWASP を被覆。未確定枝は『未定を明記した state』として置き着手時に手順展開（遅延展開）",
@@ -138,7 +138,7 @@
             },
             { "id":"G-1-2", "kind":"state", "theme":"起動スモーク", "meaning":"ビルド後に実際に起動しトップページが返る", "detail":"到達性は外部事実(HTTP 200＋本文マーカー)で縛る。スクショにしない",
               "criteria":[
-                { "text":"web がビルド後に起動し 200＋既知マーカーを返す", "verify":"CIスモークで build→next start→curl -sf localhost:3000 が 200 かつ本文に 'cc-v2 monorepo' を含む（CI run URL）", "evidence":"" }
+                { "text":"web がビルド後に起動し 200＋既知マーカーを返す", "verify":"CIスモークで build→next start→curl -sf localhost:3000 が 200 かつ本文に 'cc-v2 monorepo' を含む（CI run URL）", "evidence":"actions/runs/29792594971" }
               ]
             }
           ]
