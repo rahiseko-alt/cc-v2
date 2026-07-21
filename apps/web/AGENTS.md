@@ -14,10 +14,10 @@ Next.js（App Router）の Web アプリ。共有 UI は `@repo/ui`（`packages/
 - フレームワーク: Next.js 15（App Router） + React 19
 - パッケージ / 依存管理: pnpm（workspace）
 - スタイル: Tailwind CSS v4
-- DB / データアクセス: 未定
-- 認証: 未定
+- DB / データアクセス: 不要（ステートレス構成。永続データを持たないため。採用時に再評価）
+- 認証: 不要（公開の静的トップページのみ・保護対象リソースなし。採用時に再評価）
 - IaC / デプロイ: Vercel（main へ push で自動デプロイ、Root Directory = `apps/web`）。ビルド設定は `apps/web/vercel.json` に固定（framework=nextjs / install=`pnpm install --frozen-lockfile` / build=`pnpm --filter web build` / output=`.next`）
-- テスト: 未定
+- テスト: Vitest（`apps/web/tests`、CI で実行）
 - Lint / フォーマッタ: ESLint（flat config）
 
 ## コマンド
@@ -33,6 +33,15 @@ Next.js（App Router）の Web アプリ。共有 UI は `@repo/ui`（`packages/
 ### 性能 / 可用性 / 持続可能性（G-6）
 
 - 1ページscaffold・低トラフィックのため SLO/可用性/持続可能性は現段階N/A、閾値超過時に再評価。
+
+### 可観測性 / 監視・ログ（G-4-1）
+
+- Vercel ログ（Deployment/Runtime ログ）＋ヘルスチェック（トップページの 200 監視）で確定。
+- 異常検知の確認: 意図的失敗（500 ルート等）を1回起こし、Vercel ログにそのイベントが現れることで検証（連携後）。
+
+### コスト方針（G-4-4）
+
+- 現段階は Vercel Hobby（無料枠）運用・課金上限/アラート設定なしで確定。有料化検討時に上限・アラートを再評価。
 
 ### ロールバック手順（G-4-2）
 
