@@ -160,11 +160,23 @@
         },
         { "id":"G-3", "kind":"state", "theme":"安全", "meaning":"シークレット・依存・設定が安全に扱える", "detail":"OWASP Secrets/A05/A06 ・ 12-Factor config ・ WAセキュリティ",
           "children":[
-            { "id":"G-3-1", "kind":"state", "theme":"設定とシークレットの分離", "meaning":"機密が漏れない・env で注入", "detail":"12-Factor config / OWASP Secrets",
-              "criteria":[
-                { "text":"シークレットが未コミットで env 注入", "verify":"git ls-files に .env* が0件、.gitignore が .env* を除外（commit SHA）", "evidence":"71b83a5" },
-                { "text":"必要な環境変数が .env.example に宣言的に列挙", "verify":"apps/web/.env.example が存在し参照 env キー方針を記載（commit SHA）", "evidence":"38e6919" },
-                { "text":"secret scanning が自動有効", "verify":"GitHub secret scanning＋push protection 有効（設定URL）", "evidence":"" }
+            { "id":"G-3-1", "kind":"state", "theme":"秘密の鍵がリポジトリから漏れない", "meaning":"漏れたら事故になる鍵/パスワードを、載せない・見本化・自動ブロックの3重で守る", "detail":"12-Factor config / OWASP Secrets（根拠。監査は下の子の平易な説明で足りる）",
+              "children":[
+                { "id":"G-3-1-a", "kind":"state", "theme":"鍵がうっかり Git に載っていない", "meaning":"パスワードや鍵がリポジトリに1つも含まれない", "detail":"OWASP Secrets",
+                  "criteria":[
+                    { "text":"追跡ファイルに .env* が0件（＝鍵ファイル未コミット）", "verify":"git ls-files に .env* が0件 かつ .gitignore が .env* を除外（commit SHA）", "evidence":"71b83a5" }
+                  ]
+                },
+                { "id":"G-3-1-b", "kind":"state", "theme":"必要な設定が見本ファイルに列挙され新環境で迷わない", "meaning":"どの環境変数が要るかが .env.example を見れば分かる", "detail":"12-Factor config",
+                  "criteria":[
+                    { "text":"必須の環境変数キーが .env.example に全て列挙されている", "verify":"apps/web/.env.example が存在し参照 env キーを宣言的に列挙（commit SHA）", "evidence":"38e6919" }
+                  ]
+                },
+                { "id":"G-3-1-c", "kind":"state", "theme":"誤って push しても GitHub が自動で止める", "meaning":"鍵を含むコミットの push が自動でブロックされる", "detail":"OWASP Secrets / push protection",
+                  "criteria":[
+                    { "text":"secret scanning と push protection が有効", "verify":"リポジトリ設定で GitHub secret scanning＋push protection が有効（設定URL）", "evidence":"" }
+                  ]
+                }
               ]
             },
             { "id":"G-3-2", "kind":"state", "theme":"脆弱依存ゲート", "meaning":"既知脆弱性で止まる", "detail":"OWASP A06",
