@@ -118,7 +118,7 @@
   "meta": {
     "title": "ロードマップ",
     "active": "G-2-1",
-    "next": "G-1(動く)完了。今セッション: G-2-1 criterion2(デプロイ設定コード固定=apps/web/vercel.json)を追加、G-6(性能/可用性/持続可能性N/A明示 evidence=60b1289)・G-4-2 criterion1(ロールバック手順文書化 evidence=60b1289)を達成。★外部ブロック待ち: (a)G-2-1 criterion1/G-2-2/G-3-3-c2/G-4-1-c2/G-4-2-c2/G-4-3/G-5-c2 は Vercel連携(master のダッシュボードOAuth→デプロイID)が前提。(b)G-3-1-c push protection と G-4-4-c2 branch保護 は GitHub設定(master)。(c)G-3-3-c1 CodeQL は private リポのため GHAS(課金)が前提。★master判断待ち(製品決定): G-3-4認証要否/G-4-1監視手段/G-4-4コスト方針/G-5 DB要否 の『未定→確定』。基準変更は master 承認、done判定はCI/独立subagent。ゴール=このリポからアプリを本番運用できる環境にする。",
+    "next": "G-1(動く)完了。今セッション: G-2-1 criterion2(デプロイ設定コード固定=apps/web/vercel.json)を追加、G-6(性能/可用性/持続可能性N/A明示 evidence=60b1289)・G-4-2 criterion1(ロールバック手順文書化 evidence=60b1289)を達成。★外部ブロック待ち: (a)G-2-1 criterion1/G-2-2/G-3-3-c2/G-4-1-c2/G-4-2-c2/G-4-3/G-5-c2 は Vercel連携(master のダッシュボードOAuth→デプロイID)が前提。(b)G-3-1-c push protection と G-4-4-c2 branch保護 は GitHub設定(master)。(c)G-3-3-c1 CodeQL は private リポのため GHAS(課金)が前提。製品決定(master承認済 evidence=6f10a2d): G-3-4認証=不要/G-5 DB=不要(ステートレス)/G-4-1監視=Vercelログ+ヘルスチェック/G-4-4コスト=Vercel無料枠 を確定。残る各枝の2つ目条件(実行検証)は Vercel連携後。基準変更は master 承認、done判定はCI/独立subagent。ゴール=このリポからアプリを本番運用できる環境にする。",
     "updated": "2026-07-21"
   },
   "nodes": [
@@ -193,7 +193,7 @@
             },
             { "id":"G-3-4", "kind":"state", "theme":"認証/認可（未定→確定）", "meaning":"要否を決め、採用時は保護が効く", "detail":"未定を放置しない。採用時のみ本番criteriaを開く（遅延展開）",
               "criteria":[
-                { "text":"認証/認可の要否を確定記載（未定にしない）", "verify":"apps/web/AGENTS.md の『認証』行が『未定』でなく『不要(理由)』または採用方式で確定（commit SHA）", "evidence":"" },
+                { "text":"認証/認可の要否を確定記載（未定にしない）", "verify":"apps/web/AGENTS.md の『認証』行が『未定』でなく『不要(理由)』または採用方式で確定（commit SHA）", "evidence":"6f10a2d" },
                 { "text":"[採用時のみ] 保護対象が未認証で拒否", "verify":"保護ルートへ未認証アクセスが 401/403（公開URLの外部事実）", "evidence":"" }
               ]
             }
@@ -203,7 +203,7 @@
           "children":[
             { "id":"G-4-1", "kind":"state", "theme":"異常に気づける（可観測性）", "meaning":"落ちたら分かる", "detail":"監視手段を確定（未選定にしない）",
               "criteria":[
-                { "text":"監視/ログ手段を確定記載（未定にしない）", "verify":"apps/web/AGENTS.md の可観測性行が確定（例: Vercel ログ＋ヘルスチェック）（commit SHA）", "evidence":"" },
+                { "text":"監視/ログ手段を確定記載（未定にしない）", "verify":"apps/web/AGENTS.md の可観測性行が確定（例: Vercel ログ＋ヘルスチェック）（commit SHA）", "evidence":"6f10a2d" },
                 { "text":"意図的失敗が監視/ログに1件現れる", "verify":"既知の失敗(500ルート等)を1回起こし Vercel ログにそのイベントが現れる（ログID/URL）", "evidence":"" }
               ]
             },
@@ -220,7 +220,7 @@
             },
             { "id":"G-4-4", "kind":"state", "theme":"コストとアクセス制御", "meaning":"費用を制御し・誰がデプロイ/秘密に触れるか限定", "detail":"WAコスト / アクセス制御・監査",
               "criteria":[
-                { "text":"コスト上限/アラートの要否を確定記載", "verify":"apps/web/AGENTS.md にコスト方針(Vercel 無料枠＋上限 or N/A理由)を確定（commit SHA）", "evidence":"" },
+                { "text":"コスト上限/アラートの要否を確定記載", "verify":"apps/web/AGENTS.md にコスト方針(Vercel 無料枠＋上限 or N/A理由)を確定（commit SHA）", "evidence":"6f10a2d" },
                 { "text":"本番デプロイ主体が限定（監査可能）", "verify":"GitHub ブランチ保護(main 直push禁止・レビュー必須)が有効（設定URL＝外部事実）", "evidence":"" }
               ]
             }
@@ -228,7 +228,7 @@
         },
         { "id":"G-5", "kind":"state", "theme":"データを失わない（未定→確定）", "meaning":"永続データの要否を決め、持つなら復元・整合できる", "detail":"WA信頼性(backup) / 12-Factor backing services。現状 DB 未定",
           "criteria":[
-            { "text":"永続データ/DB の要否を確定記載（未定にしない）", "verify":"apps/web/AGENTS.md の DB 行が『未定』でなく『不要(ステートレス理由)』または採用DB＋バックアップ方針で確定（commit SHA）", "evidence":"" },
+            { "text":"永続データ/DB の要否を確定記載（未定にしない）", "verify":"apps/web/AGENTS.md の DB 行が『未定』でなく『不要(ステートレス理由)』または採用DB＋バックアップ方針で確定（commit SHA）", "evidence":"6f10a2d" },
             { "text":"[DB採用時のみ] バックアップから復元でき整合する", "verify":"バックアップ取得→復元→データ一致（スナップショットID/復元ログ＝外部事実）", "evidence":"" }
           ]
         },
