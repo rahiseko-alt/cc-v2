@@ -210,7 +210,7 @@
             { "id":"G-4-2", "kind":"state", "theme":"戻せる（ロールバック）", "meaning":"壊れても前に戻せる", "detail":"手順を先に文書化し循環を断つ",
               "criteria":[
                 { "text":"ロールバック手順が先に文書として定義", "verify":"apps/web/AGENTS.md か docs に手順(Vercel: 前デプロイを Promote)が記載（commit SHA）", "evidence":"60b1289" },
-                { "text":"前版へ実際に戻せる", "verify":"現行を壊す→前デプロイを Promote→公開URLが前版に戻る（デプロイID＋curl の外部事実）", "evidence":"" }
+                { "text":"前版へ実際に戻せる", "verify":"現行を壊す→前デプロイを Promote→公開URLが前版に戻る（デプロイID＋curl の外部事実）", "evidence":"https://vercel.com/rahisekos-projects/cc-v2-web/FurU9bwsZaP8E2WSYBuf8HPrRgae" }
               ]
             },
             { "id":"G-4-3", "kind":"state", "theme":"再現デプロイ", "meaning":"同じ手順で何度でも同結果", "detail":"同一性を配信 commit SHA 一致で定義（アプリ改修に依存しない）",
