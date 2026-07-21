@@ -118,7 +118,7 @@
   "meta": {
     "title": "ロードマップ",
     "active": "G",
-    "next": "★基準変更(要マスター承認)：第2の目(basis-reviewer)が『言語化層に束ね葉あり＝1葉1事実違反』を反証。束ね葉を atomic に分割し2 theme を平易化(束ね→2葉)。分割対象=G-1-1c1/G-3-1-a/G-3-1-c/G-3-3c2/G-4-4c2、平易化=G-3-2/G-3-3 theme。各分割葉は既存外部事実で独立立証済み(evidence 全枠充填・リンタ緑)なので完遂は維持。マスターが diff を承認したら門が緑。本番=https://cc-v2-web.vercel.app。次フェーズ(別ミッション)=アプリの中身。",
+    "next": "★基準変更(要マスター承認)を2件積んだ。(1)言語化層の束ね葉を atomic 分割＋2 theme 平易化(G-1-1c1/G-3-1-a/G-3-1-c/G-3-3c2/G-4-4c2, theme=G-3-2/G-3-3)。(2)環境分類の欠落を是正: G-2-3『今ある環境を正直に区分（多層化は今回保留）』を追加。3層構築は省略し、実在3面(sandbox=ローカル/CI, preview=Vercel自動, prod=単一本番)を AGENTS.md に台帳化、専用staging/層別configは今回省略＋理由＋再評価条件を明示(欠落の非明示を解消)。evidence=2b0fb55(当該節を実際に含む)。criteria 34件・リンタ緑。マスターが diff を承認したら門が緑。本番=https://cc-v2-web.vercel.app。",
     "updated": "2026-07-21"
   },
   "nodes": [
@@ -159,8 +159,8 @@
             },
             { "id":"G-2-3", "kind":"state", "theme":"今ある環境を正直に区分（多層化は今回保留）", "meaning":"動いている環境がどれか隠さず台帳化し、やらない多層化も理由付きで明示する", "detail":"12-Factor dev-prod parity。実在3面(sandbox=ローカル/CI, preview=Vercel自動, prod=単一本番)を分類。専用staging/層別config分離は今回省略(欠落の非明示を防ぐ)",
               "criteria":[
-                { "text":"実在する環境(ローカル/CI・Vercel preview・本番)が区分され台帳化", "verify":"apps/web/AGENTS.md『環境の区分』節が sandbox/preview/prod の3面を定義（commit SHA）", "evidence":"" },
-                { "text":"未実施の多層化(専用staging・層別config分離)を『今回省略＋理由＋再評価条件』と明示", "verify":"同節に省略対象・理由(1ページ静的/保護資源なし)・再評価トリガ(API/認証/DB導入時)が記載（commit SHA）", "evidence":"" }
+                { "text":"実在する環境(ローカル/CI・Vercel preview・本番)が区分され台帳化", "verify":"apps/web/AGENTS.md『環境の区分』節が sandbox/preview/prod の3面を定義（commit SHA）", "evidence":"2b0fb55" },
+                { "text":"未実施の多層化(専用staging・層別config分離)を『今回省略＋理由＋再評価条件』と明示", "verify":"同節に省略対象・理由(1ページ静的/保護資源なし)・再評価トリガ(API/認証/DB導入時)が記載（commit SHA）", "evidence":"2b0fb55" }
               ]
             }
           ]
