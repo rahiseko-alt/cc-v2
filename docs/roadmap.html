@@ -148,7 +148,7 @@
             { "id":"G-2-1", "kind":"state", "theme":"デプロイ経路が確立", "meaning":"本番へ公開する手段がある", "detail":"Vercel 連携（設定はコードに固定）",
               "criteria":[
                 { "text":"main への push で本番へ1回デプロイ完了", "verify":"Vercel デプロイが Ready、デプロイIDが発行（デプロイID）", "evidence":"https://cc-v2-web.vercel.app" },
-                { "text":"デプロイ設定がコードに固定", "verify":"vercel.json か apps/web/AGENTS.md に本番設定(Root=apps/web)が記載され実デプロイと一致", "evidence":"" }
+                { "text":"デプロイ設定がコードに固定", "verify":"vercel.json か apps/web/AGENTS.md に本番設定(Root=apps/web)が記載され実デプロイと一致", "evidence":"2f3fe6b" }
               ]
             },
             { "id":"G-2-2", "kind":"state", "theme":"公開URLで動作", "meaning":"本番URLで実際に開ける", "detail":"主要フロー＝トップページ描画成功を具体化",
@@ -380,7 +380,11 @@
   }
 
   function critProgress(node){
-    var arr = node.criteria || [];
+    // "[採用時のみ]"/"[DB採用時のみ]" 等、text が "[" で始まる条件付き criteria は
+    // その条件を採用するまでゲート対象外（N/A）＝分母・分子の両方から除外する（遅延展開）。
+    var arr = (node.criteria || []).filter(function(c){
+      return !/^\s*\[/.test(String(c.text || ''));
+    });
     var done = arr.filter(function(c){ return c.evidence && String(c.evidence).trim() !== ''; }).length;
     return { done: done, total: arr.length };
   }
