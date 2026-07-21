@@ -16,7 +16,7 @@ Next.js（App Router）の Web アプリ。共有 UI は `@repo/ui`（`packages/
 - スタイル: Tailwind CSS v4
 - DB / データアクセス: 未定
 - 認証: 未定
-- IaC / デプロイ: Vercel（main へ push で自動デプロイ、Root Directory = `apps/web`）
+- IaC / デプロイ: Vercel（main へ push で自動デプロイ、Root Directory = `apps/web`）。ビルド設定は `apps/web/vercel.json` に固定（framework=nextjs / install=`pnpm install --frozen-lockfile` / build=`pnpm --filter web build` / output=`.next`）
 - テスト: 未定
 - Lint / フォーマッタ: ESLint（flat config）
 
