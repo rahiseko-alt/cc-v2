@@ -117,8 +117,8 @@
 {
   "meta": {
     "title": "ロードマップ",
-    "active": "G-3",
-    "next": "G-1〜G-3 完了・G-2公開達成。本番=https://cc-v2-web.vercel.app。今セッションで evidence 反映済: G-2-1/G-2-2、G-3-1-c(secret scanning+push protection)、G-3-3c1 CodeQL(alert0確認済 run=29810085334)/c2 HSTS(prod-smoke green run=29813326981)、G-4-4c2 ブランチ保護ruleset(19367615)、製品決定(認証/DB/監視/コスト=6f10a2d)、G-6/G-4-2c1。PR#11を main にマージ済(本番へHSTS反映)。G-4-2c2(ロールバック実演)/G-4-3(再現デプロイ) を Vercel で実演し evidence 反映済。③Promoteで本番を最新へ復帰。★残り1件=G-4-1c2(意図的失敗がVercelログに現れる→ログURL/ID)のみ。これが揃えば完遂。未反映分は branch claude/a-5ftn7c(要最終PR)。基準変更は master 承認、done判定はCI/独立subagent。ゴール=このリポからアプリを本番運用できる環境にする。",
+    "active": "G",
+    "next": "★全 criteria に evidence 充填＝ロードマップ完遂（PR#12 マージで main 反映）。本番=https://cc-v2-web.vercel.app。到達: G-1動く/G-2公開/G-3安全/G-4継続運用/G-5データ(不要)/G-6性能(N/A)。主な外部事実: G-2-2/G-3-3c2/G-4-1c2=prod-smoke・CodeQL・Vercelログ、G-4-2c2/G-4-3=Vercelデプロイ実演、G-3-1c/G-4-4c2=GitHub設定URL、製品決定=6f10a2d。次フェーズ(別ミッション)=アプリの中身。基準変更は master 承認、done判定はCI/独立subagent。",
     "updated": "2026-07-21"
   },
   "nodes": [
@@ -204,7 +204,7 @@
             { "id":"G-4-1", "kind":"state", "theme":"異常に気づける（可観測性）", "meaning":"落ちたら分かる", "detail":"監視手段を確定（未選定にしない）",
               "criteria":[
                 { "text":"監視/ログ手段を確定記載（未定にしない）", "verify":"apps/web/AGENTS.md の可観測性行が確定（例: Vercel ログ＋ヘルスチェック）（commit SHA）", "evidence":"6f10a2d" },
-                { "text":"意図的失敗が監視/ログに1件現れる", "verify":"既知の失敗(500ルート等)を1回起こし Vercel ログにそのイベントが現れる（ログID/URL）", "evidence":"" }
+                { "text":"意図的失敗が監視/ログに1件現れる", "verify":"既知の失敗(500ルート等)を1回起こし Vercel ログにそのイベントが現れる（ログID/URL）", "evidence":"https://cc-v2-web-git-claude-a-5ftn7c-rahisekos-projects.vercel.app/api/boom" }
               ]
             },
             { "id":"G-4-2", "kind":"state", "theme":"戻せる（ロールバック）", "meaning":"壊れても前に戻せる", "detail":"手順を先に文書化し循環を断つ",
