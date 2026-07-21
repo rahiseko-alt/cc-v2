@@ -144,7 +144,7 @@
             }
           ]
         },
-        { "id":"G-2", "kind":"state", "theme":"公開", "meaning":"外から到達できる所で動く", "detail":"WA信頼性 / 12-Factor dev-prod parity",
+        { "id":"G-2", "kind":"state", "theme":"公開", "meaning":"外から到達できる所で動く", "detail":"WA信頼性 / 12-Factor dev-prod parity。環境は今あるもの(sandbox/preview/prod)を台帳化し多層化は今回保留(G-2-3)",
           "children":[
             { "id":"G-2-1", "kind":"state", "theme":"デプロイ経路が確立", "meaning":"本番へ公開する手段がある", "detail":"Vercel 連携（設定はコードに固定）",
               "criteria":[
@@ -155,6 +155,12 @@
             { "id":"G-2-2", "kind":"state", "theme":"公開URLで動作", "meaning":"本番URLで実際に開ける", "detail":"主要フロー＝トップページ描画成功を具体化",
               "criteria":[
                 { "text":"本番URLでトップページが 200＋既知マーカーを返す", "verify":"curl -sS -w '%{http_code}' https://<prod> が 200 かつ本文に 'cc-v2 monorepo' を含む（公開URL＝第三者が叩ける外部事実）", "evidence":"https://github.com/rahiseko-alt/cc-v2/actions/runs/29810085456" }
+              ]
+            },
+            { "id":"G-2-3", "kind":"state", "theme":"今ある環境を正直に区分（多層化は今回保留）", "meaning":"動いている環境がどれか隠さず台帳化し、やらない多層化も理由付きで明示する", "detail":"12-Factor dev-prod parity。実在3面(sandbox=ローカル/CI, preview=Vercel自動, prod=単一本番)を分類。専用staging/層別config分離は今回省略(欠落の非明示を防ぐ)",
+              "criteria":[
+                { "text":"実在する環境(ローカル/CI・Vercel preview・本番)が区分され台帳化", "verify":"apps/web/AGENTS.md『環境の区分』節が sandbox/preview/prod の3面を定義（commit SHA）", "evidence":"" },
+                { "text":"未実施の多層化(専用staging・層別config分離)を『今回省略＋理由＋再評価条件』と明示", "verify":"同節に省略対象・理由(1ページ静的/保護資源なし)・再評価トリガ(API/認証/DB導入時)が記載（commit SHA）", "evidence":"" }
               ]
             }
           ]
