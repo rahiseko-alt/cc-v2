@@ -118,7 +118,7 @@
   "meta": {
     "title": "ロードマップ",
     "active": "G-2-1",
-    "next": "G-1(動く)は完了：G-1-1(土台/機械の審判 6/6)＋G-1-2(起動スモーク＝CIで build→next start→curl 200＋'cc-v2 monorepo'、evidence=actions/runs/29792594971)。次の一手=G-2-1 デプロイ経路の確立(Vercel連携・Root=apps/web・main pushで本番へ1回デプロイ、evidence=デプロイID)→G-2-2 公開URLで 200＋マーカー。以降 G-3-3/3-4・G-4・G-5・G-6 は未達。基準変更は master 承認、done判定はCI/独立subagent。ゴール=このリポからアプリを本番運用できる環境にする。",
+    "next": "G-1(動く)完了。今セッション: G-2-1 criterion2(デプロイ設定コード固定=apps/web/vercel.json)を追加、G-6(性能/可用性/持続可能性N/A明示 evidence=60b1289)・G-4-2 criterion1(ロールバック手順文書化 evidence=60b1289)を達成。★外部ブロック待ち: (a)G-2-1 criterion1/G-2-2/G-3-3-c2/G-4-1-c2/G-4-2-c2/G-4-3/G-5-c2 は Vercel連携(master のダッシュボードOAuth→デプロイID)が前提。(b)G-3-1-c push protection と G-4-4-c2 branch保護 は GitHub設定(master)。(c)G-3-3-c1 CodeQL は private リポのため GHAS(課金)が前提。★master判断待ち(製品決定): G-3-4認証要否/G-4-1監視手段/G-4-4コスト方針/G-5 DB要否 の『未定→確定』。基準変更は master 承認、done判定はCI/独立subagent。ゴール=このリポからアプリを本番運用できる環境にする。",
     "updated": "2026-07-21"
   },
   "nodes": [
@@ -209,7 +209,7 @@
             },
             { "id":"G-4-2", "kind":"state", "theme":"戻せる（ロールバック）", "meaning":"壊れても前に戻せる", "detail":"手順を先に文書化し循環を断つ",
               "criteria":[
-                { "text":"ロールバック手順が先に文書として定義", "verify":"apps/web/AGENTS.md か docs に手順(Vercel: 前デプロイを Promote)が記載（commit SHA）", "evidence":"" },
+                { "text":"ロールバック手順が先に文書として定義", "verify":"apps/web/AGENTS.md か docs に手順(Vercel: 前デプロイを Promote)が記載（commit SHA）", "evidence":"60b1289" },
                 { "text":"前版へ実際に戻せる", "verify":"現行を壊す→前デプロイを Promote→公開URLが前版に戻る（デプロイID＋curl の外部事実）", "evidence":"" }
               ]
             },
@@ -234,7 +234,7 @@
         },
         { "id":"G-6", "kind":"state", "theme":"性能・持続可能性（現段階N/A明示）", "meaning":"性能SLO/可用性/持続可能性の要否を隠さず明示", "detail":"WA性能効率/持続可能性。黙って落とさない（欠落の非明示を防ぐ）",
           "criteria":[
-            { "text":"性能SLO/可用性/持続可能性の要件有無を確定記載", "verify":"apps/web/AGENTS.md に『1ページscaffold・低トラフィックのため SLO/可用性/持続可能性は現段階N/A、閾値超過時に再評価』と記録（commit SHA）", "evidence":"" }
+            { "text":"性能SLO/可用性/持続可能性の要件有無を確定記載", "verify":"apps/web/AGENTS.md に『1ページscaffold・低トラフィックのため SLO/可用性/持続可能性は現段階N/A、閾値超過時に再評価』と記録（commit SHA）", "evidence":"60b1289" }
           ]
         }
       ]
