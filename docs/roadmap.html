@@ -118,7 +118,7 @@
   "meta": {
     "title": "ロードマップ",
     "active": "G",
-    "next": "★全 criteria に evidence 充填＝ロードマップ完遂（PR#12 マージで main 反映）。本番=https://cc-v2-web.vercel.app。到達: G-1動く/G-2公開/G-3安全/G-4継続運用/G-5データ(不要)/G-6性能(N/A)。主な外部事実: G-2-2/G-3-3c2/G-4-1c2=prod-smoke・CodeQL・Vercelログ、G-4-2c2/G-4-3=Vercelデプロイ実演、G-3-1c/G-4-4c2=GitHub設定URL、製品決定=6f10a2d。次フェーズ(別ミッション)=アプリの中身。基準変更は master 承認、done判定はCI/独立subagent。",
+    "next": "★基準変更(要マスター承認)を2件積んだ。(1)言語化層の束ね葉を atomic 分割＋2 theme 平易化(G-1-1c1/G-3-1-a/G-3-1-c/G-3-3c2/G-4-4c2, theme=G-3-2/G-3-3)。(2)環境分類の欠落を是正: G-2-3『今ある環境を正直に区分（多層化は今回保留）』を追加。3層構築は省略し、実在3面(sandbox=ローカル/CI, preview=Vercel自動, prod=単一本番)を AGENTS.md に台帳化、専用staging/層別configは今回省略＋理由＋再評価条件を明示(欠落の非明示を解消)。evidence=2b0fb55(当該節を実際に含む)。criteria 34件・リンタ緑。マスターが diff を承認したら門が緑。本番=https://cc-v2-web.vercel.app。",
     "updated": "2026-07-21"
   },
   "nodes": [
@@ -128,7 +128,8 @@
           "children":[
             { "id":"G-1-1", "kind":"state", "theme":"土台と機械の審判", "meaning":"どこでも同じに動く下地＋CIの品質ゲート", "detail":"スタック確定・版固定・CI・本物のテスト・本物のlint。品質ゲートはCIに一本化",
               "criteria":[
-                { "text":"スタックが1案＋根拠で確定し記録（未定項目は『未定』と明記）", "verify":"apps/web/AGENTS.md に確定スタック宣言（DB/認証の未定も明記）", "evidence":"9d6941b" },
+                { "text":"スタックが1案＋根拠で確定し記録されている", "verify":"apps/web/AGENTS.md『技術スタック（確定）』が各項目を1案＋根拠で宣言（commit SHA）", "evidence":"9d6941b" },
+                { "text":"未確定の項目は『未定』/『不要(理由)』と正直に明記（隠さない）", "verify":"apps/web/AGENTS.md の DB・認証 行が空白でなく『不要(理由)』等の確定表現（commit SHA）", "evidence":"9d6941b" },
                 { "text":"依存導入から型チェックまで通る", "verify":"pnpm install --frozen-lockfile && pnpm -r typecheck が緑", "evidence":"447fa5c" },
                 { "text":"ランタイム/ツールのバージョンが固定", "verify":".tool-versions/.node-version が宣言スタックと一致", "evidence":"3cf1456" },
                 { "text":"CIが typecheck/lint/test/build を自動実行し緑（品質ゲートを一本化）", "verify":"GitHub Actions run が pnpm -r typecheck && lint && test && build 緑（run URL）", "evidence":"actions/runs/29755182381" },
@@ -143,7 +144,7 @@
             }
           ]
         },
-        { "id":"G-2", "kind":"state", "theme":"公開", "meaning":"外から到達できる所で動く", "detail":"WA信頼性 / 12-Factor dev-prod parity",
+        { "id":"G-2", "kind":"state", "theme":"公開", "meaning":"外から到達できる所で動く", "detail":"WA信頼性 / 12-Factor dev-prod parity。環境は今あるもの(sandbox/preview/prod)を台帳化し多層化は今回保留(G-2-3)",
           "children":[
             { "id":"G-2-1", "kind":"state", "theme":"デプロイ経路が確立", "meaning":"本番へ公開する手段がある", "detail":"Vercel 連携（設定はコードに固定）",
               "criteria":[
@@ -155,6 +156,12 @@
               "criteria":[
                 { "text":"本番URLでトップページが 200＋既知マーカーを返す", "verify":"curl -sS -w '%{http_code}' https://<prod> が 200 かつ本文に 'cc-v2 monorepo' を含む（公開URL＝第三者が叩ける外部事実）", "evidence":"https://github.com/rahiseko-alt/cc-v2/actions/runs/29810085456" }
               ]
+            },
+            { "id":"G-2-3", "kind":"state", "theme":"今ある環境を正直に区分（多層化は今回保留）", "meaning":"動いている環境がどれか隠さず台帳化し、やらない多層化も理由付きで明示する", "detail":"12-Factor dev-prod parity。実在3面(sandbox=ローカル/CI, preview=Vercel自動, prod=単一本番)を分類。専用staging/層別config分離は今回省略(欠落の非明示を防ぐ)",
+              "criteria":[
+                { "text":"実在する環境(ローカル/CI・Vercel preview・本番)が区分され台帳化", "verify":"apps/web/AGENTS.md『環境の区分』節が sandbox/preview/prod の3面を定義（commit SHA）", "evidence":"2b0fb55" },
+                { "text":"未実施の多層化(専用staging・層別config分離)を『今回省略＋理由＋再評価条件』と明示", "verify":"同節に省略対象・理由(1ページ静的/保護資源なし)・再評価トリガ(API/認証/DB導入時)が記載（commit SHA）", "evidence":"2b0fb55" }
+              ]
             }
           ]
         },
@@ -164,7 +171,8 @@
               "children":[
                 { "id":"G-3-1-a", "kind":"state", "theme":"鍵がうっかり Git に載っていない", "meaning":"パスワードや鍵がリポジトリに1つも含まれない", "detail":"OWASP Secrets",
                   "criteria":[
-                    { "text":"追跡ファイルに .env* が0件（＝鍵ファイル未コミット）", "verify":"git ls-files に .env* が0件 かつ .gitignore が .env* を除外（commit SHA）", "evidence":"71b83a5" }
+                    { "text":"鍵ファイル(.env 等)が Git に1つも入っていない（現状）", "verify":"git ls-files の .env* が .env.example のみ＝実鍵ファイル0件（commit SHA）", "evidence":"71b83a5" },
+                    { "text":"今後 .env を作っても Git が自動で無視する（予防）", "verify":".gitignore が .env と .env.* を除外し !.env.example のみ例外（commit SHA）", "evidence":"447fa5c" }
                   ]
                 },
                 { "id":"G-3-1-b", "kind":"state", "theme":"必要な設定が見本ファイルに列挙され新環境で迷わない", "meaning":"どの環境変数が要るかが .env.example を見れば分かる", "detail":"12-Factor config",
@@ -174,21 +182,23 @@
                 },
                 { "id":"G-3-1-c", "kind":"state", "theme":"誤って push しても GitHub が自動で止める", "meaning":"鍵を含むコミットの push が自動でブロックされる", "detail":"OWASP Secrets / push protection",
                   "criteria":[
-                    { "text":"secret scanning と push protection が有効", "verify":"リポジトリ設定で GitHub secret scanning＋push protection が有効（設定URL）", "evidence":"https://github.com/rahiseko-alt/cc-v2/settings/security_analysis" }
+                    { "text":"鍵を見つける検知(secret scanning)が有効", "verify":"リポジトリ設定で GitHub secret scanning が Enabled（設定URL）", "evidence":"https://github.com/rahiseko-alt/cc-v2/settings/security_analysis" },
+                    { "text":"見つけたら push を止める阻止(push protection)が有効", "verify":"リポジトリ設定で push protection が Enabled（設定URL）", "evidence":"https://github.com/rahiseko-alt/cc-v2/settings/security_analysis" }
                   ]
                 }
               ]
             },
-            { "id":"G-3-2", "kind":"state", "theme":"脆弱依存ゲート", "meaning":"既知脆弱性で止まる", "detail":"OWASP A06",
+            { "id":"G-3-2", "kind":"state", "theme":"使っている部品の既知の弱点で止まる", "meaning":"外部ライブラリに公表済みの弱点があればCIが赤で止める", "detail":"OWASP A06（脆弱依存ゲート）",
               "criteria":[
                 { "text":"依存監査がCIで自動実行され moderate 以上で落ちる", "verify":"CIで pnpm audit --audit-level moderate が exit 0（緑・run URL）", "evidence":"actions/runs/29758529344" },
                 { "text":"既知 moderate が解消 or 明示受容", "verify":"pnpm audit moderate 0（postcss は pnpm.overrides で >=8.5.10）、または例外を期限付きで記録", "evidence":"38e6919" }
               ]
             },
-            { "id":"G-3-3", "kind":"state", "theme":"静的解析とTLS", "meaning":"コード脆弱性・設定ミス・平文を防ぐ", "detail":"OWASP A05 / CodeQL / TLS",
+            { "id":"G-3-3", "kind":"state", "theme":"コードの弱点と通信の盗み見を防ぐ", "meaning":"コードの脆弱性・設定ミスを自動検査し、通信は暗号化して常時強制する", "detail":"OWASP A05 / CodeQL / TLS（静的解析とTLS）",
               "criteria":[
                 { "text":"CodeQL 等の静的解析がCIで自動実行", "verify":"GitHub code scanning(CodeQL) が緑で alert 0（run/alert URL）", "evidence":"https://github.com/rahiseko-alt/cc-v2/actions/runs/29810085334" },
-                { "text":"本番が TLS＋最小セキュリティヘッダ", "verify":"本番URLが https で、curl -I 応答に Strict-Transport-Security を含む（外部事実）", "evidence":"https://github.com/rahiseko-alt/cc-v2/actions/runs/29813326981" }
+                { "text":"本番の通信が暗号化されている（https で提供）", "verify":"prod-smoke の『prod 200 + marker』ステップが https 本番URLに 200（同run・外部事実）", "evidence":"https://github.com/rahiseko-alt/cc-v2/actions/runs/29813326981" },
+                { "text":"ブラウザに暗号化を常時強制するヘッダ(HSTS)が付いている", "verify":"prod-smoke の『HSTS ヘッダを確認』ステップが緑（curl -I に Strict-Transport-Security・外部事実）", "evidence":"https://github.com/rahiseko-alt/cc-v2/actions/runs/29813326981" }
               ]
             },
             { "id":"G-3-4", "kind":"state", "theme":"認証/認可（未定→確定）", "meaning":"要否を決め、採用時は保護が効く", "detail":"未定を放置しない。採用時のみ本番criteriaを開く（遅延展開）",
@@ -221,7 +231,8 @@
             { "id":"G-4-4", "kind":"state", "theme":"コストとアクセス制御", "meaning":"費用を制御し・誰がデプロイ/秘密に触れるか限定", "detail":"WAコスト / アクセス制御・監査",
               "criteria":[
                 { "text":"コスト上限/アラートの要否を確定記載", "verify":"apps/web/AGENTS.md にコスト方針(Vercel 無料枠＋上限 or N/A理由)を確定（commit SHA）", "evidence":"6f10a2d" },
-                { "text":"本番デプロイ主体が限定（監査可能）", "verify":"GitHub ブランチ保護(main 直push禁止・レビュー必須)が有効（設定URL＝外部事実）", "evidence":"https://github.com/rahiseko-alt/cc-v2/settings/rules/19367615" }
+                { "text":"main への直接 push が禁止されている", "verify":"GitHub ブランチ保護で main への直 push がブロック（設定URL＝外部事実）", "evidence":"https://github.com/rahiseko-alt/cc-v2/settings/rules/19367615" },
+                { "text":"変更はレビュー(PR承認)必須", "verify":"GitHub ブランチ保護で PR 承認必須が有効（設定URL＝外部事実）", "evidence":"https://github.com/rahiseko-alt/cc-v2/settings/rules/19367615" }
               ]
             }
           ]

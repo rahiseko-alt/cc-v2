@@ -30,6 +30,16 @@ Next.js（App Router）の Web アプリ。共有 UI は `@repo/ui`（`packages/
 
 ## 運用・非機能（確定）
 
+### 環境の区分（G-2-3）
+
+現時点で**実際に稼働している環境**を正直に区分する（多層化は今回は保留）。黙って畳み込まない。
+
+- **sandbox（ローカル / CI）**: 開発者ローカル（`pnpm --filter web dev`）と GitHub Actions。型 / lint / test / build / prod-smoke を実行。外部公開しない使い捨ての検証面。
+- **preview（Vercel 自動プレビュー）**: main 以外のブランチ push で Vercel が per-branch に自動生成する使い捨て URL。PR 検証用（例: 観測性自己テストの `/api/boom` はこの面で実演した）。
+- **prod（本番）**: `https://cc-v2-web.vercel.app`。main への push で更新される唯一の公開面。
+
+**今回は省略（理由付き・閾値超過時に再評価）**: 専用の staging 環境、環境ごとに分離した config / secret ストア、preview≈prod の parity 保証は、現状 1 ページ静的 scaffold・保護資源/永続データ無しのため**構築しない**。API 連携・認証・DB のいずれかを導入する時点で環境分離を再評価する。
+
 ### 性能 / 可用性 / 持続可能性（G-6）
 
 - 1ページscaffold・低トラフィックのため SLO/可用性/持続可能性は現段階N/A、閾値超過時に再評価。
