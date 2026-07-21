@@ -188,7 +188,7 @@
             { "id":"G-3-3", "kind":"state", "theme":"静的解析とTLS", "meaning":"コード脆弱性・設定ミス・平文を防ぐ", "detail":"OWASP A05 / CodeQL / TLS",
               "criteria":[
                 { "text":"CodeQL 等の静的解析がCIで自動実行", "verify":"GitHub code scanning(CodeQL) が緑で alert 0（run/alert URL）", "evidence":"https://github.com/rahiseko-alt/cc-v2/actions/runs/29810085334" },
-                { "text":"本番が TLS＋最小セキュリティヘッダ", "verify":"本番URLが https で、curl -I 応答に Strict-Transport-Security を含む（外部事実）", "evidence":"" }
+                { "text":"本番が TLS＋最小セキュリティヘッダ", "verify":"本番URLが https で、curl -I 応答に Strict-Transport-Security を含む（外部事実）", "evidence":"https://github.com/rahiseko-alt/cc-v2/actions/runs/29813326981" }
               ]
             },
             { "id":"G-3-4", "kind":"state", "theme":"認証/認可（未定→確定）", "meaning":"要否を決め、採用時は保護が効く", "detail":"未定を放置しない。採用時のみ本番criteriaを開く（遅延展開）",
