@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
-# 基準凍結の門番（2AI承認ゲート）。
+# 基準凍結の門番（2AIレビュー＋マスター承認・運用B）。
 # docs/roadmap.html / AGENTS.md 系（＝criteria/verify・規律）に触るPRについて、
-# .github/basis-reviewers.txt に列挙した「別系統2AI」の APPROVED が
-# 現HEAD(commit SHA)に対して全員そろっているかを判定し、
+# .github/basis-reviewers.txt に列挙した必須承認者（＝マスター）の APPROVED が
+# 現HEAD(commit SHA)に対してそろっているかを判定し、
 # その結果を commit status `basis-gate` として head SHA に記録する。
+# ※ Claude/Codex の2意見を読んだ上でマスターが承認する運用。2意見の照合は人間の規律
+#    に委ね、機械が必須とするのはマスター承認のみ（docs/basis-gate.md 参照）。
 #
 # branch protection で status context `basis-gate` を必須にして初めて機械強制になる。
 # 承認は head SHA に紐付くものだけ有効＝中身を変えると旧承認は無効(stale)。

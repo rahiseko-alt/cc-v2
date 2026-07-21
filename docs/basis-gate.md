@@ -1,39 +1,42 @@
-# 基準凍結の門（2AI承認ゲート）
+# 基準凍結の門（2AIレビュー＋マスター承認）
 
-`criteria` / `verify`（＝受入基準）や規律に触るPRを、**別系統2AI（Claude と Codex）の
-両方が承認するまでマージできない**ようにする仕組み。AGENTS.md「基準凍結の門＝2AIレビュー」の実装。
+`criteria` / `verify`（＝受入基準）や規律に触るPRを、**Claude と Codex の2つの独立した
+レビュー意見をマスターが読んだ上で承認するまでマージできない**ようにする仕組み。
+AGENTS.md「基準凍結の門」の実装（運用 (B)）。
 
 ## 何を門にかけるか
 PRの変更に次のいずれかが含まれるとき、門を適用する（それ以外は非対象＝自動pass）:
 - `docs/roadmap.html`（ロードマップの正＝criteria/verify）
 - `AGENTS.md`（ルート／各階層の規律・スタック宣言）
 
+## 運用フロー (B)
+1. **Claude** が基準変更PRを作り、判定と論拠を **PR本文／レビュー**に残す。
+2. **Codex** に同じPRを開かせ、独立した判定を **PRコメント**に残させる（敵対的に：atomic でない／不十分な点を探す）。
+3. **マスター**が Claude と Codex の両意見を読む。
+   - 2つが割れた（片方が却下）ときは、**両者の論拠を読み比べてマスターが決める**。
+4. 納得したら、マスターが **PRを承認**する。これが門の実体。
+
 ## 仕組み（機械側）
-1. `.github/workflows/basis-gate.yml` がPRのオープン／更新／レビュー投稿で走る。
-2. `.github/scripts/basis-gate.sh` が判定し、**commit status `basis-gate`** を head SHA に記録する。
-   - 基準ファイル未変更 → `success`（門は非対象）
-   - 基準ファイル変更あり → `.github/basis-reviewers.txt` の全員が**現HEADに対して** `APPROVED`
-     なら `success`、揃わなければ `failure`（誰の承認待ちかを表示）。
-   - 承認は **head SHA 紐付きのみ有効**＝中身を変えると旧承認は無効（stale）。
-3. 設定漏れ（`basis-reviewers.txt` がプレースホルダのまま）は **fail-closed**（赤）。
+- `.github/workflows/basis-gate.yml` がPRのopen/更新/レビュー投稿で走る。
+- `.github/scripts/basis-gate.sh` が判定し、**commit status `basis-gate`** を head SHA に記録する。
+  - 基準ファイル未変更 → `success`（門は非対象）
+  - 基準ファイル変更あり → `.github/basis-reviewers.txt` の必須承認者（＝マスター `rahiseko-alt`）が
+    **現HEADに対して** `APPROVED` なら `success`、無ければ `failure`。
+  - 承認は **head SHA 紐付きのみ有効**＝中身を変えると旧承認は無効（stale）。
+
+> 注：Codex の意見コメントは機械照合しない（このリポの Codex はローカル実行でマスター権限の身元のため、
+> 独立 bot として自動判定できない）。「2AIを読んでから承認したか」はマスターの規律に委ねる。
 
 ## 有効化に必要な人手（管理者）
-このリポの管理者が次を行って初めて「機械強制」になる:
-
-1. **必須レビュアーを記入**：`.github/basis-reviewers.txt` のプレースホルダを、
-   Claude と Codex がPR承認する時の実 GitHub ログイン（bot/ユーザー名）に置き換える。
-2. **Codex をこのリポに接続**：Codex が同じリポを開いてPRレビュー（Approve / Request changes）を
-   残せるようにする。
-3. **branch protection（`main`）を設定**：
-   - Require a pull request before merging（レビュー必須）
+1. **branch protection（`main`）を設定**：
+   - Require a pull request before merging
    - **Require status checks to pass** に status context **`basis-gate`** を追加
    - **Dismiss stale pull request approvals when new commits are pushed** を有効
-     （中身を変えたら承認をやり直させる）
-4. 設定後、基準変更PRは **Claude と Codex 両方の承認が現HEADに揃うまでマージ不可**になる。
+2. 設定後、基準変更PRは **マスターの承認が現HEADに付くまでマージ不可**になる。
 
-## 不一致のとき
-片方が Approve・片方が Request changes（＝2AIの判断が割れた）ときは、門は赤のまま。
-これは**人間（マスター）が両者の論拠を読み比べて決める**サイン（AGENTS.md の「不一致は人間へ上申」）。
+> `.github/basis-reviewers.txt` の承認者は既に `rahiseko-alt`（マスター）に設定済み。
+> 将来 Codex をクラウドの独立 bot 身元で使えるようにしたら、ここに Codex のログインを足して
+> 「2つの承認」を機械必須にする形へ引き上げられる。
 
 ## 制限
 - fork からのPRはトークンが read-only になり status を書けない。本リポは同一リポの
