@@ -118,10 +118,10 @@
   "meta": {
     "title": "ロードマップ",
     "active": "G",
-    "next": "この基準変更PR（handoff を roadmap の meta.handoff に一体化＋①②③構造化／失敗は docs/failures.md に蓄積型／main 向け全PRに docs/roadmap.html 差分を必須化する CI 関所 roadmap-required・例外なし）を master 承認→マージ。承認後、旧 docs/handoff.md 廃止と roadmap-required の required check 登録を確認。本番=https://cc-v2-web.vercel.app。",
+    "next": "ロードマップ本体(G)は実質完遂、運用基盤の残課題も無し（handoff の roadmap 一体化・roadmap-required の必須化まで完了）。次は新規案件/機能だが未定＝着手時に AGENTS.md『新規案件の初期化フロー』のヒアリングから。本番=https://cc-v2-web.vercel.app。",
     "handoff": {
-      "done": "git/branch/merge を一から再学習し、前回 handoff が次セッションに渡らなかった原因を特定＝PR#14 マージ後の既マージ枝へ handoff を余分 push したため main に未取り込み（消滅ではなく取り残し）。対策を設計・実装：handoff を roadmap の meta.handoff に一体化（①今回実施 ②今回トラブル ③次回=meta.next）、失敗は docs/failures.md に蓄積型、main 向け全PRに docs/roadmap.html 差分を必須化する CI 関所 roadmap-required を新設（例外なし）。PR #15 を作成、master 承認待ち。",
-      "trouble": "本当の main は cf22e57（本編フル）。ローカル clone の origin/* は stale になりうる→ブランチ/コミットの存否・位置はリモート実データ（git ls-remote / GitHub API）で確認する。サンドボックスは *.vercel.app / vercel.com を egress 遮断（Vercel 検証は CI 経由）。basis-gate は作成者と承認者が同一身元で自己承認不可（現状 admin override 常用）。"
+      "done": "handoff を roadmap(meta.handoff) に一体化＋失敗を docs/failures.md に蓄積＋全PRに roadmap 更新を課す CI 関所 roadmap-required を実装し、PR #15/#16 を main にマージ。roadmap-required が『マージを止める必須チェック』として効くことを実地検証（roadmap 未更新の検証PR #17 が mergeable=blocked＝阻止、他チェックは全緑）。別案件用の空テンプレを presets/roadmap-template.html に用意。",
+      "trouble": "ローカル clone の origin/* は stale になりうる→存否/位置はリモート実データ（git ls-remote / GitHub API list_branches）で確認する。GitHub API 直叩きは当セッションでは『App 未接続』で拒否＝ルールセットの必須チェック一覧は読めず、未更新PRが blocked になるかの実地テストで代替した。サンドボックスは *.vercel.app / vercel.com を egress 遮断（Vercel 検証は CI 経由）。basis-gate は作成者=承認者が同一身元で自己承認不可（API の管理者マージでバイパス可）。"
     },
     "updated": "2026-07-22"
   },
