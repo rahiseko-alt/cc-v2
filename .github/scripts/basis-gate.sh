@@ -24,6 +24,7 @@ set -euo pipefail
 : "${REPO:?REPO required}"
 : "${PR:?PR required}"
 : "${HEAD_SHA:?HEAD_SHA required}"
+: "${BASE_SHA:?BASE_SHA required}"
 
 CONTEXT="basis-gate"
 CONFIG=".github/basis-reviewers.txt"
@@ -35,14 +36,35 @@ set_status() {
     -f state="$state" -f context="$CONTEXT" -f description="$desc" >/dev/null
 }
 
-# 1) 基準ファイルに触れているか（触れていなければ門は非対象＝pass）
+# 1) 基準に触れているか判定（触れていなければ門は非対象＝pass）
+#    - AGENTS.md 変更          → 常に基準対象
+#    - docs/roadmap.html 変更  → meta(handoff/next/updated 等)のみなら非対象、nodes/エンジンに触れば対象
+#      （criteria/verify は全て nodes 配下。meta のみの日々の checkout は門を素通りさせる）
 FILES="$(gh api "repos/$REPO/pulls/$PR/files" --paginate --jq '.[].filename')"
-if ! grep -qE '(^|/)AGENTS\.md$|^docs/roadmap\.html$' <<<"$FILES"; then
-  echo "基準ファイル未変更。門は非対象。"
-  set_status success "基準変更なし（門は非対象）"
+is_basis=no
+if grep -qE '(^|/)AGENTS\.md$' <<<"$FILES"; then
+  is_basis=yes
+fi
+if grep -qE '^docs/roadmap\.html$' <<<"$FILES"; then
+  if gh api "repos/$REPO/contents/docs/roadmap.html?ref=$BASE_SHA" --jq '.content' 2>/dev/null | base64 -d > /tmp/base_roadmap.html \
+     && gh api "repos/$REPO/contents/docs/roadmap.html?ref=$HEAD_SHA" --jq '.content' 2>/dev/null | base64 -d > /tmp/head_roadmap.html \
+     && [ -s /tmp/base_roadmap.html ] && [ -s /tmp/head_roadmap.html ]; then
+    if node .github/scripts/roadmap-basis-changed.mjs /tmp/base_roadmap.html /tmp/head_roadmap.html; then
+      echo "roadmap.html は meta のみの変更 → 基準非対象"
+    else
+      is_basis=yes
+    fi
+  else
+    echo "roadmap.html の base/head 取得に失敗 → 安全側で基準対象に倒す"
+    is_basis=yes
+  fi
+fi
+if [ "$is_basis" = no ]; then
+  echo "基準変更なし。門は非対象。"
+  set_status success "基準変更なし（門は非対象／handoff等のmeta更新はスルー）"
   exit 0
 fi
-echo "基準ファイル変更を検出。基準凍結の門を適用。"
+echo "基準変更を検出。基準凍結の門を適用。"
 
 # 2) 必須レビュアー（コメント/空行を除去）
 mapfile -t REQUIRED < <(grep -vE '^\s*(#|$)' "$CONFIG" | tr -d ' \t\r')
