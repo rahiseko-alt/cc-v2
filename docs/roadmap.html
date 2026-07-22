@@ -118,10 +118,10 @@
   "meta": {
     "title": "ロードマップ",
     "active": "G",
-    "next": "ロードマップ本体(G)は実質完遂、運用基盤の残課題も無し（handoff の roadmap 一体化・roadmap-required の必須化まで完了）。次は新規案件/機能だが未定＝着手時に AGENTS.md『新規案件の初期化フロー』のヒアリングから。本番=https://cc-v2-web.vercel.app。",
+    "next": "ロードマップ本体(G)・運用基盤（引継ぎ＋機械ゲート2本 roadmap-required/basis-gate）とも完遂。次は新規案件/機能だが未定＝着手時に AGENTS.md『新規案件の初期化フロー』のヒアリングから。留意：handoff は roadmap.html 内のため checkout PR も basis-gate 対象＝master の承認/管理者マージが要る（meta.handoff 変更のみ basis-gate を免除する改良は将来検討）。残テスト枝 claude/verify-basis-gate は GitHub 画面で削除可。本番=https://cc-v2-web.vercel.app。",
     "handoff": {
-      "done": "handoff を roadmap(meta.handoff) に一体化＋失敗を docs/failures.md に蓄積＋全PRに roadmap 更新を課す必須CI関所 roadmap-required を実装し PR #15/#16/#18 を main にマージ。roadmap-required は当初『job名≠登録名(=workflow名)』で全PRをブロックする誤設定だったが job名を roadmap-required に改名して修正、roadmap 更新PR(#18)が緑通過→マージ成立で満たせることを実証。別案件用の空テンプレを presets/roadmap-template.html に用意。",
-      "trouble": "ローカル clone の origin/* は stale になりうる→存否/位置はリモート実データ（git ls-remote / GitHub API list_branches）で確認する。GitHub API 直叩きは当セッションでは『App 未接続』で拒否＝ルールセットの必須チェック一覧は読めず、未更新PRが blocked になるかの実地テストで代替した。サンドボックスは *.vercel.app / vercel.com を egress 遮断（Vercel 検証は CI 経由）。basis-gate は作成者=承認者が同一身元で自己承認不可（API の管理者マージでバイパス可）。"
+      "done": "handoff を roadmap(meta.handoff) に一体化＋失敗を docs/failures.md に蓄積＋機械ゲート2本を必須化：roadmap-required（全PRに roadmap 更新を強制）と basis-gate（基準変更を master 承認まで阻止）。両方とも実地で強制を実証（roadmap-required は job名≠登録名の誤設定を job名改名で修正後 #18 で pass→merge、basis-gate は検証PR #20 で 405 'basis-gate is failing' による阻止）。sharp 高危険度脆弱性も pnpm.overrides で解消。別案件用の空ロードマップテンプレを presets/roadmap-template.html に用意。PR #15/#16/#18/#19 マージ済み。",
+      "trouble": "存否/位置はローカル origin/* でなくリモート実データ（git ls-remote / GitHub API / PR API）で確認する（stale 参照・チェック名ズレで二度誤った）。GitHub Actions の必須チェック名は job 名で一致させる。basis-gate 必須化後は、必須チェックが赤だと API 管理者マージも 405 で拒否＝roadmap を触る PR（checkout 含む）は master の承認/管理者マージが必要。git プロキシは push --delete を 403 で拒否＝不要枝は GitHub 画面で消す。サンドボックスは *.vercel.app / vercel.com を egress 遮断（Vercel 検証は CI 経由）。"
     },
     "updated": "2026-07-22"
   },
