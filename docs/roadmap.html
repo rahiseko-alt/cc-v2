@@ -120,8 +120,8 @@
     "active": "G",
     "next": "この基準変更PR（handoff を roadmap の meta.handoff に一体化＋①②③構造化／失敗は docs/failures.md に蓄積型／main 向け全PRに docs/roadmap.html 差分を必須化する CI 関所 roadmap-required・例外なし）を master 承認→マージ。承認後、旧 docs/handoff.md 廃止と roadmap-required の required check 登録を確認。本番=https://cc-v2-web.vercel.app。",
     "handoff": {
-      "done": "git/branch/merge を一から再学習し、前回 handoff 消失の原因を特定＝handoff を別枝（空の origin/main から作り直した枝）に置き未マージで孤児化→消滅。対策を設計・実装：handoff を roadmap の meta.handoff に一体化（①今回実施 ②今回トラブル ③次回=meta.next）、失敗は docs/failures.md に蓄積型、main 向け全PRに docs/roadmap.html 差分を必須化する CI 関所 roadmap-required を新設（例外なし）。",
-      "trouble": "origin/main は空の Initial commit（LICENSE/README のみ）で、本編トランクは claude ブランチ側に積み上がっている。サンドボックスは *.vercel.app / vercel.com を egress 遮断（Vercel 検証は CI 経由）。basis-gate は作成者と承認者が同一身元になり自己承認不可（現状 admin override 常用）。"
+      "done": "git/branch/merge を一から再学習し、前回 handoff が次セッションに渡らなかった原因を特定＝PR#14 マージ後の既マージ枝へ handoff を余分 push したため main に未取り込み（消滅ではなく取り残し）。対策を設計・実装：handoff を roadmap の meta.handoff に一体化（①今回実施 ②今回トラブル ③次回=meta.next）、失敗は docs/failures.md に蓄積型、main 向け全PRに docs/roadmap.html 差分を必須化する CI 関所 roadmap-required を新設（例外なし）。PR #15 を作成、master 承認待ち。",
+      "trouble": "本当の main は cf22e57（本編フル）。ローカル clone の origin/* は stale になりうる→ブランチ/コミットの存否・位置はリモート実データ（git ls-remote / GitHub API）で確認する。サンドボックスは *.vercel.app / vercel.com を egress 遮断（Vercel 検証は CI 経由）。basis-gate は作成者と承認者が同一身元で自己承認不可（現状 admin override 常用）。"
     },
     "updated": "2026-07-22"
   },
