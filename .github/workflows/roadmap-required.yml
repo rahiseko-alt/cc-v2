@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   require-roadmap:
-    name: PRにroadmap更新があるか（例外なし）
+    name: roadmap-required
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
