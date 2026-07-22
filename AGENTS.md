@@ -85,12 +85,15 @@ node scripts/verify-roadmap-evidence.mjs  # roadmap の evidence が外部事実
 - 上記 Testing を緑にしてからコミットする。
 - `criteria` / `verify`（＝基準）を変更する PR は、本文でその旨を明示し、人間（マスター）承認を必須とする。
 - ロードマップの `evidence` には外部事実（commit SHA / CI run URL 等）だけを書く。
+- **全PRは `docs/roadmap.html` を必ず更新する**。CI 関所 `roadmap-required`（`.github/workflows/roadmap-required.yml`）が差分0のPRを赤で弾く。**例外なし**（handoff の②今回トラブル・③次回=`meta.next` は毎セッション必ず書けるため diff 0 はあり得ない）。機械強制は branch protection で status context `roadmap-required` を必須にして初めて有効。
 
 ## セッション開始の儀式（ロードマップ）
 
 - ロードマップの**正は `docs/roadmap.html` 内の JSON**（`<script id="roadmap-data">`）。日々の更新は**その JSON だけ**を編集する。判定・受入ゲートは末尾の描画エンジンが担い、**モデルを変える時だけ**エンジンを触る。
 - **セッション開始時**：まず `docs/roadmap.html` の `meta.active`（現在地）と `meta.next`（次の一手）を読み、ユーザーに**現在地と次の一手を報告してから**作業に入る。
-- **引継ぎ（handoff）**：ロードマップに触れるセッションでは `checkin-checkout` スキルに従う。開始時に `docs/handoff.md`（前回の特筆事項）を読み、ロードマップJSONを更新する瞬間に3行以内で上書きして commit & push する。handoff にはロードマップ関係事項は書かない（二重管理禁止）。
+- **引継ぎ（handoff）**：ロードマップに触れるセッションでは `checkin-checkout` スキルに従う。handoff は独立ファイルではなく **`docs/roadmap.html` の `meta.handoff`** に一体化する（**①今回実施=`meta.handoff.done` / ②今回トラブル=`meta.handoff.trouble`（無ければ「無し」）/ ③次回やる事=`meta.next`（無ければ「ロードマップの続き」）**）。開始時に読み、ロードマップJSONを更新する瞬間に上書きして commit & push する。handoff には進捗・criteria/verify/evidence を書かない（二重管理禁止）。
+  - **なぜ本編同梱か**：handoff を本編（毎PRで必ず main に乗る `docs/roadmap.html`）と同じファイルに置くことで、「別枝に書いて未マージで消える」事故を構造的に防ぐ。旧 `docs/handoff.md` は廃止。
+  - **失敗は蓄積、handoff は上書き**：ミス・失敗は上書きだと消えるので `docs/failures.md` に **append（消さない）** で積む（日付＋事象＋根因＋教訓）。`meta.handoff.trouble` は今回セッションの揮発メモに留める。
 
 ### ノードは2種（上流＝状態／下流＝作業）
 
