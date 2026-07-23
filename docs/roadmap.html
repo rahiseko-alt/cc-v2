@@ -120,8 +120,8 @@
     "active": "G",
     "next": "本セッションの AGENTS.md 冗長削除PR（機械が既に強制済みの記述の二重管理を排除）を master が GitHub 承認→basis-gate 緑→マージするのが最優先。その後は新規案件/機能だが未定＝着手時に AGENTS.md『新規案件の初期化フロー』のヒアリングから。留意：本PRは AGENTS.md 変更＝basis-gate 対象で master 承認/管理者マージ必須。本番=https://cc-v2-web.vercel.app。",
     "handoff": {
-      "done": "AGENTS.md の『機械制御で既に強制済み＝二重管理』な記述を削除（-24/+10行）。(1)『基準凍結の門』の機構説明（土管/head SHA 紐付き/branch protection/別ベンダ枠）を docs/basis-gate.md への1行ポインタに集約し、AIが行動に使う核（第2の目=basis-reviewer の敵対レビュー＋マスター承認・反証残れば既定STOP・門の対象＝AGENTS.md と roadmap の nodes/描画のみで meta だけは非対象）だけ残した。(2)roadmap-required の branch protection 強制説明を削り『全PRで roadmap 更新必須』に圧縮。原子粒度ルール(PR#23で凍結)は不変。",
-      "trouble": "本PRは AGENTS.md 変更＝basis-gate 対象で master の GitHub 承認/管理者マージ必須。規律prose削除は criteria/verify を変えないが、門は AGENTS.md 全変更が対象。第2の目(basis-reviewer)で『bar を下げていない／load-bearing な制約を消していない』を敵対的に確認すること。削った機構詳細は docs/basis-gate.md に全て現存＝情報損失なしを要検証。"
+      "done": "AGENTS.md の『機械制御で既に強制済み＝二重管理』な記述を2段階で削除。(1)『基準凍結の門』の機構説明を docs/basis-gate.md へのポインタに集約（-24/+10）。(2)ロードマップの仕組み説明（ノード種別/完了ゲート/分解規則/割り方/カード表記/criteria・verify・evidence の書き方＝AGENTS.md 101-122行）が docs/roadmap.html の README シートと重複＝二重管理だったため、roadmap.html を正としてポインタに畳んだ。ロードマップは描画エンジン(完了ゲート自動導出)/verify-roadmap-evidence.mjs/roadmap-required/basis-gate で機械強制される自己完結系ゆえ AGENTS.md 再説明は不要、という原理。AI挙動の核(セッション儀式=active/next 読む＋handoff)は残置。原子粒度ルール・検証の規律(22-65)は不変。",
+      "trouble": "本PRは AGENTS.md 変更＝basis-gate 対象で master の GitHub 承認/管理者マージ必須。ロードマップ仕組みを roadmap.html へ片寄せしたので、削った各項目(状態/作業・完了ゲート・分解規則・割り方・criteria/verify/evidence)が roadmap.html README シート(277-376行)に現存＝情報損失なしを第2の目で1つずつ照合すること。留意：AGENTS.md は全AI自動読込だが roadmap.html 散文は自動読込されない→儀式『開始時に roadmap.html を読む』が担保。"
     },
     "updated": "2026-07-23"
   },
