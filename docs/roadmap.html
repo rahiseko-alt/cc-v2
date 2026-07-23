@@ -118,10 +118,10 @@
   "meta": {
     "title": "ロードマップ",
     "active": "G",
-    "next": "本セッションの AGENTS.md 冗長削除PR（機械が既に強制済みの記述の二重管理を排除）を master が GitHub 承認→basis-gate 緑→マージするのが最優先。その後は新規案件/機能だが未定＝着手時に AGENTS.md『新規案件の初期化フロー』のヒアリングから。留意：本PRは AGENTS.md 変更＝basis-gate 対象で master 承認/管理者マージ必須。本番=https://cc-v2-web.vercel.app。",
+    "next": "構造改革B案が入った。次の一手はA案＝prod昇格ゲートの本物化：main→本番のVercel自動デプロイを切り離し、main を preview 相当へ降格、prod は prod-* タグ昇格＋GitHub Environment の required reviewer(=master)で承認する。Vercelダッシュボードで Production Branch 切替の手作業が1回要る。加えて別ベンダ bot(@codex/Gemini)を .github/bot-reviewers.txt に登録して tier-1 を人間から外す。本番=https://cc-v2-web.vercel.app。",
     "handoff": {
-      "done": "AGENTS.md の『機械制御で既に強制済み＝二重管理』な記述を2段階で削除。(1)『基準凍結の門』の機構説明を docs/basis-gate.md へのポインタに集約（-24/+10）。(2)ロードマップの仕組み説明（ノード種別/完了ゲート/分解規則/割り方/カード表記/criteria・verify・evidence の書き方＝AGENTS.md 101-122行）が docs/roadmap.html の README シートと重複＝二重管理だったため、roadmap.html を正としてポインタに畳んだ。ロードマップは描画エンジン(完了ゲート自動導出)/verify-roadmap-evidence.mjs/roadmap-required/basis-gate で機械強制される自己完結系ゆえ AGENTS.md 再説明は不要、という原理。AI挙動の核(セッション儀式=active/next 読む＋handoff)は残置。原子粒度ルール・検証の規律(22-65)は不変。",
-      "trouble": "本PRは AGENTS.md 変更＝basis-gate 対象で master の GitHub 承認/管理者マージ必須。ロードマップ仕組みを roadmap.html へ片寄せしたので、削った各項目(状態/作業・完了ゲート・分解規則・割り方・criteria/verify/evidence)が roadmap.html README シート(277-376行)に現存＝情報損失なしを第2の目で1つずつ照合すること。留意：AGENTS.md は全AI自動読込だが roadmap.html 散文は自動読込されない→儀式『開始時に roadmap.html を読む』が担保。"
+      "done": "承認負担の構造改革B案を実装：マージ承認を『毎マージ』から3層に組み替えた。tier-0(実装/文章/roadmap meta)=機械CIだけ→auto-merge、tier-1(roadmap nodes=criteria/verify)=別ベンダbotの敵対レビュー(未設定間は人間fallback)、tier-2(審判集合=.github/workflows・.github/scripts・reviewers台帳・ルートAGENTS.md・roadmap描画エンジン+prod昇格)=人間承認のみ。実装物：AGENTS.md『検証の規律』を3層へ改訂、roadmap-basis-changed.mjs を meta/nodes/engine の3分類器化、basis-gate.sh を3層ルーティングへ全面改訂、.github/bot-reviewers.txt 新設、auto-merge.yml 新設(CI緑+basis-gate/prod-smoke緑+holdラベル無しで自動squash)、docs/basis-gate.md を3層+auto-mergeへ更新。同時に『審判の整合性ホール』(workflows/scriptsが従来門の外)を審判集合に取込んで封鎖。",
+      "trouble": "本PRは審判集合(AGENTS.md/workflows/scripts/reviewers台帳)に触る＝tier-2なので basis-gate は master 承認まで failure＝auto-merge も走らない(＝この改革PRだけは従来どおり master が手動承認/マージ。これが旧フロー最後の1クリック)。auto-merge.yml と status/check_suite トリガは『main に入って以降』有効なので、この改革がmainにマージされて初めて日常のauto-mergeが効き出す。private無料のためbasis-gateのハード強制は未(ソフト信号のみ)だが auto-merge が basis-gate=success を条件にするので tier-1/2 未緑では自動マージされない。"
     },
     "updated": "2026-07-23"
   },

@@ -1,14 +1,14 @@
-# basis-gate が「現HEADでの判定」を必須とする GitHub ログイン（1行1つ）。
+# tier-2（審判集合＝審判そのものの変更／prod 昇格）を裁く必須「人間」の GitHub ログイン（1行1つ）。
+# ＋ tier-1（基準＝roadmap nodes 変更）で bot が未設定の間の安全側 fallback もここを使う。
 #
-# 運用(2)：
-#   - 第2の目 … 独立サブエージェント basis-reviewer が敵対的にレビューし、反証を平易言語で出す
-#                （.claude/agents/basis-reviewer.md）。生の反証は PR に記録として残す。
-#   - マスター … 第2の目の反証を読んだ上で、この承認を出す（＝門の実体）。
-# よって機械が必須とする判定者は「マスター1名」。第2の目の反証対応は人間の規律に委ねる
-#   （サブエージェントは独立 bot 身元を持てないため機械照合しない）。
+# 3層（詳細は docs/basis-gate.md）：
+#   - tier-0（機械だけ）        … basis-gate 即 success。この台帳は無関係。
+#   - tier-1（別ベンダ bot）    … .github/bot-reviewers.txt の bot が裁く。bot 未設定なら下記の人間へ fallback。
+#   - tier-2（人間＝マスター）  … .github/workflows/** ・ .github/scripts/** ・reviewers 台帳・ルート AGENTS.md・
+#                                 roadmap 描画エンジン・prod 昇格。ここに列挙した人間の APPROVED が現HEADに要る。
 #
-# 将来：別ベンダの bot（例 @codex review / Gemini Code Assist）を第2の目に格上げする場合、
-#   その bot のログインをここに足すだけで basis-gate がその bot の反証/承認を機械照合する。
+# 第2の目の思考補助として独立サブエージェント basis-reviewer（.claude/agents/basis-reviewer.md）を使ってよいが、
+# サブエージェントは独立 bot 身元を持てないため機械照合の対象にしない（照合対象は下記の実ログインのみ）。
 #
 # 行頭 # はコメント。空行は無視。
 
