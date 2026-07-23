@@ -32,7 +32,8 @@ concurrency:
 
 jobs:
   evaluate:
-    name: 緑の main 向け PR を自動マージ
+    # check run 名を "auto-merge" に固定し、自己チェックを完全一致で除外する（部分一致は緩く危険）。
+    name: auto-merge
     runs-on: ubuntu-latest
     steps:
       - name: 評価してマージ
@@ -68,12 +69,14 @@ jobs:
               echo "skip: commit status = $cstate（門 or prod-smoke が未緑）"; continue
             fi
 
-            # 2) check runs（CI: quality / smoke / roadmap-required 等）が全て success/skipped/neutral か。
-            #    自分自身(auto-merge)の check は除外して自己デッドロックを防ぐ。
+            # 2) check runs（CI: quality / smoke / roadmap-required 等）が全て success/neutral か。
+            #    自分自身(auto-merge)の check は「完全一致」で除外して自己デッドロックを防ぐ。
+            #    skipped は緑扱いしない（必須 check を skip させて素通りさせる裏口を塞ぐ）。
+            #    in-progress/queued(conclusion=null) も未成功扱い＝次イベントで再評価。
             runs="$(gh api "repos/$REPO/commits/$sha/check-runs?per_page=100" \
-              --jq '[.check_runs[] | select((.name|test("auto-merge"))|not)]')"
+              --jq '[.check_runs[] | select(.name != "auto-merge")]')"
             total="$(jq 'length' <<<"$runs")"
-            bad="$(jq '[.[] | select(.conclusion!="success" and .conclusion!="skipped" and .conclusion!="neutral")] | length' <<<"$runs")"
+            bad="$(jq '[.[] | select(.conclusion!="success" and .conclusion!="neutral")] | length' <<<"$runs")"
             if [ "$total" -eq 0 ]; then echo "skip: check runs がまだ無い"; continue; fi
             if [ "$bad" -ne 0 ]; then echo "skip: 未成功の check runs が $bad 件"; continue; fi
 

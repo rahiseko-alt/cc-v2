@@ -65,9 +65,14 @@
     人間は個々の bar 変更を裁かない（bot 未設定の間だけ安全側で人間へ fallback）。
   - **tier-2（人間＝マスターの承認が要る唯一の層）**：**「審判そのもの」を変える時**と**本番昇格**だけ。ここは
     AI が自分の判定を骨抜きにできる急所なので、必ず人間が承認する。
-    - **審判集合（＝tier-2 の門の対象）**：`.github/workflows/**`（機械の審判本体）／`.github/scripts/**`
-      （basis-gate・evidence 検査＝強制装置）／`.github/basis-reviewers.txt`・`.github/bot-reviewers.txt`（誰が裁くか）／
-      このルート `AGENTS.md`（規律メタルール）／`docs/roadmap.html` の描画エンジン。加えて **prod への昇格**。
+    - **審判集合（＝tier-2 の門の対象）**：AI が自分の判定を骨抜きにできる所を全部含める。
+      - **門・CI・台帳・規律の本体**：`.github/workflows/**`（機械の審判本体）／`.github/scripts/**`／
+        `scripts/**`（`verify-roadmap-evidence.mjs` ＝evidence 偽造検査器を含む）／`.github/basis-reviewers.txt`・
+        `.github/bot-reviewers.txt`（誰が裁くか）／このルート `AGENTS.md`（規律メタルール）／`docs/roadmap.html` の描画エンジン。
+      - **「緑の定義」そのもの**：各 `package.json` の scripts（`test`/`lint` 等）／`tsconfig*.json`／`vitest.config.*`／
+        `eslint.config.*`／`pnpm-workspace.yaml`／`pnpm-lock.yaml`／`.node-version`／`.tool-versions`／`.npmrc`。
+        ここを緩める＝審判の中身を変えることなので人間必須（実装コード本体 `apps/**/src` 等は tier-0 のまま自動流通）。
+      - 加えて **prod への昇格**。
   - **反証は平易言語**：非エンジニアが読める1文で出す（bot も人間も）。反証が残る間は既定 STOP。解除は
     「基準を直して反証を消す」か「マスターが理由を記録して覆す」のいずれか。
   - **`meta`（handoff/next 等）だけの更新は非対象**＝承認不要でマージ可（日々のチェックアウトは自動で通る）。

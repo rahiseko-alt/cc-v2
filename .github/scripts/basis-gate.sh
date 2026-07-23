@@ -119,13 +119,28 @@ enforce_bot_gate() {
 # 1) 変更ファイル一覧
 FILES="$(gh api "repos/$REPO/pulls/$PR/files" --paginate --jq '.[].filename')"
 
-# 2) tier-2（審判集合）に触れているか。ルート AGENTS.md・workflows・scripts・reviewers 台帳。
+# 2) tier-2（審判集合）に触れているか。＝「審判そのもの」を変えるファイル。
+#    (a) 門・CI・レビュア台帳・規律の本体
 tier2=no
 if grep -qxE 'AGENTS\.md' <<<"$FILES"; then tier2=yes; fi                 # ルート AGENTS.md のみ
 if grep -qE '^\.github/workflows/' <<<"$FILES"; then tier2=yes; fi
 if grep -qE '^\.github/scripts/' <<<"$FILES"; then tier2=yes; fi
 if grep -qxE '\.github/basis-reviewers\.txt' <<<"$FILES"; then tier2=yes; fi
 if grep -qxE '\.github/bot-reviewers\.txt' <<<"$FILES"; then tier2=yes; fi
+#    (b) 「CI が緑と判定する定義そのもの」＝審判の中身。ここを緩める＝審判を骨抜きにする、なので人間必須。
+#        各 package.json の scripts / 直下 scripts/(evidence 偽造検査器を含む) / 型・lint・test・依存・
+#        ランタイム固定の設定。実装コード本体(apps/**/src 等)は tier-0 のまま自動流通する。
+if grep -qE '(^|/)package\.json$' <<<"$FILES"; then tier2=yes; fi
+if grep -qE '^scripts/' <<<"$FILES"; then tier2=yes; fi
+if grep -qE '(^|/)tsconfig[^/]*\.json$' <<<"$FILES"; then tier2=yes; fi
+if grep -qE '(^|/)vitest\.config\.[cm]?[jt]s$' <<<"$FILES"; then tier2=yes; fi
+if grep -qE '(^|/)eslint\.config\.[cm]?[jt]s$' <<<"$FILES"; then tier2=yes; fi
+if grep -qE '(^|/)\.eslintrc' <<<"$FILES"; then tier2=yes; fi
+if grep -qxE 'pnpm-workspace\.yaml' <<<"$FILES"; then tier2=yes; fi
+if grep -qxE 'pnpm-lock\.yaml' <<<"$FILES"; then tier2=yes; fi
+if grep -qxE '\.node-version' <<<"$FILES"; then tier2=yes; fi
+if grep -qxE '\.tool-versions' <<<"$FILES"; then tier2=yes; fi
+if grep -qxE '\.npmrc' <<<"$FILES"; then tier2=yes; fi
 
 # 3) roadmap.html 変更の分類（meta / nodes / engine）。engine は tier-2、nodes は tier-1。
 roadmap_class=none
