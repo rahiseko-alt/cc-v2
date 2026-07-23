@@ -12,9 +12,14 @@
 | **tier-1** | `docs/roadmap.html` の **nodes**（criteria/verify＝合格ライン） | **別ベンダ bot**（第2の目） | bot 反証なしで `success`（bot 未設定時は人間 fallback） |
 | **tier-2** | **審判集合**（下記）＝ 審判そのもの／prod 昇格 | **人間（マスター）** | 人間 APPROVED で `success` |
 
-- **審判集合（tier-2）**：`.github/workflows/**`（機械の審判本体）／`.github/scripts/**`（basis-gate・evidence 検査
-  ＝強制装置）／`.github/basis-reviewers.txt`・`.github/bot-reviewers.txt`（誰が裁くか）／ルート `AGENTS.md`
-  （規律メタルール）／`docs/roadmap.html` の**描画エンジン**（＝roadmap-data JSON 以外の HTML/CSS/JS）。
+- **審判集合（tier-2）**：AI が自分の判定を骨抜きにできる所を全部含める。
+  - **門・CI・台帳・規律の本体**：`.github/workflows/**`（機械の審判本体）／`.github/scripts/**`／
+    `scripts/**`（`verify-roadmap-evidence.mjs`＝evidence 偽造検査器を含む）／`.github/basis-reviewers.txt`・
+    `.github/bot-reviewers.txt`（誰が裁くか）／ルート `AGENTS.md`（規律メタルール）／`docs/roadmap.html` の**描画エンジン**
+    （＝roadmap-data JSON 以外の HTML/CSS/JS）。
+  - **「緑の定義」そのもの**：各 `package.json` の scripts（`test`/`lint` 等）／`tsconfig*.json`／`vitest.config.*`／
+    `eslint.config.*`／`pnpm-workspace.yaml`／`pnpm-lock.yaml`／`.node-version`／`.tool-versions`／`.npmrc`。
+    実装コード本体（`apps/**/src` 等）は tier-0 のまま自動流通する。
 - **roadmap の分類**は `.github/scripts/roadmap-basis-changed.mjs` が `meta`／`nodes`／`engine` の3トークンで返す
   （meta→tier-0・nodes→tier-1・engine→tier-2）。
 - **優先順位**：tier-2 該当があれば最優先で人間。無く nodes 変更のみなら tier-1。どれでもなければ tier-0。
