@@ -54,6 +54,11 @@
   - **機械は中身を判断しない（土管）**：`basis-gate`（`.github/workflows/basis-gate.yml`）は反証の当否を評価せず、
     必須レビュアーの判定フラグ（承認／変更要求）を **head SHA 紐付き**で読んで赤/緑にするだけ。中身の判断は
     第2の目（AI）と人間（マスター）が行う。
+  - **門の対象範囲（過剰適用を防ぐ）**：`basis-gate` が対象にするのは **AGENTS.md の変更**と、**`docs/roadmap.html` のうち
+    `nodes`（criteria/verify を含む）または描画エンジンに触れる変更**のみ。`meta`（`handoff`/`next`/`updated` 等のナビ情報）
+    **だけ**の変更は非対象＝門を素通りさせる（判定は `.github/scripts/roadmap-basis-changed.mjs`）。criteria/verify は全て
+    `nodes` 配下にあるため、**日々のチェックアウト（handoff 更新のみ）は承認不要で自動でマージできる**一方、基準そのものの
+    変更は必ず門に掛かる。
   - **門の実体＝マスターの承認**：基準変更PR（`docs/roadmap.html` / `AGENTS.md` 系）は、当該 commit SHA に紐付く
     マスターの GitHub 承認が付くまで緑にしない。中身を変えたら旧承認は失効（stale）。branch protection で機械強制し、
     設定内容は `docs/basis-gate.md` に文書化する（誰かが黙って門を外せないように）。
