@@ -118,10 +118,10 @@
   "meta": {
     "title": "ロードマップ",
     "active": "G",
-    "next": "構造改革B案が入った。次の一手はA案＝prod昇格ゲートの本物化：main→本番のVercel自動デプロイを切り離し、main を preview 相当へ降格、prod は prod-* タグ昇格＋GitHub Environment の required reviewer(=master)で承認する。Vercelダッシュボードで Production Branch 切替の手作業が1回要る。加えて別ベンダ bot(@codex/Gemini)を .github/bot-reviewers.txt に登録して tier-1 を人間から外す。本番=https://cc-v2-web.vercel.app。",
+    "next": "リポを公開化済み＝branch protection のハード強制がタダで可能に。残作業：(1)このPRで CodeRabbit(coderabbitai[bot])を tier-1 の第2の目として登録→実挙動(正確なbotログイン名・変更要求を出せるか)を観察し必要なら同PRで微修正。(2)branch protection で basis-gate・CI・roadmap-required を必須チェック化し門を物理強制へ(check名は job名と一致させること＝過去の失敗 failures.md 2026-07-22)。(3)A案=prod昇格ゲートの本物化(Vercel Production Branch 切替1回)。本番=https://cc-v2-web.vercel.app。",
     "handoff": {
-      "done": "承認負担の構造改革B案を実装：マージ承認を『毎マージ』から3層に組み替えた。tier-0(実装/文章/roadmap meta)=機械CIだけ→auto-merge、tier-1(roadmap nodes=criteria/verify)=別ベンダbotの敵対レビュー(未設定間は人間fallback)、tier-2(審判集合=.github/workflows・.github/scripts・reviewers台帳・ルートAGENTS.md・roadmap描画エンジン+prod昇格)=人間承認のみ。実装物：AGENTS.md『検証の規律』を3層へ改訂、roadmap-basis-changed.mjs を meta/nodes/engine の3分類器化、basis-gate.sh を3層ルーティングへ全面改訂、.github/bot-reviewers.txt 新設、auto-merge.yml 新設(CI緑+basis-gate/prod-smoke緑+holdラベル無しで自動squash)、docs/basis-gate.md を3層+auto-mergeへ更新。同時に『審判の整合性ホール』(workflows/scriptsが従来門の外)を審判集合に取込んで封鎖。",
-      "trouble": "第2の目(basis-reviewer)が『審判集合が狭すぎ』の致命反証を捕捉→修正済み：各package.jsonのscripts・直下scripts/(evidence検査器)・tsconfig/pnpm-lock/.node-version 等『緑の定義そのもの』をtier-2に追加(でないとAIが自分のCIを緩めて自動マージできた)。auto-mergeの自己除外も完全一致化+skipped非緑化。詳細はfailures.md 2026-07-23。本PRは審判集合に触る＝tier-2なので basis-gate は master 承認まで failure＝auto-merge も走らない(この改革PRだけ従来どおり master が手動承認/マージ=旧フロー最後の1クリック)。auto-merge.yml と status/check_suite トリガは『main に入って以降』有効ゆえ、mainにマージされて初めて日常auto-mergeが効き出す。private無料でbasis-gateハード強制は未(ソフト信号)だが auto-merge が basis-gate=success 条件なので tier-1/2 未緑では自動マージされない。"
+      "done": "構造改革B案(3層ゲート+auto-merge)がPR#25でmainにマージ済み＝日常マージの自動化が稼働。続けてリポを公開化(private→public)し、tier-1の第2の目に CodeRabbit を採用(公開リポ無料・変更要求を出せる別ベンダ)。本PRで .github/bot-reviewers.txt の placeholder を coderabbitai[bot] に差し替え(＝tier-1をbotへ、人間fallbackから移行)。あわせて口調規律(丁寧維持厳守)をAGENTS.md普遍ルールに追加済み。",
+      "trouble": "CodeRabbit の GitHub 上のレビュー投稿身元は coderabbitai[bot] と想定して登録したが、正確な .user.login と『CHANGES_REQUESTED を出せるか(既定はコメントのみの可能性)』は本PRのCodeRabbitレビューで実地確認し、違えば同PR内で修正する(過去に job名≠check名で全PRブロックの失敗あり＝名前は実測合わせが鉄則)。本PRは bot-reviewers.txt=審判集合に触る＝tier-2なので master 承認まで basis-gate は赤・auto-merge も走らない(このPRは master 手動承認/マージ)。branch protection 未設定の今はハード強制でなくソフト信号。"
     },
     "updated": "2026-07-23"
   },
