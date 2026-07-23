@@ -120,10 +120,10 @@
     "active": "G",
     "next": "ロードマップ本体(G)・運用基盤（引継ぎ＋機械ゲート2本 roadmap-required/basis-gate）とも完遂。次は新規案件/機能だが未定＝着手時に AGENTS.md『新規案件の初期化フロー』のヒアリングから。留意：handoff は roadmap.html 内のため checkout PR も basis-gate 対象＝master の承認/管理者マージが要る（meta.handoff 変更のみ basis-gate を免除する改良は将来検討）。残テスト枝 claude/verify-basis-gate は GitHub 画面で削除可。本番=https://cc-v2-web.vercel.app。",
     "handoff": {
-      "done": "handoff を roadmap(meta.handoff) に一体化＋失敗を docs/failures.md に蓄積＋機械ゲート2本を必須化：roadmap-required（全PRに roadmap 更新を強制）と basis-gate（基準変更を master 承認まで阻止）。両方とも実地で強制を実証（roadmap-required は job名≠登録名の誤設定を job名改名で修正後 #18 で pass→merge、basis-gate は検証PR #20 で 405 'basis-gate is failing' による阻止）。sharp 高危険度脆弱性も pnpm.overrides で解消。別案件用の空ロードマップテンプレを presets/roadmap-template.html に用意。PR #15/#16/#18/#19 マージ済み。",
+      "done": "handoff を roadmap(meta.handoff) に一体化＋失敗を docs/failures.md に蓄積＋機械ゲート2本を必須化：roadmap-required（全PRに roadmap 更新を強制）と basis-gate（基準変更を master 承認まで阻止）。両方とも実地で強制を実証（roadmap-required は job名≠登録名の誤設定を job名改名で修正後 #18 で pass→merge、basis-gate は検証PR #20 で 405 'basis-gate is failing' による阻止）。sharp 高危険度脆弱性も pnpm.overrides で解消。別案件用の空ロードマップテンプレを presets/roadmap-template.html に用意。#21 で basis-gate を絞り込み（meta 更新のみの変更は門を素通り＝日々のチェックアウトは承認不要）。next の新着脆弱性(<15.5.21)を 15.5.21 へ更新し audit 緑化。PR #15/#16/#18/#19/#21 マージ済み。",
       "trouble": "存否/位置はローカル origin/* でなくリモート実データ（git ls-remote / GitHub API / PR API）で確認する（stale 参照・チェック名ズレで二度誤った）。GitHub Actions の必須チェック名は job 名で一致させる。basis-gate 必須化後は、必須チェックが赤だと API 管理者マージも 405 で拒否＝roadmap を触る PR（checkout 含む）は master の承認/管理者マージが必要。git プロキシは push --delete を 403 で拒否＝不要枝は GitHub 画面で消す。サンドボックスは *.vercel.app / vercel.com を egress 遮断（Vercel 検証は CI 経由）。"
     },
-    "updated": "2026-07-22"
+    "updated": "2026-07-23"
   },
   "nodes": [
     { "id":"G", "kind":"state", "theme":"ゴール：アプリを本番運用できる環境にする", "meaning":"動かし・公開し・安全に・継続運用でき・データを失わない", "detail":"最上位＝最終到達状態。子＝必要十分条件（各々が必要・合わせて十分）。Well-Architected/12-Factor/OWASP を被覆。未確定枝は『未定を明記した state』として置き着手時に手順展開（遅延展開）",
