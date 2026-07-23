@@ -1,9 +1,9 @@
 name: basis-gate
 
-# 基準凍結の門番（2AI承認ゲート）。
-# criteria/verify・規律に触るPR（docs/roadmap.html / AGENTS.md 系）は、
-# 別系統2AI(Claude/Codex)の両承認が現HEADに揃うまで basis-gate を緑にしない。
-# 承認が後から付くので pull_request だけでなく pull_request_review でも再評価する。
+# 基準凍結の門番（3層ルーティング）。詳細は docs/basis-gate.md。
+# PR が触るファイルを tier-0/1/2 に分類し、必要な承認だけを現HEADに要求する：
+#   tier-0=機械だけ即success / tier-1=別ベンダbot反証なし / tier-2=人間(審判集合・prod昇格)承認。
+# 承認/レビューが後から付くので pull_request だけでなく pull_request_review でも再評価する。
 # ※ 機械強制は branch protection で status context `basis-gate` を必須にして初めて有効。
 
 on:
@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   gate:
-    name: 2AI承認ゲート (基準変更PR)
+    name: 基準凍結の門番 (3層ルーティング)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -1,8 +1,9 @@
-// docs/roadmap.html の base 版と head 版を比べ、変更が JSON の meta（handoff/next/updated 等の
-// ナビ情報）だけに収まっているかを判定する。
-//   - meta だけの変更（nodes もエンジンHTMLも不変）        → exit 0（＝基準非対象。日々の checkout はここ）
-//   - nodes（criteria/verify 含む）やエンジンHTMLに変更あり → exit 1（＝基準対象。門を適用）
-//   - パース不能・想定外                                    → exit 1（安全側で対象）
+// docs/roadmap.html の base 版と head 版を比べ、変更を3層に分類して stdout に1トークンで出す。
+//   - meta   … meta(handoff/next/updated 等)のみ変更（nodes もエンジンHTMLも不変） → tier-0（門は非対象／日々の checkout）
+//   - nodes  … nodes(criteria/verify 含む)が変更（エンジンHTMLは不変）           → tier-1（別ベンダ bot の敵対レビュー）
+//   - engine … 描画エンジン(HTML/CSS/JS＝審判の一部)が変更                        → tier-2（人間＝マスター承認）
+//   - engine … パース不能・想定外も安全側で engine(=人間) に倒す
+// 分類トークンは stdout の**単独最終行**に出す（診断は stderr）。呼び出し側(basis-gate.sh)がこれを読む。
 // criteria/verify は全て nodes 配下にあり meta には無いため、「meta のみ変更」は基準変更ではない。
 import fs from 'node:fs';
 
@@ -18,19 +19,28 @@ function parse(path) {
   return { json, shell };
 }
 
+function emit(token, msg) {
+  if (msg) console.error(msg);
+  console.log(token);
+}
+
 try {
   const [, , baseFile, headFile] = process.argv;
   const a = parse(baseFile);
   const b = parse(headFile);
-  const nodesEqual = JSON.stringify(a.json.nodes) === JSON.stringify(b.json.nodes);
   const shellEqual = a.shell === b.shell;
-  if (nodesEqual && shellEqual) {
-    console.log('roadmap.html の変更は meta(handoff/next/updated 等)のみ → 基準非対象');
+  if (!shellEqual) {
+    emit('engine', 'roadmap.html の描画エンジン(HTML/CSS/JS)が変更 → tier-2(人間承認)');
     process.exit(0);
   }
-  console.log(`roadmap.html の変更が meta 以外に及ぶ（nodes変更=${!nodesEqual} / エンジン変更=${!shellEqual}） → 基準対象`);
-  process.exit(1);
+  const nodesEqual = JSON.stringify(a.json.nodes) === JSON.stringify(b.json.nodes);
+  if (nodesEqual) {
+    emit('meta', 'roadmap.html の変更は meta(handoff/next/updated 等)のみ → tier-0(門は非対象)');
+    process.exit(0);
+  }
+  emit('nodes', 'roadmap.html の nodes(criteria/verify 含む)が変更 → tier-1(別ベンダ bot レビュー)');
+  process.exit(0);
 } catch (e) {
-  console.log('判定不能のため安全側で基準対象に倒す: ' + (e && e.message));
-  process.exit(1);
+  emit('engine', '判定不能のため安全側で tier-2(人間) に倒す: ' + (e && e.message));
+  process.exit(0);
 }
