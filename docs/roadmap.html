@@ -118,10 +118,10 @@
   "meta": {
     "title": "ロードマップ",
     "active": "G",
-    "next": "AGENTS.md 粒度ルール改訂PR（本セッション）を master が GitHub 承認→basis-gate 緑→マージするのが最優先。その後は新規案件/機能だが未定＝着手時に AGENTS.md『新規案件の初期化フロー』のヒアリングから。留意：本PRは AGENTS.md 変更＝basis-gate 対象で master 承認/管理者マージ必須。残テスト枝 claude/verify-basis-gate は GitHub 画面で削除可。本番=https://cc-v2-web.vercel.app。",
+    "next": "本セッションの AGENTS.md 冗長削除PR（機械が既に強制済みの記述の二重管理を排除）を master が GitHub 承認→basis-gate 緑→マージするのが最優先。その後は新規案件/機能だが未定＝着手時に AGENTS.md『新規案件の初期化フロー』のヒアリングから。留意：本PRは AGENTS.md 変更＝basis-gate 対象で master 承認/管理者マージ必須。本番=https://cc-v2-web.vercel.app。",
     "handoff": {
-      "done": "AGENTS.md『検証の規律』の粒度ルールを『AIごとに解釈がぶれない』形へ改訂。(1)原子（1葉=1事実=1verify）を『唯一の停止条件』と明記し、責任単位で早期に止める抜け道を除去。(2)判定を『verify が独立して落ちうる受入事実を2つ以上含むか？』の1問に統一し、受入事実＝マスターが独立に受け入れ判定したい結果／能力と定義。typecheck&&lint&&test=1事実=1葉、secret scanning＋push protection=2事実=割る、を手順内の例で明示。(3).claude/agents/basis-reviewer.md の atomic 定義も同じ1問に整合。第2の目(basis-reviewer)が初回は『①②が&&/理由基準で合格例と矛盾』と反証→受入事実基準の1問に修正して再審。",
-      "trouble": "ルール文面の『機械的判定手順』は語の単位を厳密に合わせないと自己矛盾する：初稿は判定を『verifyが&&で割れるか／独立2理由で落ちうるか』で書いたが、合格例 typecheck&&lint&&test に literal 適用すると『割れ』と逆判定になり第2の目が反証。教訓＝判定は必ず『受入事実（マスターが独立に受け入れたい結果）』の数で数え、コマンド/&&/失敗原因の数で数えない。本PRは AGENTS.md 変更＝basis-gate 対象で master の GitHub 承認/管理者マージ必須（roadmap を触る checkout も同様）。git プロキシは push --delete を 403 拒否＝不要枝は GitHub 画面で削除。"
+      "done": "AGENTS.md の『機械制御で既に強制済み＝二重管理』な記述を削除（-24/+10行）。(1)『基準凍結の門』の機構説明（土管/head SHA 紐付き/branch protection/別ベンダ枠）を docs/basis-gate.md への1行ポインタに集約し、AIが行動に使う核（第2の目=basis-reviewer の敵対レビュー＋マスター承認・反証残れば既定STOP・門の対象＝AGENTS.md と roadmap の nodes/描画のみで meta だけは非対象）だけ残した。(2)roadmap-required の branch protection 強制説明を削り『全PRで roadmap 更新必須』に圧縮。原子粒度ルール(PR#23で凍結)は不変。",
+      "trouble": "本PRは AGENTS.md 変更＝basis-gate 対象で master の GitHub 承認/管理者マージ必須。規律prose削除は criteria/verify を変えないが、門は AGENTS.md 全変更が対象。第2の目(basis-reviewer)で『bar を下げていない／load-bearing な制約を消していない』を敵対的に確認すること。削った機構詳細は docs/basis-gate.md に全て現存＝情報損失なしを要検証。"
     },
     "updated": "2026-07-23"
   },

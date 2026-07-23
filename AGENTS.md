@@ -54,29 +54,15 @@
   - その下（操作＝作業ノード）は着手時に展開する（遅延展開）。
 - **平易言語（人間が監査できる形）**：各状態の `theme` は**非エンジニアが読んで「何が嬉しいか」が分かる1行**にする。
   専門用語（12-Factor / OWASP 等）は根拠として `detail` へ退避。これが無いと人間（マスター）の承認が形骸化する。
-- **基準凍結の門＝第2の目のレビュー＋マスター承認（着手前・必須）**：`criteria` / `verify` を確定（凍結）
-  する瞬間に、**作業した本人以外の独立レビュアーが敵対的にレビューし、その反証を人間（マスター）が読んだ上で
-  承認するまで、実装（手順化）に進めない**。
-  - **第2の目**：独立サブエージェント `basis-reviewer`（`.claude/agents/basis-reviewer.md`）が、分解が
-    **atomic・十分・平易**かを敵対的に審査する（迷えば却下）。本人（Claude）はPR本文に、第2の目はその判定を残す。
-  - **反証は平易言語で提示**：反証は「**非エンジニアが読んで動ける1文**」で書く（専門用語は補足へ）。生の反証は
-    PRに記録として残し、私（Claude）はそれを平易に翻訳して「GO可／直す／覆す」をマスターに提示する（要約は生記録と照合可能）。
-  - **反証があれば止まる（Y）**：反証（変更要求）が残っている間は門は**赤**。解除は「**基準を直して反証を消す**」か
-    「**マスターが理由を記録して覆す**」のいずれか。既定は STOP。放置して緑にはならない。
-  - **機械は中身を判断しない（土管）**：`basis-gate`（`.github/workflows/basis-gate.yml`）は反証の当否を評価せず、
-    必須レビュアーの判定フラグ（承認／変更要求）を **head SHA 紐付き**で読んで赤/緑にするだけ。中身の判断は
-    第2の目（AI）と人間（マスター）が行う。
-  - **門の対象範囲（過剰適用を防ぐ）**：`basis-gate` が対象にするのは **AGENTS.md の変更**と、**`docs/roadmap.html` のうち
-    `nodes`（criteria/verify を含む）または描画エンジンに触れる変更**のみ。`meta`（`handoff`/`next`/`updated` 等のナビ情報）
-    **だけ**の変更は非対象＝門を素通りさせる（判定は `.github/scripts/roadmap-basis-changed.mjs`）。criteria/verify は全て
-    `nodes` 配下にあるため、**日々のチェックアウト（handoff 更新のみ）は承認不要で自動でマージできる**一方、基準そのものの
-    変更は必ず門に掛かる。
-  - **門の実体＝マスターの承認**：基準変更PR（`docs/roadmap.html` / `AGENTS.md` 系）は、当該 commit SHA に紐付く
-    マスターの GitHub 承認が付くまで緑にしない。中身を変えたら旧承認は失効（stale）。branch protection で機械強制し、
-    設定内容は `docs/basis-gate.md` に文書化する（誰かが黙って門を外せないように）。
-  - **別ベンダ枠は将来差し替え可**：第2の目を別ベンダの bot（例：`@codex review` / Gemini Code Assist）に格上げする
-    場合、その bot のログインを `.github/basis-reviewers.txt` に足すだけで、`basis-gate` がその bot の反証/承認を
-    機械照合する（現状は独立 bot 身元を持てないため、第2の目の反証対応は人間の規律に委ねる）。
+- **基準凍結の門（第2の目のレビュー＋マスター承認・着手前必須）**：`criteria` / `verify` を凍結する瞬間に、
+  本人以外の独立レビュアー（第2の目＝`basis-reviewer`、`.claude/agents/basis-reviewer.md`）が **atomic・十分・平易**
+  かを敵対的にレビューし、その反証を人間（マスター）が読んだ上で承認するまで、実装（手順化）に進めない。
+  - **反証は平易言語**：非エンジニアが読める1文で出す。Claude はそれを「GO可／直す／覆す」に翻訳してマスターへ。
+  - **反証が残る間は既定 STOP**。解除は「基準を直して反証を消す」か「マスターが理由を記録して覆す」のいずれか。
+  - **門の対象**：AGENTS.md の変更と、`docs/roadmap.html` の `nodes`（criteria/verify）・描画エンジンに触れる変更のみ。
+    `meta`（handoff/next 等）**だけ**の更新は非対象＝承認不要でマージ可（日々のチェックアウトは自動で通る）。
+  - **機械強制の仕組みの正は `docs/basis-gate.md`**（basis-gate＝土管／head SHA 紐付き／branch protection／別ベンダ枠）。
+    AGENTS.md では繰り返さない（二重管理を避ける）。
 
 ## Testing instructions（品質チェック）
 
@@ -102,7 +88,7 @@ node scripts/verify-roadmap-evidence.mjs  # roadmap の evidence が外部事実
 - 上記 Testing を緑にしてからコミットする。
 - `criteria` / `verify`（＝基準）を変更する PR は、本文でその旨を明示し、人間（マスター）承認を必須とする。
 - ロードマップの `evidence` には外部事実（commit SHA / CI run URL 等）だけを書く。
-- **全PRは `docs/roadmap.html` を必ず更新する**。CI 関所 `roadmap-required`（`.github/workflows/roadmap-required.yml`）が差分0のPRを赤で弾く。**例外なし**（handoff の②今回トラブル・③次回=`meta.next` は毎セッション必ず書けるため diff 0 はあり得ない）。機械強制は branch protection で status context `roadmap-required` を必須にして初めて有効。
+- **全PRは `docs/roadmap.html` を必ず更新する**（例外なし。②今回トラブル・③`meta.next` は毎セッション書けるので diff 0 はあり得ない）。CI 関所 `roadmap-required` が差分0のPRを弾く。
 
 ## セッション開始の儀式（ロードマップ）
 
