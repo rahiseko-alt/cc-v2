@@ -141,3 +141,17 @@
   判別結果とペイロードを目視確認してから適用する運用にした。
 - 教訓：**外部から与えられる URL は前置き・末尾の揺れを想定して末尾から取る**。破壊的操作（branch protection の
   PUT 等）は必ず `--dry-run` を実装し、対象を目視確認してから本実行する。
+
+## 2026-07-24 「ブラウザ1クリックで branch protection」ボタンが原理的に不可能だった（実リポジトリで露見）
+- 事象：新リポジトリの Actions で1クリック実行する `.github/workflows/setup.yml` を追加したが、実際に
+  コピーした menu-saas で startup failure（赤×・-1s）。ワークフロー名も出ずファイルパス表示になった。
+- 根因：(1) `permissions: administration: write` は GITHUB_TOKEN の有効スコープに存在せず、ワークフローが
+  不正で起動失敗。(2) そもそも GitHub Actions の自動トークン(GITHUB_TOKEN)には branch protection を変更する
+  権限が無い＝この方式は根本的に成立しない。ローカルの YAML parse は通るため机上では気づけず、実適用を
+  検証しないまま「1クリックで済む」と説明してしまった。
+- 対処：setup.yml を撤去。branch protection は「管理者本人のブラウザ操作(Settings→Branches、道具不要)」を
+  正の手順にし、`bash scripts/setup.sh` は gh 認証済みエンジニア向けの代替に降格。AGENTS.md 手順0/_TEMPLATE.md/
+  setup.sh コメントを是正。
+- 教訓：**「サーバー側の権限が要る操作」を自動トークンで賄えると仮定しない**。権限モデル(誰のトークンに何が
+  できるか)を先に確認する。**外部に出す前に必ず実環境で1回実行して赤/緑を見る**（机上の parse 成功を根拠に
+  「動く」と言わない）。非エンジニア向けは「その人が実際にクリックだけで完了できるか」を実物で確かめる。

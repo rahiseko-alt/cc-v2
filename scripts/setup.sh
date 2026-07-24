@@ -93,7 +93,9 @@ fi
 # 6) 適用：gh が要る
 [ "$have_gh" -eq 1 ] \
   || die "gh CLI が必要です。https://cli.github.com からインストールし 'gh auth login' してください。"
-# GitHub Actions 上ではトークンが環境変数で渡る（対話ログイン不要）。手元実行のときだけ認証を確認する。
+# 管理者トークンを環境変数(GH_TOKEN/GITHUB_TOKEN)で渡した場合は対話ログイン確認を省く。
+# ※ branch protection には管理者権限が要る。GitHub Actions の自動トークンには権限が無く使えない
+#    （このスクリプトは、管理者本人が手元で gh auth 済みで実行する用途）。
 if [ -z "${GH_TOKEN:-}" ] && [ -z "${GITHUB_TOKEN:-}" ]; then
   gh auth status >/dev/null 2>&1 \
     || die "gh が未認証です。'gh auth login' を実行してください。"
