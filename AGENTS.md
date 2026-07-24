@@ -71,7 +71,8 @@
     - **審判集合（＝tier-2 の門の対象）**：AI が自分の判定を骨抜きにできる所を全部含める。
       - **門・CI・台帳・規律の本体**：`.github/workflows/**`（機械の審判本体）／`.github/scripts/**`／
         `scripts/**`（`verify-roadmap-evidence.mjs` ＝evidence 偽造検査器を含む）／`.github/basis-reviewers.txt`・
-        `.github/bot-reviewers.txt`（誰が裁くか）／このルート `AGENTS.md`（規律メタルール）／`docs/roadmap.html` の描画エンジン。
+        `.github/bot-reviewers.txt`（誰が裁くか）／`.coderabbit.yaml`（tier-1 bot が**どう裁くか**＝`request_changes_workflow` 等。
+        緩めると tier-1 が骨抜き）／このルート `AGENTS.md`（規律メタルール）／`docs/roadmap.html` の描画エンジン。
       - **「緑の定義」そのもの**：各 `package.json` の scripts（`test`/`lint` 等）／`tsconfig*.json`／`vitest.config.*`／
         `eslint.config.*`／`pnpm-workspace.yaml`／`pnpm-lock.yaml`／`.node-version`／`.tool-versions`／`.npmrc`。
         ここを緩める＝審判の中身を変えることなので人間必須（実装コード本体 `apps/**/src` 等は tier-0 のまま自動流通）。

@@ -15,8 +15,8 @@
 - **審判集合（tier-2）**：AI が自分の判定を骨抜きにできる所を全部含める。
   - **門・CI・台帳・規律の本体**：`.github/workflows/**`（機械の審判本体）／`.github/scripts/**`／
     `scripts/**`（`verify-roadmap-evidence.mjs`＝evidence 偽造検査器を含む）／`.github/basis-reviewers.txt`・
-    `.github/bot-reviewers.txt`（誰が裁くか）／ルート `AGENTS.md`（規律メタルール）／`docs/roadmap.html` の**描画エンジン**
-    （＝roadmap-data JSON 以外の HTML/CSS/JS）。
+    `.github/bot-reviewers.txt`（誰が裁くか）／`.coderabbit.yaml`（tier-1 bot が**どう裁くか**＝`request_changes_workflow` 等）／
+    ルート `AGENTS.md`（規律メタルール）／`docs/roadmap.html` の**描画エンジン**（＝roadmap-data JSON 以外の HTML/CSS/JS）。
   - **「緑の定義」そのもの**：各 `package.json` の scripts（`test`/`lint` 等）／`tsconfig*.json`／`vitest.config.*`／
     `eslint.config.*`／`pnpm-workspace.yaml`／`pnpm-lock.yaml`／`.node-version`／`.tool-versions`／`.npmrc`。
     実装コード本体（`apps/**/src` 等）は tier-0 のまま自動流通する。
@@ -51,30 +51,62 @@
 
 ## 必須レビュアー台帳（現状）
 - **人間**：`.github/basis-reviewers.txt` = **`rahiseko-alt`（マスター）** 1名（tier-2＋bot未設定時の tier-1 fallback）。
-- **bot**：`.github/bot-reviewers.txt` = **未設定（placeholder）**。別ベンダ bot を入れると tier-1 が人間から外れる。
+- **bot**：`.github/bot-reviewers.txt` = **`coderabbitai[bot]`（CodeRabbit）**。tier-1 はこの bot が裁く（人間から外れる）。
+  bot が実レビューを出せない間は tier-1 が緑にならないため、下記 CodeRabbit セットアップの完了が前提。
 
-## 別ベンダ bot（第2の目）の導入（tier-1 を人間から外す）
-候補は GitHub App として PR にレビューを出す：
-- **`@codex review`**（OpenAI・PRに標準のGitHubレビューをbot身元で投稿）
-- **Gemini Code Assist**（Google・個人版は無料）／ CodeRabbit / Qodo など
+## 別ベンダ bot（第2の目）＝CodeRabbit（tier-1 を人間から外す）
+採用は **CodeRabbit**（公開リポ無料・bot 身元 `coderabbitai[bot]`）。理由：3候補（CodeRabbit / Gemini Code Assist /
+OpenAI Codex）のうち **GitHub の formal review "Request changes"(CHANGES_REQUESTED) を自動で出す**ことを公式サポートするのは
+CodeRabbit のみ（Gemini はコメント型で Request changes を出さず不適、Codex は有料＋保証が弱い）。
 
-手順：その bot をリポにインストールし、**ログインを `.github/bot-reviewers.txt` に記入**する（placeholder と差し替え）。
-basis-gate は bot の「反証(CHANGES_REQUESTED)が無いか」を機械照合する（bot は Approve を出せない場合があるため、
-判定は「承認済みか」ではなく「現HEADでレビュー済み＆反証なしか」）。**`basis-gate` の乗り物はレビュアー非依存**。
+basis-gate は bot の「現HEADでレビュー済み＆反証(CHANGES_REQUESTED)なし」を機械照合する（bot は Approve を出せない場合が
+あるため、判定は「承認済みか」ではなく「レビュー済み＆反証なしか」）。**`basis-gate` の乗り物はレビュアー非依存**。
 なお GitHub の "required approvals" は bot 承認を数えない仕様のため、効かせる正しい方法は本 basis-gate のような
 **"必須ステータスチェック"**（native 承認要件ではない）。
 
-## 有効化に必要な人手（管理者）
-1. **branch protection（`main`）を設定**：
-   - Require a pull request before merging
-   - **Require status checks to pass** に status context **`basis-gate`** と CI／`roadmap-required` を追加
-   - **Dismiss stale pull request approvals when new commits are pushed** を有効
-2. 設定後、tier-1/2 の PR は **反証が残る間は赤／承認が現HEADに付いて緑** になり、緑まで（auto-merge も含め）進めない。
+### CodeRabbit セットアップ（管理者・一度きり）
+1. GitHub Marketplace で **CodeRabbit を当リポにインストール**（All または当リポを選択）。
+2. **CodeRabbit ダッシュボードで当リポを ON**。
+3. GitHub リポ **Settings → Moderation options → Code review limits を無効化**（有効だと bot が formal レビューを submit
+   できない＝無反応の主因。組織があれば組織側設定も無効化）。
+4. リポルートの **`.coderabbit.yaml`** で **`reviews.request_changes_workflow: true`**（既定 false＝COMMENT のみで反証が出ず
+   ゲートが素通りになるため必須）。このファイルは審判集合(tier-2)として凍結済み。
+5. 完了確認：tier-1 相当の PR（roadmap の nodes 変更）に `coderabbitai[bot]` のレビューが現HEADに付き、`basis-gate` が緑になること。
+   反応しない時の切り分け：App 未インストール／ダッシュボード OFF／PR が draft／`base_branches` 対象外／Code review limits 有効
+   ／レート制限 → `@coderabbitai review` で手動発火。どうしても不可なら `.github/bot-reviewers.txt` を placeholder に戻し
+   tier-1 を人間 fallback（稀なので許容）。
 
-> ⚠️ プラン制約：**private リポでは branch protection の"必須化(ハード強制)"は有料プラン（Pro/Team）または public 化が要る**。
-> それが無い間、`basis-gate` は**赤/緑の"信号"は出るがマージ物理ブロックはかからない**。ただし `auto-merge` は
-> basis-gate=success を条件にするので、**tier-1/2 が緑になるまで自動マージは走らない**（ソフトには機能する）。
-> 将来 public 化 or 有料化で `basis-gate` を必須 ON にすればハード強制へ格上げできる（仕掛けは完成済み）。
+## 有効化に必要な人手（管理者）＝物理強制 ON（Ruleset 推奨）
+
+当リポは**公開済み**なので Ruleset / branch protection は**無料**で使える。**Ruleset を推奨**（日本語・記号・スペース入りの
+チェック名を、まだ走っていなくても手入力で必須登録できる。従来型 branch protection は「直近7日に実際に走ったチェック」しか
+選べず不便）。
+
+**手順（GitHub → リポ Settings → Rules → Rulesets → New ruleset → New branch ruleset）**：
+1. **Ruleset name**：`main-protect`
+2. **Enforcement status**：**Active**（既定 Disabled なので必ず変更）
+3. **Bypass list**：**何も追加しない**（＝リポ管理者本人もルールに従う。手動マージの裏口を塞ぐ核心）
+4. **Target branches → Add target → Include default branch**（`main`）
+5. **Require a pull request before merging** を ON、**Required approvals = 0**
+   （※ **Require approvals を付けてはいけない**。tier-0 は formal Approve を持たず承認は `basis-gate` に一元化しているため、
+   付けると自作 auto-merge の GITHUB_TOKEN マージが**永久ブロック**される）
+6. **Require status checks to pass** を ON にし、次の**4つだけ**を1つずつ入力して＋（**名前完全一致**）：
+   - `basis-gate`（commit status context）
+   - `typecheck / lint / test / build`（CI quality の job 名）
+   - `起動スモーク (build → start → curl 200 + marker)`（CI smoke の job 名）
+   - `roadmap-required`（job 名）
+7. **Block force pushes** は既定 ON のまま → **Create**
+
+**必須にしてはいけないもの**：
+- `prod 200 + marker`（prod-smoke）… `pull_request` で走らず本番 URL 反映後に緑になる性質。必須化すると鶏卵で詰む。
+- `auto-merge` … マージ実行役。必須化すると自己デッドロック。
+- **Require approvals / CODEOWNERS** … 上記5の通り GITHUB_TOKEN マージを殺す。
+
+設定後、tier-1/2 の PR は **反証が残る間は赤／承認・レビューが現HEADに付いて緑** になり、緑まで（auto-merge も含め）
+物理的に進めない。自作 auto-merge（GITHUB_TOKEN の `gh pr merge`）は必須チェックをバイパスしない（緑で通り・赤で拒否）。
+
+> 補足：かつては private リポの必須化に有料プランが要ったが、**公開化により無料でハード強制が可能**になった。
+> `basis-gate` を必須にすることで、赤（tier-2 承認待ち等）の PR は手動マージも含め物理ブロックされる。
 
 ## 制限
 - fork からのPRはトークンが read-only になり status を書けない。本リポは同一リポの `claude/*` ブランチ運用のため通常は該当しない。

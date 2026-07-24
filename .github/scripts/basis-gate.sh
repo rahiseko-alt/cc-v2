@@ -8,7 +8,8 @@
 #                                  → .github/bot-reviewers.txt の bot が「反証なし」で success。
 #                                    bot 未設定の間だけ安全側で人間(basis-reviewers.txt)へ fallback。
 #   tier-2（人間＝マスター承認）  … 審判集合＝ .github/workflows/** ・ .github/scripts/** ・
-#                                  reviewers 台帳 ・ ルート AGENTS.md ・ roadmap の描画エンジン ・ prod 昇格。
+#                                  reviewers 台帳 ・ bot 設定(.coderabbit.yaml) ・ ルート AGENTS.md ・
+#                                  roadmap の描画エンジン ・ prod 昇格。
 #                                  → basis-reviewers.txt の必須人間が全員 APPROVED で success。
 #
 # 機械は「反証の"内容"」は判断しない。人間/bot が出した判定フラグ（承認/変更要求）を中継・強制するだけ（土管）。
@@ -127,6 +128,7 @@ if grep -qE '^\.github/workflows/' <<<"$FILES"; then tier2=yes; fi
 if grep -qE '^\.github/scripts/' <<<"$FILES"; then tier2=yes; fi
 if grep -qxE '\.github/basis-reviewers\.txt' <<<"$FILES"; then tier2=yes; fi
 if grep -qxE '\.github/bot-reviewers\.txt' <<<"$FILES"; then tier2=yes; fi
+if grep -qE '(^|/)\.coderabbit\.ya?ml$' <<<"$FILES"; then tier2=yes; fi   # tier-1 bot の挙動定義（request_changes_workflow 等）＝審判の中身。勝手な無力化を防ぐ
 #    (b) 「CI が緑と判定する定義そのもの」＝審判の中身。ここを緩める＝審判を骨抜きにする、なので人間必須。
 #        各 package.json の scripts / 直下 scripts/(evidence 偽造検査器を含む) / 型・lint・test・依存・
 #        ランタイム固定の設定。実装コード本体(apps/**/src 等)は tier-0 のまま自動流通する。

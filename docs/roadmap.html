@@ -118,12 +118,12 @@
   "meta": {
     "title": "ロードマップ",
     "active": "G",
-    "next": "最優先＝branch protection を設定して門を『ソフト信号→物理強制』へ格上げ（公開化でタダ）。必須ステータスチェックに basis-gate / typecheck・lint・test・build / 起動スモーク / roadmap-required を追加し、check名は job名と完全一致（failures.md 2026-07-22）。理由：現状は basis-gate が赤でも手動マージが通り、PR#26 がそれで誤マージされた。②main の .github/bot-reviewers.txt が coderabbitai[bot] のまま(＝動かない bot が tier-1 に載る footgun)→ CodeRabbit の実レビューを1件確認できたら維持、無理なら placeholder へ戻す(tier-2 の小PR)。③A案=prod昇格ゲート本物化(Vercel Production Branch 切離し)。本番=https://cc-v2-web.vercel.app。",
+    "next": "最優先＝承認ゼロ化の物理強制ON。【マスター操作待ち】①CodeRabbitを当リポにインストール+ダッシュボードON+GitHub Settings/Moderation/Code review limitsを無効化→私がPRにcoderabbitai[bot]の実レビューが付くか検証(tier-1無人化の前提)。②main に Ruleset『main-protect』をActiveで作成し basis-gate / typecheck・lint・test・build / 起動スモーク(build→start→curl 200+marker) / roadmap-required の4つを必須・Bypass空・承認数0(手順は docs/basis-gate.md)。Require approvals・prod-smoke・auto-mergeは必須にしない。③私が赤い使い捨てPRのマージ拒否＋通常tier-0のauto-mergeを外部事実として実証。④その後A案=prod昇格ゲート本物化(Vercel Production Branch切離し+GitHub Environment承認)。本番=https://cc-v2-web.vercel.app。",
     "handoff": {
-      "done": "承認3層化+auto-merge(PR#25)が main で稼働。リポ公開化+履歴秘密スキャンclean。口調規律(丁寧維持厳守)をAGENTS.md普遍ルールに追加。tier-1の第2の目にCodeRabbitを選定しGitHub App導入(All repos+write)+app.coderabbit.aiにcc-v2接続まで完了、PR#26でbot-reviewers.txtにcoderabbitai[bot]を登録しmainへマージ。この handoff はコード外(roadmap meta+failures.md)のみ＝tier-0 単独PRとし、auto-merge が実際に効くかの実証も兼ねる(=master のマージ操作なしで main に載るはず)。",
-      "trouble": "①CodeRabbitはPR#26に3回トリガー+新コミットにも無反応で実稼働未確認。②branch protection未設定ゆえ basis-gate赤(tier-2/承認待ち)でも手動マージが物理的に通り、実際 PR#26 がそれで通った＝門は今『ソフト信号』。次セッション最優先で物理強制化。③今回セッションで master が3回手動マージしたのは、扱ったPRが全て審判集合(tier-2)＝門の組立作業だったため(通常のtier-0/1作業はmasterのマージ不要)。加えて handoff を tier-2 の bot是正と束ねた私の失敗が余計に手動を増やした→本セッション末で handoff を tier-0 単独に分離。④main の bot-reviewers.txt が coderabbitai[bot] のまま(footgun)。動かないbot登録は tier-1 PR を『存在しないbotのレビュー待ち』で固着させ得るので、CodeRabbit復活 or placeholderへ戻す是正(tier-2小PR)が要る。⑤『basis-gate: All jobs failed』メールは tier-2未承認時の exit1＝正常な赤(status説明に『tier-2 承認待ち』)。"
+      "done": "承認ゼロ化に着手。tier-1の第2の目CodeRabbitを実稼働させる .coderabbit.yaml(reviews.request_changes_workflow:true=CHANGES_REQUESTEDを出す)を追加。さらにこれを審判集合(tier-2)へ凍結＝basis-gate.shのtier-2判定/AGENTS.md/docs/basis-gate.mdに .coderabbit.yaml を追加(AIが後でbot設定を勝手に緩めtier-1を無力化する裏口封じ)。docs/basis-gate.mdの有効化手順を『公開リポ無料・Ruleset推奨・必須4チェック・承認数0・Bypass空・prod-smoke/Require approvals禁止・CodeRabbit(Code review limits無効化+request_changes_workflow)』へ全面更新。このPRは審判集合変更=tier-2=マスター承認1回。",
+      "trouble": "①branch protectionのON自体は当セッションのツールで実行不能(MCP githubに機能なし/直APIはproxyが403 GitHub access not enabled/gh CLI無し)＝マスターがGitHub画面でRulesetを作る1操作が構造的に必須。②CodeRabbit実稼働は未実証(App導入+ダッシュボードON+Code review limits無効化はマスター操作)。無反応時は draft/base_branches対象外/Code review limits有効/レート制限を切り分け、最後は placeholder戻しで人間fallback(稀なので許容)。③必須チェックにRequire approvals/CODEOWNERSを付けると tier-0がformal Approveを持たずauto-mergeのGITHUB_TOKENマージが永久ブロック→厳禁(承認はbasis-gateに一元化)。④prod-smokeはPRで走らず本番URL依存＝必須化不可(鶏卵)。"
     },
-    "updated": "2026-07-23"
+    "updated": "2026-07-24"
   },
   "nodes": [
     { "id":"G", "kind":"state", "theme":"ゴール：アプリを本番運用できる環境にする", "meaning":"動かし・公開し・安全に・継続運用でき・データを失わない", "detail":"最上位＝最終到達状態。子＝必要十分条件（各々が必要・合わせて十分）。Well-Architected/12-Factor/OWASP を被覆。未確定枝は『未定を明記した state』として置き着手時に手順展開（遅延展開）",

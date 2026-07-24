@@ -69,3 +69,19 @@
   次セッション最優先で branch protection を設定し basis-gate 等を必須チェック化（check名=job名一致）。
 - 教訓：①門は「信号」だけでは守れない。**物理強制を入れて初めて赤が赤として効く**。②PRは tier をまたいで混載しない
   ＝tier-0(コード/文章/meta)と tier-2(審判集合)は別PRに割る。混ぜると自動で流れる分まで人間のマージ律速になる（＝改革の旨味を自分で消す）。
+
+## 2026-07-24 tier-1 bot の設定ファイル(.coderabbit.yaml)を審判集合から落としかけた／branch protection 物理強制はツールで実行不能と確定
+- 事象：承認ゼロ化のため CodeRabbit を実稼働させる `.coderabbit.yaml`(`request_changes_workflow: true`) を追加する際、当初これを
+  tier-0 のまま入れようとした（basis-gate の tier-2 リスト外）。tier-0 だと AI が後で `request_changes_workflow: false` 等へ勝手に
+  緩め、tier-1 の反証(CHANGES_REQUESTED)機能を無力化する裏口になる（2026-07-23「審判集合を狭く定義」と同型の穴）。実装中に気づき
+  tier-2 へ格上げした。加えて、branch protection の物理強制 ON は当セッションのツールでは実行不能と確定：MCP github に該当ツール
+  無し／直 API は proxy が 403(GitHub access is not enabled)／`gh` CLI 無し。＝マスターが GitHub 画面で Ruleset を作る1操作が構造的に必須。
+- 根因：①「bot が誰か(bot-reviewers.txt)」は審判集合に入れていたが「bot が**どう裁くか**(.coderabbit.yaml)」を見落とした＝審判の
+  "中身"の取りこぼし。②「branch protection を設定する」を暗にツールで代行できると仮定しかけた（実際は admin の画面操作のみ）。
+- 対処：basis-gate.sh の tier-2 判定に `.coderabbit.yaml` を追加し、AGENTS.md・docs/basis-gate.md の審判集合列挙にも明記。
+  docs/basis-gate.md に「必須チェックに Require approvals を付けると tier-0 が formal Approve を持たず自作 auto-merge の
+  GITHUB_TOKEN マージが永久ブロックされる」ことも明記（承認は basis-gate に一元化）。
+- 教訓：①第2の目(bot)を導入する時は「誰が裁くか」だけでなく「どの設定でどう裁くか」の**設定ファイルまで審判集合に凍結**する。
+  ②branch protection/Ruleset の作成・変更は **admin の画面操作のみ＝AI は代行不能**。手順を docs 化してマスターに委ねる（ツールで
+  やろうとして空回りしない）。③承認は `basis-gate`(必須ステータスチェック)に一元化し、GitHub native の Require approvals は使わない
+  （bot 承認を数えない＋GITHUB_TOKEN マージを殺す）。
