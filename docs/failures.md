@@ -58,3 +58,14 @@
 - 教訓：「AI が自分の合格を偽造できる経路」を塞ぐときは、審判を動かす仕組みだけでなく**緑の判定基準を決める全ファイル**
   （scripts本体・各config・依存/ランタイム固定）まで含める。パスは思い込みでなく `git ls-files` で実測して被覆を確認する。
   基準を凍結する変更は必ず第2の目に敵対レビューさせてからマージへ回す（今回それが穴を捕捉した＝門が機能した実例）。
+
+## 2026-07-23 branch protection 未設定のまま運用し、赤の tier-2 PR(#26)が手動マージで通った／handoff を tier-2 と束ね余計に手動を増やした
+- 事象：tier-1 の bot 登録PR#26 は basis-gate が「tier-2 承認待ち」で赤だったが、**branch protection 未設定のため物理ブロックが効かず手動マージが通った**。
+  結果、実稼働未確認の coderabbitai[bot] が tier-1 レビュアーとして main に載る footgun 化。さらに是正+handoff を1つのPR#27に束ねたため、
+  本来 master のマージ不要な handoff(tier-0=roadmap meta+failures.md)まで tier-2 に巻き込み、master の手動マージを不要に増やした。
+- 根因：①門を「赤/緑の信号」までしか作らず**物理強制(required status check)を有効化しないまま実運用**した＝ソフト信号は人が無視できる。
+  ②tier-0(handoff)と tier-2(審判集合の変更)を**1PRに混載**した＝混ぜると全体が厳しい方(tier-2)に倒れ、自動で流れるはずの handoff まで手動化する。
+- 対処：handoff を tier-0 単独PRに分離（auto-merge で master 操作なしに main へ）。bot是正(placeholder 戻し)は独立の tier-2 小PRに切り出す。
+  次セッション最優先で branch protection を設定し basis-gate 等を必須チェック化（check名=job名一致）。
+- 教訓：①門は「信号」だけでは守れない。**物理強制を入れて初めて赤が赤として効く**。②PRは tier をまたいで混載しない
+  ＝tier-0(コード/文章/meta)と tier-2(審判集合)は別PRに割る。混ぜると自動で流れる分まで人間のマージ律速になる（＝改革の旨味を自分で消す）。
