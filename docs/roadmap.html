@@ -118,10 +118,10 @@
   "meta": {
     "title": "ロードマップ",
     "active": "G",
-    "next": "検問所 basis-gate は撤去完了・普通のPRフロー(AIがPR→誰でも承認→マージ)で運用中。main の branch protection rule もマスターが削除済み。次の一手は任意でA案 prod昇格ゲート。本番=https://cc-v2-web.vercel.app。",
+    "next": "『案件の絶対起点＝まず原子ツリー』ルールを明文化・機械裏付けまで完了。以後どの新案件も、実装前にこのツリーを作る運用。任意の次の一手はA案 prod昇格ゲート、または auto-merge.yml 残骸の撤去。本番=https://cc-v2-web.vercel.app。",
     "handoff": {
-      "done": "検問所 basis-gate(tier-1/tier-2)を全廃し普通のPRフローへ戻す作業を完了。basis-gate 一式を削除しAGENTS.md の承認3層を撤去(PR#30 マージ済み)。マスターが main の branch protection rule も削除。最後にこの検証PRで『新規PRが検問所に止められず普通にマージできる』ことを実証。チェックイン/アウト・CI・roadmap-required・evidence 検査は温存。",
-      "trouble": "無し（検問所は撤去済み。auto-merge.yml に basis-gate 前提の記述が残るが空振りバグで無害＝気になれば別途撤去可）。"
+      "done": "『どんな案件でも最初の成果物は docs/roadmap.html の原子ツリー（例外なし・AI裁量ゼロ）』を新ルールとして明文化。AGENTS.md 冒頭に『案件の絶対起点』節を新設＋初期化フローに手順6(原子ツリー作成)を追加、_TEMPLATE.md と roadmap.html README にも同旨を追記。機械裏付けとして verify-roadmap-evidence.mjs に構造検査(ゴール分解ツリーである/受入criteria付き葉がある/meta.active・next・handoff完備)を追加し、平坦なmd代替や空ロードマップをCIで弾くようにした。ローカルでリンタ緑を確認。",
+      "trouble": "verify-roadmap-evidence.mjs の追記で日本語メッセージ内に生の二重引用符を入れJS文字列を壊しかけたが、コミット前にローカル実行で検知し『』へ修正して回避(failures.md に記録)。"
     },
     "updated": "2026-07-24"
   },
@@ -280,6 +280,9 @@
       <p>このファイル1個 ＝ <b>ロードマップ（図）＋その仕様（README）</b>の自己完結ファイル。
       リポジトリにまずこれ1個あれば、ここから開始できる。用途は<b>計画先行の進捗管理</b>で、
       アプリ開発でも任意の長期計画でも使える汎用の表。</p>
+      <p class="rule">案件の絶対起点：どんな依頼でも、実装より先にこの原子ツリーを作る（例外なし・AI裁量ゼロ）。
+      正の運用ルールはルート <code>AGENTS.md</code>「案件の絶対起点」。cc-v2 をコピーして始めた新案件は、
+      同梱ノードを破棄し新案件のゴールから描き直すのが第一コミット。</p>
 
       <h2>核となる仕組み（状態と作業）</h2>
       <p class="rule">上流＝<b>状態</b>（満たしたい結果）。下流＝<b>作業</b>（実行する操作）。作業を進めると状態が満たされる。</p>
