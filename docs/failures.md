@@ -70,6 +70,18 @@
 - 教訓：①門は「信号」だけでは守れない。**物理強制を入れて初めて赤が赤として効く**。②PRは tier をまたいで混載しない
   ＝tier-0(コード/文章/meta)と tier-2(審判集合)は別PRに割る。混ぜると自動で流れる分まで人間のマージ律速になる（＝改革の旨味を自分で消す）。
 
+## 2026-07-23 自作 auto-merge.yml が「対象PRなし」で毎回空振り＝tier-0でも自動マージされなかった（実テストで発覚）
+- 事象：tier-0 の handoff PR#28 は全11チェック緑・basis-gate=tier-0 success だったが auto-merge が一度もマージしなかった。実行ログは
+  毎回 **「対象の open PR なし。」**＝ PR 一覧取得 `gh api "repos/$REPO/pulls?state=open&base=main&per_page=50" --jq '...'` が
+  空を返し、マージ手前で continue/exit していた。結局 Claude が MCP の merge_pull_request で手動マージして handoff を main に載せた。
+- 根因：①自作ワークフローの PR 列挙クエリが実環境で PR を拾えていない（`&base=main` 等のクエリ/トークン権限まわりの不備の疑い）。
+  実イベントでは走っていた（status/pull_request で発火）ので「発火しない」ではなく「発火後の列挙が空」。②そもそも private 時代の
+  自作 auto-merge は GITHUB_TOKEN 起因イベントが別ワークフローを再起動しない制約とも相性が悪く、堅牢でない。
+- 対処(方針)：**公開化した今、自作 auto-merge.yml を捨て、GitHub ネイティブの auto-merge + branch protection に置換する**（次セッション）。
+  ネイティブは「必須チェック緑で自動マージ」を公式提供し、GITHUB_TOKEN 制約や列挙バグの影響を受けない。＝物理強制(branch protection)と一体で入る。
+- 教訓：自動化は「動くはず」で終わらせず**実PRで最後(マージ成立)まで通して確認**する。既製の堅牢機構(ネイティブ auto-merge)がある所を
+  自作ワークフローで代替しない（特に GITHUB_TOKEN の再起動制約が絡む領域）。当座は tier-0 を Claude が MCP で直接マージすれば master は不介在。
+
 ## 2026-07-24 tier-1 bot の設定ファイル(.coderabbit.yaml)を審判集合から落としかけた／branch protection 物理強制はツールで実行不能と確定
 - 事象：承認ゼロ化のため CodeRabbit を実稼働させる `.coderabbit.yaml`(`request_changes_workflow: true`) を追加する際、当初これを
   tier-0 のまま入れようとした（basis-gate の tier-2 リスト外）。tier-0 だと AI が後で `request_changes_workflow: false` 等へ勝手に
@@ -85,3 +97,16 @@
   ②branch protection/Ruleset の作成・変更は **admin の画面操作のみ＝AI は代行不能**。手順を docs 化してマスターに委ねる（ツールで
   やろうとして空回りしない）。③承認は `basis-gate`(必須ステータスチェック)に一元化し、GitHub native の Require approvals は使わない
   （bot 承認を数えない＋GITHUB_TOKEN マージを殺す）。
+
+## 2026-07-24 tier-2 の「マスターが自分のPRをApprove」は GitHub 仕様で不可能＝承認導線が破綻していた
+- 事象：承認ゼロ化のため tier-2 PR(#30)をマスターに承認させようとしたが、GitHub は**PR作者が自分のPRをApproveできない**仕様。
+  当リポの全PRは Claude Code が `rahiseko-alt`（＝マスター本人）名義で作成するため、basis-gate の tier-2「rahiseko-alt の APPROVED で緑」は
+  **永久に満たせない**。＝branch protection で `basis-gate` を必須化し Bypass を空にすると、tier-2 は誰にも通せず全ルール変更がデッドロック。
+- 根因：basis-gate のtier-2 承認を「GitHub formal Approve」に固定したが、作者=承認者が同一人物になる本運用（AIがマスター名義でPR作成）を
+  考慮していなかった。過去の tier-2 PR は実は Approve ではなく**マスターの手動マージ**で通しており（＝承認導線は最初から機能していない）、
+  branch protection 未設定ゆえ表面化していなかっただけ。
+- 対処：tier-2 の承認＝**マスターが自分でMergeボタンを押す**行為に定義し直す。物理強制は「Bypass list にリポ管理者(マスター)を入れる」
+  ＝AI(auto-merge/MCP)は必須チェック赤で物理ブロック・マスターだけが赤いtier-2を意図的にMergeできる、で実現（Bypass空は不可）。
+  基準変更を機械承認で完全ロックしたい場合の次善は、Approveの代わりにマスターのコメント/ラベル信号をbasis-gateが読む改修（将来課題）。
+- 教訓：承認の「導線」は仕組みを作る前に**実際に人がその操作をできるか**を1回試す。AIがマスター名義でPRを作る運用では formal Approve は
+  使えない＝tier-2の合格条件は「作者本人が実行可能な操作」（Merge/コメント/ラベル）で設計する。物理強制は AI を縛り、マスターは Bypass で通す。

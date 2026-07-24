@@ -85,11 +85,15 @@ basis-gate は bot の「現HEADでレビュー済み＆反証(CHANGES_REQUESTED
 **手順（GitHub → リポ Settings → Rules → Rulesets → New ruleset → New branch ruleset）**：
 1. **Ruleset name**：`main-protect`
 2. **Enforcement status**：**Active**（既定 Disabled なので必ず変更）
-3. **Bypass list**：**何も追加しない**（＝リポ管理者本人もルールに従う。手動マージの裏口を塞ぐ核心）
+3. **Bypass list**：**`Repository admin`（＝マスター）を追加**する。
+   ⚠️ 直感に反するが**空にしてはいけない**。当リポの全PRは Claude が**マスター名義(`rahiseko-alt`)で作成**するため、
+   GitHub 仕様上マスターは自分のPRを Approve できず、`basis-gate` の tier-2 は**永久に緑にならない**。Bypass を空にすると
+   tier-2（ルール変更）が誰にも通せずデッドロックする。Bypass に admin を入れると、**AI(auto-merge/MCP)は必須チェック赤で
+   物理ブロックされ、マスターだけが tier-2 を意図的に Merge できる**（＝tier-2 承認＝マスターの手動 Merge）。物理強制の対象は AI。
 4. **Target branches → Add target → Include default branch**（`main`）
 5. **Require a pull request before merging** を ON、**Required approvals = 0**
-   （※ **Require approvals を付けてはいけない**。tier-0 は formal Approve を持たず承認は `basis-gate` に一元化しているため、
-   付けると自作 auto-merge の GITHUB_TOKEN マージが**永久ブロック**される）
+   （※ **Require approvals を付けてはいけない**。全PRがマスター名義＝自己承認不可で formal Approve が付けられず、承認は
+   `basis-gate` に一元化しているため、付けると tier-0/1 の auto-merge/MCP マージまで**永久ブロック**される）
 6. **Require status checks to pass** を ON にし、次の**4つだけ**を1つずつ入力して＋（**名前完全一致**）：
    - `basis-gate`（commit status context）
    - `typecheck / lint / test / build`（CI quality の job 名）
@@ -102,8 +106,15 @@ basis-gate は bot の「現HEADでレビュー済み＆反証(CHANGES_REQUESTED
 - `auto-merge` … マージ実行役。必須化すると自己デッドロック。
 - **Require approvals / CODEOWNERS** … 上記5の通り GITHUB_TOKEN マージを殺す。
 
-設定後、tier-1/2 の PR は **反証が残る間は赤／承認・レビューが現HEADに付いて緑** になり、緑まで（auto-merge も含め）
-物理的に進めない。自作 auto-merge（GITHUB_TOKEN の `gh pr merge`）は必須チェックをバイパスしない（緑で通り・赤で拒否）。
+設定後の挙動：
+- **tier-0/1**：`basis-gate` 緑＋CI 緑になれば AI が自動でマージ（マスター不介在）。AI のマージは必須チェックをバイパスしない
+  （緑で通り・赤で拒否）。※ 自作 `auto-merge.yml` は PR 列挙が空振りするバグで実際にはマージできていない（failures.md 2026-07-23）ため、
+  **GitHub ネイティブ auto-merge へ置換する**か、当座は **Claude が `basis-gate` 緑を確認して MCP で直接マージ**する。
+- **tier-2**：`basis-gate` は「承認待ち」で赤のまま（マスターは自分のPRを Approve できないため緑にできない）。AI はマージ不能。
+  **マスターが Bypass 権限で自分で Merge ボタンを押す**ことが tier-2 承認になる。これが唯一マスターが手を動かす経路（かつ稀）。
+
+> 補足（完全ロックを望む場合の次善）：Bypass を空のまま tier-2 を通したいなら、`basis-gate.sh` を改修し「マスターの Approve」の
+> 代わりに「マスターが現HEADに付けたコメント/ラベル信号」を承認として読む方式にする（作者本人でも実行可能な操作にする）。将来課題。
 
 > 補足：かつては private リポの必須化に有料プランが要ったが、**公開化により無料でハード強制が可能**になった。
 > `basis-gate` を必須にすることで、赤（tier-2 承認待ち等）の PR は手動マージも含め物理ブロックされる。
