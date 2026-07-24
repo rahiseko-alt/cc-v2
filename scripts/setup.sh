@@ -93,8 +93,11 @@ fi
 # 6) 適用：gh が要る
 [ "$have_gh" -eq 1 ] \
   || die "gh CLI が必要です。https://cli.github.com からインストールし 'gh auth login' してください。"
-gh auth status >/dev/null 2>&1 \
-  || die "gh が未認証です。'gh auth login' を実行してください。"
+# GitHub Actions 上ではトークンが環境変数で渡る（対話ログイン不要）。手元実行のときだけ認証を確認する。
+if [ -z "${GH_TOKEN:-}" ] && [ -z "${GITHUB_TOKEN:-}" ]; then
+  gh auth status >/dev/null 2>&1 \
+    || die "gh が未認証です。'gh auth login' を実行してください。"
+fi
 
 printf '%s' "$payload" | gh api -X PUT \
   -H "Accept: application/vnd.github+json" \

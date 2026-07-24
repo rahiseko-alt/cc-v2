@@ -121,7 +121,7 @@
     "next": "『案件の絶対起点＝まず原子ツリー』の明文化＋機械裏付け＋新案件セットアップ自動化まで完了。新リポジトリは『コピー→bash scripts/setup.sh→原子ツリー作成→実装』で cc-v2 と同レベル運用に入れる。任意の次の一手はA案 prod昇格ゲート、または auto-merge.yml 残骸の撤去。本番=https://cc-v2-web.vercel.app。",
     "handoff": {
       "done": "(1)『どんな案件でも最初の成果物は原子ツリー(例外なし・AI裁量ゼロ)』をルール化(AGENTS.md 冒頭に『案件の絶対起点』節＋初期化フローに手順0=setup/6=ツリー作成、_TEMPLATE.md・roadmap README に同旨)。(2)機械裏付け: verify-roadmap-evidence.mjs に構造検査(ゴール分解ツリー/受入criteria付き葉/meta完備)を追加し平坦md代替・空ロードマップをCIで弾く。(3)クローンで運ばれないサーバー側設定を埋める scripts/setup.sh を新規作成(gh api で branch protection=必須チェック ci-green/roadmap-required を冪等適用)。安定した集約ゲート job『ci-green』を ci.yml に追加。ローカルで bash -n・dry-run・roadmap リンタ・JSON parse を緑確認。",
-      "trouble": "setup.sh の owner/repo 判別で当初パス先頭2要素を取り、サンドボックスのプロキシURL(/git/ 前置き)で owner=git と誤判定。dry-run で発覚し『末尾2要素を取る』方式へ修正(failures.md に記録)。gh 未導入環境のため実 PUT は未実行=適用検証はマスター環境で要実施。"
+      "trouble": "当初 setup.sh を『手元でターミナル＋gh導入＋コマンド実行』前提にしたが、非エンジニアには非現実的と指摘され設計変更。GitHub Actions の workflow_dispatch で『Actionsタブ→Run workflowボタン』の1クリックだけで setup.sh をサーバー側実行する .github/workflows/setup.yml を追加(permissions: administration:write、GH_TOKEN=github.token)。手元コマンドは engineer 向けの代替として温存。実適用の成否はマスターが新リポジトリでボタンを押した時に確定=未検証。"
     },
     "updated": "2026-07-24"
   },
