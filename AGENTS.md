@@ -135,15 +135,23 @@ node scripts/verify-roadmap-evidence.mjs  # roadmap の evidence が外部事実
 冒頭の「案件の絶対起点」どおり、**最後（6）の原子ツリー作成が着手の第一成果物**であり、
 これを飛ばして実装に入ることは無い（1〜5 はツリーを描くための入力）。
 
-0. **機械強制を有効化（新リポジトリで1回だけ）** — 既定ブランチに branch protection（必須チェック
-   `ci-green` / `roadmap-required`）を掛ける。**これはクローンで運ばれない唯一のサーバー側設定**で、これを
-   掛けて初めて「CI が赤ならマージ不可」＝ルール文に歯が付く。未実行だとルールは書いてあるが強制されない。
-   - **非エンジニア（推奨・道具不要）**：GitHub の Settings → Branches →「Add branch protection rule」→
-     Branch name pattern に `main` →「Require status checks to pass」にチェック → 検索欄で `ci-green` と
-     `roadmap-required` を選ぶ（初回CI実行後に一覧へ出る）→ Save。管理者権限のブラウザ操作だけで完結する。
-   - **エンジニア（任意）**：gh CLI 認証済みなら `bash scripts/setup.sh` でも同じ設定を1コマンドで適用できる。
-   - ⚠ GitHub Actions の自動トークン（`GITHUB_TOKEN`）には branch protection を変える権限が無いため、
-     workflow ボタンでの自動適用はできない。必ず上記いずれか（人の管理者権限）で行う。
+0. **機械強制を有効化（新リポジトリで1回だけ／以下は実地検証済みの正確な手順）** — 既定ブランチ `main` に
+   branch protection を掛け「CI が緑でないとマージ不可」にする。**クローンで運ばれない唯一のサーバー側設定**で、
+   これを掛けて初めてルール文に歯が付く（未設定だと、赤い PR や AI の auto-merge が main に入り得る）。
+   - **手順0-a：リポジトリを Public にする（前提）** — GitHub 無料プランの **Private では branch protection /
+     Ruleset は強制されない**（設定画面に「Team org にしないと効かない」旨の警告が出る＝実地で確認済み）。
+     公開したくないなら歯止めは掛からないので、代わりに `auto-merge` を無効化し、マージは必ず人手で行う。
+   - **手順0-b：Settings → 左メニュー『Branches』**（**『Rules → Rulesets』ではない**。そちらは無料 Private で
+     効かず迷子になる）→「Add branch protection rule」→ **Branch name pattern に `main`**（空だと Create が
+     押せない）→「Require status checks to pass before merging」にチェック → 検索欄で **`ci-green`** を選ぶ →
+     一番下の緑「**Create**」。
+   - **手順0-c：`roadmap-required` は最初は一覧に出ない**（PR 時のみ動くチェックのため、PR が1本も無い新規
+     repo では未記録＝実地で確認済み）。**最初の PR が1回動いた後**、同じ画面で `roadmap-required` を追加する。
+     `ci-green` だけでも型/Lint/テスト/ビルド/ツリー検査(evidence)/起動確認を束ねた本丸は効く。
+   - **エンジニア（任意）**：gh CLI 認証済みなら `bash scripts/setup.sh` で `ci-green`/`roadmap-required` を
+     一括適用も可（Public 前提は同じ）。
+   - ⚠ GitHub Actions の自動トークン（`GITHUB_TOKEN`）には branch protection を変える権限が無く、workflow
+     ボタンでの自動化は不可（過去に試みて startup failure。`docs/failures.md` 参照）。必ず人の管理者権限で行う。
 1. **ヒアリング** — 下記「決めるべき必要項目」を、まず *制約* から確認する。
    （クラウド指定はあるか / 言語指定は / 既存システム連携は / 顧客・チームの縛りは）
 2. **リサーチ** — 確定した制約の範囲で、その年の最新ベスト構成を調べる。

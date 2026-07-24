@@ -120,8 +120,8 @@
     "active": "G",
     "next": "『案件の絶対起点＝まず原子ツリー』の明文化＋機械裏付けまで完了。新リポジトリの運用は『コピー→(管理者が)Settings→Branchesでbranch protection→原子ツリー作成→実装』。branch protection の1回設定だけは人の管理者権限が要る(GITHUB_TOKENでは不可)。任意の次の一手はA案 prod昇格ゲート、または auto-merge.yml 残骸の撤去。本番=https://cc-v2-web.vercel.app。",
     "handoff": {
-      "done": "(1)『どんな案件でも最初の成果物は原子ツリー(例外なし・AI裁量ゼロ)』をルール化(AGENTS.md 冒頭に『案件の絶対起点』節＋初期化フローに手順0=setup/6=ツリー作成、_TEMPLATE.md・roadmap README に同旨)。(2)機械裏付け: verify-roadmap-evidence.mjs に構造検査(ゴール分解ツリー/受入criteria付き葉/meta完備)を追加し平坦md代替・空ロードマップをCIで弾く。(3)クローンで運ばれないサーバー側設定を埋める scripts/setup.sh を新規作成(gh api で branch protection=必須チェック ci-green/roadmap-required を冪等適用)。安定した集約ゲート job『ci-green』を ci.yml に追加。ローカルで bash -n・dry-run・roadmap リンタ・JSON parse を緑確認。",
-      "trouble": "『ブラウザ1クリックのボタン(setup.yml)』を作ったが致命的に誤り: GITHUB_TOKEN には administration 権限が無く branch protection を変更できず、workflow は startup failure(赤×)。実リポジトリで露見。setup.yml を撤去し、branch protection は『管理者本人の Settings→Branches 画面操作(非エンジニア向け・道具不要)』を正、`bash scripts/setup.sh` をエンジニア向け代替、と是正。AGENTS.md 手順0・_TEMPLATE.md・setup.sh コメントを更新(failures.md に記録)。branch protection の1回設定は人の管理者権限が必須という制約は消せない。"
+      "done": "AGENTS.md 手順0(branch protection の掛け方ナビ)を、実リポジトリ(menu-saas)で実際に操作して判明した事実へ全面是正。判明点=(a)無料Privateでは branch protection/Ruleset が効かない→Public前提、(b)『Rules→Rulesets』ではなく『Branches』画面を使う、(c)Branch name pattern に main を入れないと Create不可、(d)roadmap-required はPR時のみ動くため新規repoでは一覧に出ず、最初のPR後に追加する。ci-green は即選べる。_TEMPLATE.md も同内容へ更新。過去分(『案件の絶対起点』ルール化・ci-green集約ゲート・verify構造検査・壊れたsetup.yml撤去)はPR#32/#33でmain反映済み。",
+      "trouble": "AGENTS.md のナビが『実際に画面でやらず推測で書いた手順』のままで、ユーザーが操作中に roadmap-required がヒットしない/Create押せない等で詰まった。実操作の各画面を突き合わせて是正。教訓: 手順ドキュメントは実環境で1回通してから書く(failures.md に既記録の派生)。"
     },
     "updated": "2026-07-24"
   },

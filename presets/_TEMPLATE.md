@@ -7,10 +7,11 @@
 > **最初の成果物は原子ツリー（例外なし）**：この案件でも、実装より先に `docs/roadmap.html` の
 > 原子分解ツリーを作り直す（ルート `AGENTS.md`「案件の絶対起点」を参照）。スタック記入はその入力。
 >
-> **機械強制の有効化（新リポジトリで1回だけ）**：branch protection（必須チェック `ci-green` /
-> `roadmap-required`）を掛ける。これを掛けるまでルールは強制されない。非エンジニアは GitHub の
-> Settings → Branches から画面操作で（`AGENTS.md`「案件の絶対起点」手順0参照）、エンジニアは
-> `bash scripts/setup.sh` でも可。
+> **機械強制の有効化（新リポジトリで1回だけ・実地検証済み手順）**：(1) リポジトリを **Public** にする
+> （無料 Private では branch protection が効かない）。(2) Settings → **Branches**（Rulesets ではない）→
+> Add branch protection rule → Branch name pattern に `main` → Require status checks で **`ci-green`** を
+> 選ぶ → **Create**。(3) `roadmap-required` は**最初の PR 後**に同手順で追加（PR時のみ動くため初回は一覧に
+> 出ない）。詳細はルート `AGENTS.md`「案件の絶対起点」手順0。エンジニアは `bash scripts/setup.sh` でも可。
 
 ## 概要
 
