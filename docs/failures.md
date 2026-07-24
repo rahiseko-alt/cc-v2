@@ -58,3 +58,18 @@
 - 教訓：「AI が自分の合格を偽造できる経路」を塞ぐときは、審判を動かす仕組みだけでなく**緑の判定基準を決める全ファイル**
   （scripts本体・各config・依存/ランタイム固定）まで含める。パスは思い込みでなく `git ls-files` で実測して被覆を確認する。
   基準を凍結する変更は必ず第2の目に敵対レビューさせてからマージへ回す（今回それが穴を捕捉した＝門が機能した実例）。
+
+## 2026-07-23 branch protection 未設定のまま tier-2 PR(#26)が赤の basis-gate を無視して手動マージされ、動かない bot が本番規律に載った
+- 事象：tier-1 の第2の目に CodeRabbit を選定・導入(GitHub App=All repos+write、app.coderabbit.ai に cc-v2 接続)まで済ませ、
+  `.github/bot-reviewers.txt` を coderabbitai[bot] に登録する PR#26 を出した。だが CodeRabbit は 3回のトリガー＋新コミットにも
+  一切レビューを投稿せず（実稼働未確認）。その状態で PR#26 が main に**マージ**された。basis-gate は「tier-2 承認待ち」で赤だったが、
+  **branch protection 未設定のため物理ブロックが効かず手動マージが通った**。結果、動かない bot が tier-1 レビュアーとして本番規律に載り、
+  次の tier-1 PR が「存在しない bot のレビュー待ち」で永久固着する footgun 化。翌 handoff PR で placeholder に戻して是正。
+- 根因：①門を「赤/緑の信号」までしか作らず、**物理強制（required status check）を有効化しないまま実運用に入った**。ソフト信号は
+  人が無視できる。②レビューbotを「導入・接続＝稼働」と早合点し、**実際にPRへレビューを1件投稿することを確認する前に**登録PRを進めた。
+  ③basis-gate.sh の bot ゲートに「レビュー待ちのタイムアウト/フォールバック」が無く、登録された bot が沈黙すると tier-1 が固着する。
+- 対処：bot-reviewers.txt を placeholder へ戻し tier-1 を人間 fallback に復帰。次セッション最優先で branch protection を設定し
+  basis-gate 等を必須チェック化（check名=job名一致）。CodeRabbit は実レビューを1件確認できるまで登録しない方針を明記。
+- 教訓：門は「信号を出す」だけでは守れない。**物理強制(branch protection の required status check)を入れて初めて"効く"**。
+  外部レビューbotは「導入した」ではなく「実際にPRへレビューを投稿した」ことを外部事実で確認してから規律に組み込む。
+  沈黙する必須レビュアーは gate を固着させるので、登録は"実稼働の証拠"とセットにする。

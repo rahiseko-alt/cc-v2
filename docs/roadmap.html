@@ -118,10 +118,10 @@
   "meta": {
     "title": "ロードマップ",
     "active": "G",
-    "next": "リポを公開化済み＝branch protection のハード強制がタダで可能に。残作業：(1)このPRで CodeRabbit(coderabbitai[bot])を tier-1 の第2の目として登録→実挙動(正確なbotログイン名・変更要求を出せるか)を観察し必要なら同PRで微修正。(2)branch protection で basis-gate・CI・roadmap-required を必須チェック化し門を物理強制へ(check名は job名と一致させること＝過去の失敗 failures.md 2026-07-22)。(3)A案=prod昇格ゲートの本物化(Vercel Production Branch 切替1回)。本番=https://cc-v2-web.vercel.app。",
+    "next": "最優先＝branch protection を設定して門を『ソフト信号→物理強制』へ格上げ（公開化でタダ）。必須ステータスチェックに basis-gate / typecheck・lint・test・build / 起動スモーク / roadmap-required を追加し、check名は job名と完全一致させる（過去の失敗 failures.md 2026-07-22）。理由：現状は basis-gate が赤でも手動マージが通り、実際 PR#26 がそれで誤マージされ footgun 化した。次点：(A案)prod昇格ゲートの本物化=Vercel Production Branch を main から切離し prod-* タグ昇格+GitHub Environment 承認へ。tier-1 の bot は CodeRabbit が実際にレビューを出すのを1件確認できてから .github/bot-reviewers.txt を coderabbitai[bot] へ再設定（Gemini/Qodo でも可）。本番=https://cc-v2-web.vercel.app。",
     "handoff": {
-      "done": "構造改革B案(3層ゲート+auto-merge)がPR#25でmainにマージ済み＝日常マージの自動化が稼働。続けてリポを公開化(private→public)し、tier-1の第2の目に CodeRabbit を採用(公開リポ無料・変更要求を出せる別ベンダ)。本PRで .github/bot-reviewers.txt の placeholder を coderabbitai[bot] に差し替え(＝tier-1をbotへ、人間fallbackから移行)。あわせて口調規律(丁寧維持厳守)をAGENTS.md普遍ルールに追加済み。",
-      "trouble": "CodeRabbit の GitHub 上のレビュー投稿身元は coderabbitai[bot] と想定して登録したが、正確な .user.login と『CHANGES_REQUESTED を出せるか(既定はコメントのみの可能性)』は本PRのCodeRabbitレビューで実地確認し、違えば同PR内で修正する(過去に job名≠check名で全PRブロックの失敗あり＝名前は実測合わせが鉄則)。本PRは bot-reviewers.txt=審判集合に触る＝tier-2なので master 承認まで basis-gate は赤・auto-merge も走らない(このPRは master 手動承認/マージ)。branch protection 未設定の今はハード強制でなくソフト信号。"
+      "done": "承認3層化+auto-merge(PR#25)が main で稼働＝日常マージ自動化。リポを公開化(private→public)し履歴の秘密スキャンはクリーン。口調規律(丁寧維持厳守)をAGENTS.md普遍ルールに追加。tier-1の第2の目にCodeRabbitを選定しGitHub App導入(All repos+write)+app.coderabbit.aiにcc-v2接続まで完了。しかしCodeRabbitはPR#26に3回のトリガー+新コミットにも無反応(実稼働未確認)。本セッション最後にbot-reviewers.txtをcoderabbitai[bot]→placeholderへ戻し、tier-1を安全な人間fallbackに復帰させた(このhandoff PRの主眼)。",
+      "trouble": "①最重要:branch protection未設定ゆえ basis-gate が赤(tier-2/承認待ち)でも手動マージが物理的に通る＝門は今『ソフト信号』。実際 bot登録PR#26 がこの穴で誤マージされ、動かないCodeRabbitがtier-1に載る footgun 化→本PRで placeholder へ是正済み。次セッション最優先で branch protection を入れて物理強制化すること。②動かないbotをbot-reviewers.txtに載せると、tier-1 PRが『存在しないbotのレビュー待ち』で永久固着(basis-gate赤のまま)。CodeRabbitは実レビューを1件確認できるまで登録しない。③GitHub Actionsの『basis-gate: All jobs failed』メールは tier-2が未承認時に exit 1 する設計どおりの赤＝バグではない(status説明に『tier-2 承認待ち』と出る)。④本PRは bot-reviewers.txt=審判集合に触る＝tier-2。branch protection未設定なので master が手動マージして是正を反映すること。"
     },
     "updated": "2026-07-23"
   },

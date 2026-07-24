@@ -18,7 +18,10 @@
 #
 # 行頭 # はコメント。空行は無視。placeholder(REPLACE_WITH_) は「未設定」と判定される。
 #
-# 採用：CodeRabbit（公開リポ無料・"変更要求"を出せる別ベンダ bot）。GitHub App のレビュー投稿身元は
-#       coderabbitai[bot]。basis-gate は現HEADでこの bot のレビュー有無＋反証(CHANGES_REQUESTED)を照合する。
+# CodeRabbit は導入・接続済み（GitHub App=All repos+write / app.coderabbit.ai に cc-v2 接続）だが、
+# 2026-07-23 時点で PR#26 に対し 3回のトリガー＋新コミットにも一切レビューを投稿せず＝実稼働未確認。
+# よって「coderabbitai[bot]」の実登録は**保留**し、placeholder に戻す（＝tier-1 は安全な人間 fallback）。
+# 再開手順：CodeRabbit が実際に PR へレビューを投稿するのを1件でも確認したら、下行を coderabbitai[bot] に差し替える。
+# ※ 動かない bot を登録したままにすると、tier-1 PR が「存在しない bot のレビュー待ち」で永久に固まる（basis-gate 赤のまま）。
 
-coderabbitai[bot]
+REPLACE_WITH_VENDOR_BOT_LOGIN
