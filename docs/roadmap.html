@@ -118,10 +118,10 @@
   "meta": {
     "title": "ロードマップ",
     "active": "G",
-    "next": "方針転換(マスター指示)＝承認の検問所 basis-gate(tier-1/tier-2)を廃止し、普通の形『AIがPRを出す→誰でもレビュー/承認→マージ』へ戻す。今セッションで basis-gate 一式を削除(basis-gate.yml/basis-gate.sh/roadmap-basis-changed.mjs/basis-reviewers.txt/bot-reviewers.txt/.coderabbit.yaml/docs/basis-gate.md)し AGENTS.md から承認3層を撤去。チェックイン/アウト(handoff)・CI・roadmap-required・evidence検査は残す。【マスター操作1つ】main の branch protection から必須チェック『basis-gate』を外す(または rule 自体を削除)＝しないと basis-gate 削除後に全PRが『basis-gate 未報告』で永久ブロック(failures 2026-07-22 と同型)。その後この撤去PRをマージ。次の一手＝任意でA案 prod昇格ゲート。本番=https://cc-v2-web.vercel.app。",
+    "next": "検問所 basis-gate は撤去完了・普通のPRフロー(AIがPR→誰でも承認→マージ)で運用中。main の branch protection rule もマスターが削除済み。次の一手は任意でA案 prod昇格ゲート。本番=https://cc-v2-web.vercel.app。",
     "handoff": {
-      "done": "マスター指示で方針転換：承認の検問所 basis-gate(tier-1/tier-2)を廃止し、普通の PR フロー(誰でもレビュー/承認→マージ)へ戻す。basis-gate 一式(basis-gate.yml/basis-gate.sh/roadmap-basis-changed.mjs/basis-reviewers.txt/bot-reviewers.txt/.coderabbit.yaml/docs/basis-gate.md)を削除し、AGENTS.md の『承認は3層』を撤去。チェックイン/アウト・CI・roadmap-required・evidence 検査は温存。本セッション前半で入れかけた CodeRabbit/tier-2凍結も本転換で撤去。PR#30 をこの撤去内容に置き換え。",
-      "trouble": "①basis-gate を消すには main の branch protection の必須チェック『basis-gate』も外す必要がある(admin 画面操作のみ/ツール不可)。外さないと basis-gate 未報告で全PRが永久ブロック(failures 2026-07-22 の roadmap-required 事故と同型)。②auto-merge.yml に basis-gate ステータス前提のロジックが残るが、元々『対象PRなし』空振りバグで無害(必要なら別途撤去)。③この撤去PR自体はマージ前に basis-gate がまだ動き tier-2 赤になり得る→マスターが branch protection を外してからマージ(または管理者バイパス)。"
+      "done": "検問所 basis-gate(tier-1/tier-2)を全廃し普通のPRフローへ戻す作業を完了。basis-gate 一式を削除しAGENTS.md の承認3層を撤去(PR#30 マージ済み)。マスターが main の branch protection rule も削除。最後にこの検証PRで『新規PRが検問所に止められず普通にマージできる』ことを実証。チェックイン/アウト・CI・roadmap-required・evidence 検査は温存。",
+      "trouble": "無し（検問所は撤去済み。auto-merge.yml に basis-gate 前提の記述が残るが空振りバグで無害＝気になれば別途撤去可）。"
     },
     "updated": "2026-07-24"
   },
