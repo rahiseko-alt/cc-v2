@@ -135,10 +135,15 @@ node scripts/verify-roadmap-evidence.mjs  # roadmap の evidence が外部事実
 冒頭の「案件の絶対起点」どおり、**最後（6）の原子ツリー作成が着手の第一成果物**であり、
 これを飛ばして実装に入ることは無い（1〜5 はツリーを描くための入力）。
 
-0. **機械強制を有効化（新リポジトリで1回だけ）** — `bash scripts/setup.sh` を実行し、既定ブランチに
-   branch protection（必須チェック `ci-green` / `roadmap-required`）を掛ける。**これはクローンで運ばれない
-   唯一のサーバー側設定**で、これを掛けて初めて「CI が赤ならマージ不可」＝ルール文に歯が付く。未実行だと
-   ルールは書いてあるが強制されない（＝ md ロードマップが素通りした過去の穴と同じ）。前提は gh CLI 認証済み。
+0. **機械強制を有効化（新リポジトリで1回だけ）** — 既定ブランチに branch protection（必須チェック
+   `ci-green` / `roadmap-required`）を掛ける。**これはクローンで運ばれない唯一のサーバー側設定**で、これを
+   掛けて初めて「CI が赤ならマージ不可」＝ルール文に歯が付く。未実行だとルールは書いてあるが強制されない。
+   - **非エンジニア（推奨・道具不要）**：GitHub の Settings → Branches →「Add branch protection rule」→
+     Branch name pattern に `main` →「Require status checks to pass」にチェック → 検索欄で `ci-green` と
+     `roadmap-required` を選ぶ（初回CI実行後に一覧へ出る）→ Save。管理者権限のブラウザ操作だけで完結する。
+   - **エンジニア（任意）**：gh CLI 認証済みなら `bash scripts/setup.sh` でも同じ設定を1コマンドで適用できる。
+   - ⚠ GitHub Actions の自動トークン（`GITHUB_TOKEN`）には branch protection を変える権限が無いため、
+     workflow ボタンでの自動適用はできない。必ず上記いずれか（人の管理者権限）で行う。
 1. **ヒアリング** — 下記「決めるべき必要項目」を、まず *制約* から確認する。
    （クラウド指定はあるか / 言語指定は / 既存システム連携は / 顧客・チームの縛りは）
 2. **リサーチ** — 確定した制約の範囲で、その年の最新ベスト構成を調べる。
