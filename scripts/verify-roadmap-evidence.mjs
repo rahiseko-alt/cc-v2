@@ -47,9 +47,17 @@ function main() {
   const ids = new Set();
   const violations = [];
 
+  let decomposed = 0; // 子を持つ（分解された）ノード数
+  let leavesWithCriteria = 0; // 受入条件を持つ葉状態の数
+
   for (const root of data.nodes) {
     walk(root, (node) => {
       if (node.id) ids.add(node.id);
+      const hasChildren = Array.isArray(node.children) && node.children.length > 0;
+      if (hasChildren) decomposed++;
+      if (!hasChildren && Array.isArray(node.criteria) && node.criteria.length > 0) {
+        leavesWithCriteria++;
+      }
       for (const c of node.criteria || []) {
         const ev = (c.evidence ?? "").trim();
         if (ev === "") continue; // 未充足は対象外（☐ のまま）
@@ -63,11 +71,41 @@ function main() {
     });
   }
 
-  const active = data.meta?.active;
-  if (active && !ids.has(active)) {
+  // 「案件の絶対起点＝原子ツリー」を機械で裏付ける構造検査。
+  // 平坦な md 代替・空/退化したロードマップを CI で弾く（AI の裁量ゼロ）。
+  if (!Array.isArray(data.nodes) || data.nodes.length === 0) {
+    violations.push("nodes が空です（ゴールを頂点にした原子ツリーが未作成）");
+  }
+  if (decomposed === 0) {
+    violations.push(
+      "分解されたノードが1つもありません（ゴールを子条件へ割った『ツリー』になっていない＝平坦なチェックリストは不可）",
+    );
+  }
+  if (leavesWithCriteria === 0) {
+    violations.push(
+      "受入条件(criteria)を持つ葉が1つもありません（原子まで割って各葉に verify を置くこと）",
+    );
+  }
+
+  const meta = data.meta || {};
+  const active = meta.active;
+  if (!active || String(active).trim() === "") {
+    violations.push("meta.active が未設定です（現在地ノードIDを指すこと）");
+  } else if (!ids.has(active)) {
     violations.push(
       `meta.active "${active}" は実在ノードIDを指していません（stale pointer）`,
     );
+  }
+  if (!meta.next || String(meta.next).trim() === "") {
+    violations.push("meta.next が未設定です（次の一手を書くこと）");
+  }
+  const handoff = meta.handoff || {};
+  for (const key of ["done", "trouble"]) {
+    if (!handoff[key] || String(handoff[key]).trim() === "") {
+      violations.push(
+        `meta.handoff.${key} が未設定です（①今回実施 / ②今回トラブル。無ければ「無し」と書く）`,
+      );
+    }
   }
 
   if (violations.length > 0) {

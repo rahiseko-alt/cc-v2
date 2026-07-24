@@ -1,0 +1,34 @@
+# 最初のセットアップ（新リポジトリで1回だけ、ブラウザのボタンを押すだけ）。
+#
+# 目的：branch protection を掛け「中身が緑でないと本番に反映できない」状態にする。
+#   これは GitHub のサーバー側設定でコピーに含まれないため、新リポジトリごとに一度だけ要る。
+#
+# 使い方（パソコン作業ゼロ）：
+#   1. 新リポジトリの「Actions」タブを開く
+#   2. 左の一覧から「① 最初のセットアップ（1回だけ押す）」を選ぶ
+#   3. 右の「Run workflow」ボタンを押す
+#   これだけで、GitHub の中で scripts/setup.sh が動き、鍵がかかる。
+#
+# 仕組み：この workflow は自分自身のリポジトリに対して administration 権限のトークンで
+#   branch protection を設定する（gh はランナーに標準搭載・GH_TOKEN で認証済み）。
+
+name: ① 最初のセットアップ（1回だけ押す）
+
+on:
+  workflow_dispatch:
+
+permissions:
+  administration: write   # branch protection の設定に必要
+  contents: read
+
+jobs:
+  protect:
+    name: 鍵をかける（branch protection）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: branch protection を適用（scripts/setup.sh）
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/setup.sh

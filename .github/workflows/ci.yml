@@ -96,3 +96,20 @@ jobs:
           fi
 
           echo "SMOKE OK: HTTP 200 かつ本文に 'cc-v2 monorepo' を確認"
+
+  # 集約ゲート＝branch protection が要求する「安定した1つの必須チェック」。
+  # 内部ジョブ(quality/smoke)の名前や中身が変わっても context 名は 'ci-green' で不変。
+  # scripts/setup.sh はこの 'ci-green' と 'roadmap-required' だけを必須指定する。
+  gate:
+    name: ci-green
+    needs: [quality, smoke]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: 上流ジョブが全て success か検査（1つでも失敗/スキップなら赤）
+        run: |
+          if [ "${{ needs.quality.result }}" != "success" ] || [ "${{ needs.smoke.result }}" != "success" ]; then
+            echo "ci-green: FAIL (quality=${{ needs.quality.result }} smoke=${{ needs.smoke.result }})"
+            exit 1
+          fi
+          echo "ci-green: OK（quality / smoke ともに success）"

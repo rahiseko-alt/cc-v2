@@ -118,10 +118,10 @@
   "meta": {
     "title": "ロードマップ",
     "active": "G",
-    "next": "検問所 basis-gate は撤去完了・普通のPRフロー(AIがPR→誰でも承認→マージ)で運用中。main の branch protection rule もマスターが削除済み。次の一手は任意でA案 prod昇格ゲート。本番=https://cc-v2-web.vercel.app。",
+    "next": "『案件の絶対起点＝まず原子ツリー』の明文化＋機械裏付け＋新案件セットアップ自動化まで完了。新リポジトリは『コピー→bash scripts/setup.sh→原子ツリー作成→実装』で cc-v2 と同レベル運用に入れる。任意の次の一手はA案 prod昇格ゲート、または auto-merge.yml 残骸の撤去。本番=https://cc-v2-web.vercel.app。",
     "handoff": {
-      "done": "検問所 basis-gate(tier-1/tier-2)を全廃し普通のPRフローへ戻す作業を完了。basis-gate 一式を削除しAGENTS.md の承認3層を撤去(PR#30 マージ済み)。マスターが main の branch protection rule も削除。最後にこの検証PRで『新規PRが検問所に止められず普通にマージできる』ことを実証。チェックイン/アウト・CI・roadmap-required・evidence 検査は温存。",
-      "trouble": "無し（検問所は撤去済み。auto-merge.yml に basis-gate 前提の記述が残るが空振りバグで無害＝気になれば別途撤去可）。"
+      "done": "(1)『どんな案件でも最初の成果物は原子ツリー(例外なし・AI裁量ゼロ)』をルール化(AGENTS.md 冒頭に『案件の絶対起点』節＋初期化フローに手順0=setup/6=ツリー作成、_TEMPLATE.md・roadmap README に同旨)。(2)機械裏付け: verify-roadmap-evidence.mjs に構造検査(ゴール分解ツリー/受入criteria付き葉/meta完備)を追加し平坦md代替・空ロードマップをCIで弾く。(3)クローンで運ばれないサーバー側設定を埋める scripts/setup.sh を新規作成(gh api で branch protection=必須チェック ci-green/roadmap-required を冪等適用)。安定した集約ゲート job『ci-green』を ci.yml に追加。ローカルで bash -n・dry-run・roadmap リンタ・JSON parse を緑確認。",
+      "trouble": "当初 setup.sh を『手元でターミナル＋gh導入＋コマンド実行』前提にしたが、非エンジニアには非現実的と指摘され設計変更。GitHub Actions の workflow_dispatch で『Actionsタブ→Run workflowボタン』の1クリックだけで setup.sh をサーバー側実行する .github/workflows/setup.yml を追加(permissions: administration:write、GH_TOKEN=github.token)。手元コマンドは engineer 向けの代替として温存。実適用の成否はマスターが新リポジトリでボタンを押した時に確定=未検証。"
     },
     "updated": "2026-07-24"
   },
@@ -280,6 +280,9 @@
       <p>このファイル1個 ＝ <b>ロードマップ（図）＋その仕様（README）</b>の自己完結ファイル。
       リポジトリにまずこれ1個あれば、ここから開始できる。用途は<b>計画先行の進捗管理</b>で、
       アプリ開発でも任意の長期計画でも使える汎用の表。</p>
+      <p class="rule">案件の絶対起点：どんな依頼でも、実装より先にこの原子ツリーを作る（例外なし・AI裁量ゼロ）。
+      正の運用ルールはルート <code>AGENTS.md</code>「案件の絶対起点」。cc-v2 をコピーして始めた新案件は、
+      同梱ノードを破棄し新案件のゴールから描き直すのが第一コミット。</p>
 
       <h2>核となる仕組み（状態と作業）</h2>
       <p class="rule">上流＝<b>状態</b>（満たしたい結果）。下流＝<b>作業</b>（実行する操作）。作業を進めると状態が満たされる。</p>
