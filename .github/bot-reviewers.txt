@@ -17,5 +17,8 @@
 #      設定/プロンプトを与える（リポ設定 or bot 側の指示ファイル）。
 #
 # 行頭 # はコメント。空行は無視。placeholder(REPLACE_WITH_) は「未設定」と判定される。
+#
+# 採用：CodeRabbit（公開リポ無料・"変更要求"を出せる別ベンダ bot）。GitHub App のレビュー投稿身元は
+#       coderabbitai[bot]。basis-gate は現HEADでこの bot のレビュー有無＋反証(CHANGES_REQUESTED)を照合する。
 
-REPLACE_WITH_VENDOR_BOT_LOGIN
+coderabbitai[bot]
