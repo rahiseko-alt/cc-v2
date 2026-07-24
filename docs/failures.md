@@ -81,3 +81,46 @@
   ネイティブは「必須チェック緑で自動マージ」を公式提供し、GITHUB_TOKEN 制約や列挙バグの影響を受けない。＝物理強制(branch protection)と一体で入る。
 - 教訓：自動化は「動くはず」で終わらせず**実PRで最後(マージ成立)まで通して確認**する。既製の堅牢機構(ネイティブ auto-merge)がある所を
   自作ワークフローで代替しない（特に GITHUB_TOKEN の再起動制約が絡む領域）。当座は tier-0 を Claude が MCP で直接マージすれば master は不介在。
+
+## 2026-07-24 tier-1 bot の設定ファイル(.coderabbit.yaml)を審判集合から落としかけた／branch protection 物理強制はツールで実行不能と確定
+- 事象：承認ゼロ化のため CodeRabbit を実稼働させる `.coderabbit.yaml`(`request_changes_workflow: true`) を追加する際、当初これを
+  tier-0 のまま入れようとした（basis-gate の tier-2 リスト外）。tier-0 だと AI が後で `request_changes_workflow: false` 等へ勝手に
+  緩め、tier-1 の反証(CHANGES_REQUESTED)機能を無力化する裏口になる（2026-07-23「審判集合を狭く定義」と同型の穴）。実装中に気づき
+  tier-2 へ格上げした。加えて、branch protection の物理強制 ON は当セッションのツールでは実行不能と確定：MCP github に該当ツール
+  無し／直 API は proxy が 403(GitHub access is not enabled)／`gh` CLI 無し。＝マスターが GitHub 画面で Ruleset を作る1操作が構造的に必須。
+- 根因：①「bot が誰か(bot-reviewers.txt)」は審判集合に入れていたが「bot が**どう裁くか**(.coderabbit.yaml)」を見落とした＝審判の
+  "中身"の取りこぼし。②「branch protection を設定する」を暗にツールで代行できると仮定しかけた（実際は admin の画面操作のみ）。
+- 対処：basis-gate.sh の tier-2 判定に `.coderabbit.yaml` を追加し、AGENTS.md・docs/basis-gate.md の審判集合列挙にも明記。
+  docs/basis-gate.md に「必須チェックに Require approvals を付けると tier-0 が formal Approve を持たず自作 auto-merge の
+  GITHUB_TOKEN マージが永久ブロックされる」ことも明記（承認は basis-gate に一元化）。
+- 教訓：①第2の目(bot)を導入する時は「誰が裁くか」だけでなく「どの設定でどう裁くか」の**設定ファイルまで審判集合に凍結**する。
+  ②branch protection/Ruleset の作成・変更は **admin の画面操作のみ＝AI は代行不能**。手順を docs 化してマスターに委ねる（ツールで
+  やろうとして空回りしない）。③承認は `basis-gate`(必須ステータスチェック)に一元化し、GitHub native の Require approvals は使わない
+  （bot 承認を数えない＋GITHUB_TOKEN マージを殺す）。
+
+## 2026-07-24 tier-2 の「マスターが自分のPRをApprove」は GitHub 仕様で不可能＝承認導線が破綻していた
+- 事象：承認ゼロ化のため tier-2 PR(#30)をマスターに承認させようとしたが、GitHub は**PR作者が自分のPRをApproveできない**仕様。
+  当リポの全PRは Claude Code が `rahiseko-alt`（＝マスター本人）名義で作成するため、basis-gate の tier-2「rahiseko-alt の APPROVED で緑」は
+  **永久に満たせない**。＝branch protection で `basis-gate` を必須化し Bypass を空にすると、tier-2 は誰にも通せず全ルール変更がデッドロック。
+- 根因：basis-gate のtier-2 承認を「GitHub formal Approve」に固定したが、作者=承認者が同一人物になる本運用（AIがマスター名義でPR作成）を
+  考慮していなかった。過去の tier-2 PR は実は Approve ではなく**マスターの手動マージ**で通しており（＝承認導線は最初から機能していない）、
+  branch protection 未設定ゆえ表面化していなかっただけ。
+- 対処：tier-2 の承認＝**マスターが自分でMergeボタンを押す**行為に定義し直す。物理強制は「Bypass list にリポ管理者(マスター)を入れる」
+  ＝AI(auto-merge/MCP)は必須チェック赤で物理ブロック・マスターだけが赤いtier-2を意図的にMergeできる、で実現（Bypass空は不可）。
+  基準変更を機械承認で完全ロックしたい場合の次善は、Approveの代わりにマスターのコメント/ラベル信号をbasis-gateが読む改修（将来課題）。
+- 教訓：承認の「導線」は仕組みを作る前に**実際に人がその操作をできるか**を1回試す。AIがマスター名義でPRを作る運用では formal Approve は
+  使えない＝tier-2の合格条件は「作者本人が実行可能な操作」（Merge/コメント/ラベル）で設計する。物理強制は AI を縛り、マスターは Bypass で通す。
+
+## 2026-07-24 承認の階層(tier-1/tier-2＝basis-gate)そのものが過剰＝マスターの使い勝手を破壊していた。廃止して普通のPRフローへ
+- 事象：basis-gate による承認3層（変更のたびに「許可が要るか」を判定して止める検問所）を導入して以降、マスターが承認待ちに追われ、
+  2日間を消耗。自己承認不可・自作auto-merge空振り・branch protection 手動必須…と副次問題が連鎖し、非エンジニアのマスターには
+  理解も運用も不能な複雑さに。マスターの明確な指示により **basis-gate(tier-1/tier-2)を全廃**し、「AIがPRを出す→誰でもレビュー/承認→マージ」
+  の一般的なフローへ戻すことを決定。
+- 根因：ソロ/少人数・非エンジニアのオーナーという実態に対し、大企業級の多層承認ガバナンスを自作で被せた＝**要件に対して過剰設計**。
+  「本人採点の禁止」を突き詰めるあまり、日常の全変更に承認判定を挟み、CI(普通の自動テスト)だけで足りる所を検問所で二重化した。
+- 対処：basis-gate 一式（`.github/workflows/basis-gate.yml`／`.github/scripts/basis-gate.sh`／`roadmap-basis-changed.mjs`／
+  `basis-reviewers.txt`／`bot-reviewers.txt`／`.coderabbit.yaml`／`docs/basis-gate.md`）を削除、AGENTS.md の「承認は3層」を撤去。
+  チェックイン/アウト(handoff)・CI・roadmap-required・evidence 検査は温存。main の branch protection から必須チェック `basis-gate` を
+  外すのはマスターの画面操作（ツール不可）。
+- 教訓：**ガバナンスは組織規模と運用者のリテラシーに合わせる**。ソロ/非エンジニアには「PR＋CI緑＋誰でも承認→マージ」で十分。
+  仕組みが目的化して使い勝手を殺したら、それ自体が最大の失敗。足す前に「この人がこれを毎日回せるか」を問う。

@@ -118,12 +118,12 @@
   "meta": {
     "title": "ロードマップ",
     "active": "G",
-    "next": "最優先＝branch protection＋GitHub ネイティブ auto-merge を設定（公開化でタダ）。必須ステータスチェックに basis-gate / typecheck・lint・test・build / 起動スモーク / roadmap-required を追加し check名は job名と完全一致（failures.md 2026-07-22）。同時に自作 auto-merge.yml は捨ててネイティブに置換（自作は列挙クエリが空振りしtier-0でも自動マージされなかった＝failures.md 2026-07-23／当座はtier-0をClaudeがMCPで直接マージすればmaster不介在）。②main の bot-reviewers.txt が coderabbitai[bot] のまま(footgun)→CodeRabbit実レビュー1件確認で維持、無理ならplaceholderへ戻す(tier-2小PR)。③A案=prod昇格ゲート本物化(Vercel Production Branch 切離し)。本番=https://cc-v2-web.vercel.app。",
+    "next": "方針転換(マスター指示)＝承認の検問所 basis-gate(tier-1/tier-2)を廃止し、普通の形『AIがPRを出す→誰でもレビュー/承認→マージ』へ戻す。今セッションで basis-gate 一式を削除(basis-gate.yml/basis-gate.sh/roadmap-basis-changed.mjs/basis-reviewers.txt/bot-reviewers.txt/.coderabbit.yaml/docs/basis-gate.md)し AGENTS.md から承認3層を撤去。チェックイン/アウト(handoff)・CI・roadmap-required・evidence検査は残す。【マスター操作1つ】main の branch protection から必須チェック『basis-gate』を外す(または rule 自体を削除)＝しないと basis-gate 削除後に全PRが『basis-gate 未報告』で永久ブロック(failures 2026-07-22 と同型)。その後この撤去PRをマージ。次の一手＝任意でA案 prod昇格ゲート。本番=https://cc-v2-web.vercel.app。",
     "handoff": {
-      "done": "承認3層化+auto-merge(PR#25)が main で稼働。リポ公開化+履歴秘密スキャンclean。口調規律(丁寧維持厳守)をAGENTS.md普遍ルールに追加。tier-1の第2の目にCodeRabbitを選定しGitHub App導入(All repos+write)+app.coderabbit.aiにcc-v2接続まで完了、PR#26でbot-reviewers.txtにcoderabbitai[bot]を登録しmainへマージ。handoff を tier-0 単独PR(#28)に分離し、master のマージ操作なしで main へ載せた(ただし自作 auto-merge は空振りしたため Claude が MCP で直接マージ)。",
-      "trouble": "⓪自作 auto-merge.yml は実PR#28(全緑)で一度もマージせず＝PR列挙クエリが『対象PRなし』で空振り(failures.md 2026-07-23)。次セッションで GitHub ネイティブ auto-merge+branch protection に置換する。当座 tier-0 は Claude が MCP merge で落とせば master 不介在。①CodeRabbitはPR#26に3回トリガー+新コミットにも無反応で実稼働未確認。②branch protection未設定ゆえ basis-gate赤(tier-2/承認待ち)でも手動マージが物理的に通り、実際 PR#26 がそれで通った＝門は今『ソフト信号』。次セッション最優先で物理強制化。③今回セッションで master が3回手動マージしたのは、扱ったPRが全て審判集合(tier-2)＝門の組立作業だったため(通常のtier-0/1作業はmasterのマージ不要)。加えて handoff を tier-2 の bot是正と束ねた私の失敗が余計に手動を増やした→本セッション末で handoff を tier-0 単独に分離。④main の bot-reviewers.txt が coderabbitai[bot] のまま(footgun)。動かないbot登録は tier-1 PR を『存在しないbotのレビュー待ち』で固着させ得るので、CodeRabbit復活 or placeholderへ戻す是正(tier-2小PR)が要る。⑤『basis-gate: All jobs failed』メールは tier-2未承認時の exit1＝正常な赤(status説明に『tier-2 承認待ち』)。"
+      "done": "マスター指示で方針転換：承認の検問所 basis-gate(tier-1/tier-2)を廃止し、普通の PR フロー(誰でもレビュー/承認→マージ)へ戻す。basis-gate 一式(basis-gate.yml/basis-gate.sh/roadmap-basis-changed.mjs/basis-reviewers.txt/bot-reviewers.txt/.coderabbit.yaml/docs/basis-gate.md)を削除し、AGENTS.md の『承認は3層』を撤去。チェックイン/アウト・CI・roadmap-required・evidence 検査は温存。本セッション前半で入れかけた CodeRabbit/tier-2凍結も本転換で撤去。PR#30 をこの撤去内容に置き換え。",
+      "trouble": "①basis-gate を消すには main の branch protection の必須チェック『basis-gate』も外す必要がある(admin 画面操作のみ/ツール不可)。外さないと basis-gate 未報告で全PRが永久ブロック(failures 2026-07-22 の roadmap-required 事故と同型)。②auto-merge.yml に basis-gate ステータス前提のロジックが残るが、元々『対象PRなし』空振りバグで無害(必要なら別途撤去)。③この撤去PR自体はマージ前に basis-gate がまだ動き tier-2 赤になり得る→マスターが branch protection を外してからマージ(または管理者バイパス)。"
     },
-    "updated": "2026-07-23"
+    "updated": "2026-07-24"
   },
   "nodes": [
     { "id":"G", "kind":"state", "theme":"ゴール：アプリを本番運用できる環境にする", "meaning":"動かし・公開し・安全に・継続運用でき・データを失わない", "detail":"最上位＝最終到達状態。子＝必要十分条件（各々が必要・合わせて十分）。Well-Architected/12-Factor/OWASP を被覆。未確定枝は『未定を明記した state』として置き着手時に手順展開（遅延展開）",

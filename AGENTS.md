@@ -34,9 +34,7 @@
   2. 機械で白黒つかない所（画面が正しい・主要フローが成功する 等）だけ、**独立サブエージェント**
      （`.claude/agents/independent-verifier.md`）が判定する。＝作業した本人以外・報告を鵜呑みにせず
      自分で `verify` を再実行・再観察し、敵対的に落としにいく。
-- **基準は実行者が書き換え不能**：`criteria` / `verify` は着手前に固定する。変更は **本人以外の独立レビュア
-  （第2の目＝別ベンダの bot）** が敵対的に承認するまで通さない（bar を下げていないかを本人以外が見る）。
-  AI は与えられた基準で判定するだけ。＝基準変更は **tier-1**（下記「承認は3層」）。
+- **基準は着手前に固定**：`criteria` / `verify` は着手前に決め、作業の途中で自分に都合よく緩めない。
 - **evidence は偽造不能な外部事実のみ**：CI の run URL / 変更を実際に含む commit SHA / デプロイ ID /
   第三者が叩ける公開 URL。**「スクショ保存した」「レビューした」等の自己申告は証拠にしない。**
 - **粒度＝原子（1葉＝1事実＝1verify）。これが唯一の停止条件**：葉の状態は「独立して落ちうる受入事実」が
@@ -58,29 +56,9 @@
   - その下（操作＝作業ノード）は着手時に展開する（遅延展開）。
 - **平易言語（人間が監査できる形）**：各状態の `theme` は**非エンジニアが読んで「何が嬉しいか」が分かる1行**にする。
   専門用語（12-Factor / OWASP 等）は根拠として `detail` へ退避。これが無いと人間（マスター）の承認が形骸化する。
-- **承認は「毎マージ」ではなく3層に置く（速度と本人採点禁止の両立）**：人間（マスター）の承認は**希少資源**。
-  「変えると全体の裁定が変わる所」にだけ人間を置き、日常は機械と bot で自動に流す。マージの度に人間が押す運用は禁止。
-  - **tier-0（機械だけ・緑で auto-merge／人間ゼロ）**：実装コード・文章・`meta`/handoff 等。CI（機械の審判）が
-    緑になれば自動マージ。人間もbotも介在しない。
-  - **tier-1（別ベンダbotの敵対レビュー・反証なしで auto-merge／人間ゼロ）**：`criteria` / `verify`（＝合格ラインの変更）。
-    第2の目を**別ベンダの bot**（例 `@codex` review / Gemini Code Assist）へ格上げし、bot が **atomic・十分・平易**
-    かを敵対レビューする。反証が無く CI が緑なら自動マージ。**本人採点の禁止は「本人以外の別ベンダ bot」が担保**し、
-    人間は個々の bar 変更を裁かない（bot 未設定の間だけ安全側で人間へ fallback）。
-  - **tier-2（人間＝マスターの承認が要る唯一の層）**：**「審判そのもの」を変える時**と**本番昇格**だけ。ここは
-    AI が自分の判定を骨抜きにできる急所なので、必ず人間が承認する。
-    - **審判集合（＝tier-2 の門の対象）**：AI が自分の判定を骨抜きにできる所を全部含める。
-      - **門・CI・台帳・規律の本体**：`.github/workflows/**`（機械の審判本体）／`.github/scripts/**`／
-        `scripts/**`（`verify-roadmap-evidence.mjs` ＝evidence 偽造検査器を含む）／`.github/basis-reviewers.txt`・
-        `.github/bot-reviewers.txt`（誰が裁くか）／このルート `AGENTS.md`（規律メタルール）／`docs/roadmap.html` の描画エンジン。
-      - **「緑の定義」そのもの**：各 `package.json` の scripts（`test`/`lint` 等）／`tsconfig*.json`／`vitest.config.*`／
-        `eslint.config.*`／`pnpm-workspace.yaml`／`pnpm-lock.yaml`／`.node-version`／`.tool-versions`／`.npmrc`。
-        ここを緩める＝審判の中身を変えることなので人間必須（実装コード本体 `apps/**/src` 等は tier-0 のまま自動流通）。
-      - 加えて **prod への昇格**。
-  - **反証は平易言語**：非エンジニアが読める1文で出す（bot も人間も）。反証が残る間は既定 STOP。解除は
-    「基準を直して反証を消す」か「マスターが理由を記録して覆す」のいずれか。
-  - **`meta`（handoff/next 等）だけの更新は非対象**＝承認不要でマージ可（日々のチェックアウトは自動で通る）。
-  - **機械強制の仕組みの正は `docs/basis-gate.md`**（basis-gate＝土管／3層分岐／head SHA 紐付き／branch protection／
-    別ベンダ枠／auto-merge）。AGENTS.md では繰り返さない（二重管理を避ける）。
+- **承認はシンプル（tier / basis-gate 方式は廃止）**：変更は PR を出せば **誰でもレビュー/承認してマージ**できる。
+  承認の階層（tier-0/1/2）や「この変更は許可が要るか」を判定する検問所（basis-gate）は用いない。
+  守るのは **CI（型 / Lint / テスト / ビルド）が緑であること** だけ。
 
 ## Testing instructions（品質チェック）
 
@@ -104,9 +82,7 @@ node scripts/verify-roadmap-evidence.mjs  # roadmap の evidence が外部事実
 
 - コミットは小さく・説明的に。1 コミット＝1 目的（ロードマップの作業ノード 1 個に対応）。
 - 上記 Testing を緑にしてからコミットする。
-- `criteria` / `verify`（＝基準）を変更する PR は、本文でその旨を明示する（＝tier-1）。第2の目＝**別ベンダ bot**
-  の敵対レビューで反証なし＋CI緑なら自動マージ（bot 未設定の間だけ人間へ fallback）。人間の承認は tier-2
-  （審判集合の変更・prod 昇格）だけに要る。詳細は「検証の規律」の3層を正とする。
+- 変更は PR を出し、**誰でもレビュー/承認してマージ**してよい（tier / basis-gate の承認階層は廃止）。守るのは CI が緑なことだけ。
 - ロードマップの `evidence` には外部事実（commit SHA / CI run URL 等）だけを書く。
 - **全PRは `docs/roadmap.html` を必ず更新する**（例外なし。②今回トラブル・③`meta.next` は毎セッション書けるので diff 0 はあり得ない）。CI 関所 `roadmap-required` が差分0のPRを弾く。
 
@@ -123,7 +99,7 @@ node scripts/verify-roadmap-evidence.mjs  # roadmap の evidence が外部事実
 ロードマップは**機械制御と一体の自己完結システム**で、仕組みの説明を AGENTS.md に再掲するのは二重管理になる。
 
 - **仕組み・仕様の正は `docs/roadmap.html` の README シート**：ノードの種別（状態/作業）、完了ゲート、分解規則、割り方、カード表記、受入条件（`criteria`/`verify`/`evidence`）の書き方はすべてそこを見る。AGENTS.md では繰り返さない。
-- **機械が自動で強制する**：描画エンジンが完了ゲート（子が全 `done` でも受入未検証なら「検証待ち」）を自動導出し、`scripts/verify-roadmap-evidence.mjs` が `evidence` を外部事実か機械検査、`roadmap-required`／`basis-gate` が更新必須・基準凍結を強制する。仕組みは roadmap と一体で自己完結しているので、AGENTS.md 側の再説明は要らない。
+- **機械が自動で強制する**：描画エンジンが完了ゲート（子が全 `done` でも受入未検証なら「検証待ち」）を自動導出し、`scripts/verify-roadmap-evidence.mjs` が `evidence` を外部事実か機械検査、`roadmap-required` が更新必須を強制する。仕組みは roadmap と一体で自己完結しているので、AGENTS.md 側の再説明は要らない。
 - **criteria/verify を着手前に固定し AI が書き換えない**規律は、上記「検証の規律」節が正（門＝人間承認）。
 
 ## スタックは「ここでは決めない」
